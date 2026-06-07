@@ -1,0 +1,2407 @@
+<!DOCTYPE html>
+
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Chapter 6 — Multiple Access &amp; Error Detection</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&amp;family=Inter:wght@300;400;500;600;700;900&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #07111f;
+      --deep: #0b1a2e;
+      --mid-blue: #102340;
+      --card-bg: rgba(16, 35, 64, .6);
+      --border: rgba(0, 200, 255, .18);
+      --accent: #00c8ff;
+      --accent2: #ff6b35;
+      --gold: #ffc940;
+      --green: #3effa0;
+      --red: #ff5f6d;
+      --purple: #b48aff;
+      --text: #dce8f5;
+      --muted: #7d93ad;
+      --highlight: rgba(0, 200, 255, .07);
+      --ar-bg: rgba(255, 201, 64, .05);
+      --ar-border: rgba(255, 201, 64, .25)
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    body {
+      font-family: Inter, sans-serif;
+      background: var(--navy);
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 14.5px;
+      scroll-behavior: smooth
+    }
+
+    b,
+    strong {
+      color: #fff
+    }
+
+    .hero {
+      background: linear-gradient(160deg, #07111f 0%, #0b1a2e 45%, #130c30 100%);
+      padding: 64px 40px 52px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--accent)
+    }
+
+    .hero:before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 55% at 50% -5%, rgba(0, 200, 255, .13), transparent 70%);
+      pointer-events: none
+    }
+
+    .badge {
+      display: inline-block;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      padding: 5px 20px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      text-transform: uppercase
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -1px;
+      margin-bottom: 6px
+    }
+
+    .hero h1 span {
+      color: var(--accent)
+    }
+
+    .hero .ar-title {
+      font-family: Cairo, sans-serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      margin-bottom: 18px;
+      direction: rtl
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 13px;
+      max-width: 620px;
+      margin: 0 auto
+    }
+
+    .lang-bar {
+      background: var(--deep);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .lang-bar strong {
+      color: var(--accent)
+    }
+
+    /* Sticky topic nav */
+    .topic-nav {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: rgba(7, 17, 31, .95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap
+    }
+
+    .topic-nav a {
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid var(--border);
+      background: rgba(16, 35, 64, .75);
+      padding: 7px 12px;
+      border-radius: 9px;
+      font-size: 11.5px;
+      font-weight: 700;
+      transition: .2s;
+      white-space: nowrap
+    }
+
+    .topic-nav a:hover,
+    .topic-nav a.active {
+      color: var(--navy);
+      background: var(--accent);
+      border-color: var(--accent)
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 36px 24px 90px
+    }
+
+    .chapter-banner {
+      background: linear-gradient(135deg, rgba(0, 200, 255, .08), rgba(7, 17, 31, .6));
+      border: 1px solid var(--accent);
+      border-radius: 16px;
+      padding: 20px 28px;
+      margin: 32px 0 28px;
+      display: flex;
+      align-items: center;
+      gap: 18px
+    }
+
+    .ch-num {
+      width: 56px;
+      height: 56px;
+      background: var(--accent);
+      color: var(--navy);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 20px;
+      flex-shrink: 0
+    }
+
+    .ch-titles h2 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -.3px
+    }
+
+    .ch-titles .ar {
+      font-family: Cairo, sans-serif;
+      font-size: .9rem;
+      color: var(--gold);
+      direction: rtl;
+      text-align: right;
+      margin-top: 2px
+    }
+
+    .ch-titles .desc {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-top: 4px
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin: 44px 0 16px;
+      scroll-margin-top: 80px
+    }
+
+    .sec-num {
+      width: 40px;
+      height: 40px;
+      background: rgba(0, 200, 255, .15);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      flex-shrink: 0;
+      margin-top: 2px
+    }
+
+    .sec-titles h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -.2px
+    }
+
+    .sec-titles .ar {
+      font-family: Cairo, sans-serif;
+      font-size: .85rem;
+      color: var(--gold);
+      direction: rtl;
+      text-align: right;
+      margin-top: 1px
+    }
+
+    .sec-titles .desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 26px;
+      margin-bottom: 14px;
+      backdrop-filter: blur(4px)
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .card-title .ar {
+      font-family: Cairo, sans-serif;
+      font-size: .8rem;
+      color: var(--gold);
+      font-weight: 600;
+      direction: rtl
+    }
+
+    .card p,
+    .card li {
+      margin-bottom: 6px
+    }
+
+    .card ul,
+    .card ol {
+      padding-left: 22px
+    }
+
+    .ar-box {
+      background: var(--ar-bg);
+      border: 1px solid var(--ar-border);
+      border-right: 4px solid var(--gold);
+      border-radius: 0 10px 10px 0;
+      padding: 13px 16px;
+      margin-top: 12px;
+      direction: rtl;
+      text-align: right;
+      font-family: Cairo, sans-serif;
+      font-size: 13.5px;
+      color: #ccd6e8;
+      line-height: 1.9
+    }
+
+    .ar-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      direction: ltr;
+      text-align: left
+    }
+
+    .highlight {
+      background: var(--highlight);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 13px 16px;
+      margin: 10px 0;
+      font-size: 13.5px
+    }
+
+    .note {
+      background: rgba(255, 107, 53, .07);
+      border: 1px solid rgba(255, 107, 53, .28);
+      border-radius: 10px;
+      padding: 13px 16px;
+      margin: 10px 0;
+      font-size: 13.5px
+    }
+
+    .note-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent2);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 5px
+    }
+
+    .tip {
+      background: rgba(62, 255, 160, .05);
+      border: 1px solid rgba(62, 255, 160, .25);
+      border-radius: 10px;
+      padding: 13px 16px;
+      margin: 10px 0;
+      font-size: 13.5px
+    }
+
+    .tip-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 5px
+    }
+
+    .formula {
+      background: rgba(0, 0, 0, .45);
+      border: 1px solid rgba(255, 201, 64, .25);
+      border-radius: 8px;
+      padding: 12px 18px;
+      margin: 10px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      color: var(--gold);
+      direction: ltr;
+      overflow-x: auto;
+      white-space: pre
+    }
+
+    .formula .flabel {
+      font-family: Inter, sans-serif;
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 5px;
+      letter-spacing: .5px;
+      text-transform: uppercase
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 14px 0
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px
+    }
+
+    thead th {
+      background: var(--mid-blue);
+      color: var(--accent);
+      padding: 11px 14px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: .4px;
+      white-space: nowrap
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(0, 200, 255, .07)
+    }
+
+    tbody tr:hover {
+      background: var(--highlight)
+    }
+
+    tbody td {
+      padding: 10px 14px;
+      vertical-align: top
+    }
+
+    tbody td:first-child {
+      font-weight: 600;
+      color: var(--gold)
+    }
+
+    .g {
+      color: var(--green)
+    }
+
+    .r {
+      color: var(--red)
+    }
+
+    .y {
+      color: var(--gold)
+    }
+
+    .p {
+      color: var(--purple)
+    }
+
+    .tag {
+      display: inline-block;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      background: rgba(0, 200, 255, .1);
+      border-radius: 5px;
+      padding: 1px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      margin: 2px
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px
+    }
+
+    .grid3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px
+    }
+
+    /* Diagrams / visual blocks */
+    .diagram {
+      background: rgba(0, 0, 0, .35);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 14px 0;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      overflow-x: auto
+    }
+
+    .diagram-title {
+      font-family: Inter, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      text-align: left
+    }
+
+    .flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0;
+      margin: 14px 0
+    }
+
+    .fbox {
+      background: var(--mid-blue);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 9px 14px;
+      font-size: 12.5px;
+      font-weight: 600;
+      text-align: center
+    }
+
+    .fbox.a {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0, 200, 255, .1)
+    }
+
+    .fbox.o {
+      border-color: var(--accent2);
+      color: var(--accent2);
+      background: rgba(255, 107, 53, .1)
+    }
+
+    .fbox.p {
+      border-color: var(--purple);
+      color: var(--purple);
+      background: rgba(180, 138, 255, .1)
+    }
+
+    .fbox.g {
+      border-color: var(--green);
+      color: var(--green);
+      background: rgba(62, 255, 160, .08)
+    }
+
+    .fbox.r {
+      border-color: var(--red);
+      color: var(--red);
+      background: rgba(255, 95, 109, .08)
+    }
+
+    .arrow {
+      color: var(--muted);
+      font-size: 18px;
+      padding: 0 8px
+    }
+
+    .arrow-down {
+      color: var(--muted);
+      font-size: 18px;
+      display: block;
+      text-align: center;
+      margin: 4px 0
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 14px 0
+    }
+
+    .tl-row {
+      display: flex;
+      align-items: stretch;
+      gap: 0
+    }
+
+    .tl-time {
+      min-width: 90px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: var(--muted);
+      text-align: right;
+      padding: 8px 12px 8px 0;
+      border-right: 2px solid var(--border);
+      flex-shrink: 0
+    }
+
+    .tl-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      margin: 10px -7px 0 -7px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1
+    }
+
+    .tl-dot.blue {
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(0, 200, 255, .5)
+    }
+
+    .tl-dot.orange {
+      background: var(--accent2);
+      box-shadow: 0 0 8px rgba(255, 107, 53, .5)
+    }
+
+    .tl-dot.green {
+      background: var(--green);
+      box-shadow: 0 0 8px rgba(62, 255, 160, .5)
+    }
+
+    .tl-dot.red {
+      background: var(--red);
+      box-shadow: 0 0 8px rgba(255, 95, 109, .5)
+    }
+
+    .tl-content {
+      padding: 6px 0 6px 20px;
+      font-size: 13px
+    }
+
+    hr.div {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: .2;
+      margin: 44px 0
+    }
+
+    .exam-q {
+      border-left: 3px solid var(--purple);
+      background: rgba(180, 138, 255, .05);
+      border-radius: 0 8px 8px 0;
+      padding: 13px 16px;
+      margin: 10px 0;
+      font-size: 13.5px
+    }
+
+    .exam-q .q-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--purple);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 5px
+    }
+
+    .answer {
+      color: var(--green);
+      font-weight: 700
+    }
+
+    .final {
+      background: linear-gradient(135deg, rgba(0, 200, 255, .06), rgba(7, 17, 31, .8));
+      border: 1px solid var(--accent);
+      border-radius: 16px;
+      padding: 30px;
+      margin-top: 52px
+    }
+
+    .final h2 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 18px
+    }
+
+    .final h2 .ar {
+      font-family: Cairo, sans-serif;
+      font-size: .85rem;
+      color: var(--gold);
+      font-weight: 600;
+      direction: rtl;
+      display: block;
+      margin-top: 2px
+    }
+
+    /* ALOHA timeline visualizer */
+    .aloha-vis {
+      background: rgba(0, 0, 0, .35);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin: 14px 0;
+      overflow-x: auto
+    }
+
+    .aloha-vis .av-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px
+    }
+
+    .aloha-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 8px
+    }
+
+    .aloha-station {
+      min-width: 70px;
+      font-size: 11.5px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace
+    }
+
+    .aloha-time {
+      display: flex;
+      gap: 2px
+    }
+
+    .aloha-slot {
+      width: 36px;
+      height: 24px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0
+    }
+
+    .aloha-slot.tx {
+      background: rgba(0, 200, 255, .25);
+      border: 1px solid var(--accent);
+      color: var(--accent)
+    }
+
+    .aloha-slot.col {
+      background: rgba(255, 95, 109, .25);
+      border: 1px solid var(--red);
+      color: var(--red)
+    }
+
+    .aloha-slot.idle {
+      background: rgba(16, 35, 64, .5);
+      border: 1px solid rgba(0, 200, 255, .1);
+      color: var(--muted)
+    }
+
+    .aloha-slot.vul {
+      background: rgba(255, 201, 64, .12);
+      border: 1px dashed rgba(255, 201, 64, .4);
+      color: var(--gold)
+    }
+
+    .t-axis {
+      display: flex;
+      gap: 2px;
+      margin-left: 72px;
+      margin-bottom: 4px
+    }
+
+    .t-label {
+      width: 36px;
+      text-align: center;
+      font-size: 10px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      flex-shrink: 0
+    }
+
+    /* Backoff visual */
+    .backoff-vis {
+      background: rgba(0, 0, 0, .35);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin: 14px 0
+    }
+
+    .step-box {
+      background: rgba(0, 200, 255, .06);
+      border: 1px solid rgba(0, 200, 255, .2);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin: 6px 0;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .step-num {
+      width: 26px;
+      height: 26px;
+      background: var(--accent);
+      color: var(--navy);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 12px;
+      flex-shrink: 0
+    }
+
+    .csma-vis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 14px 0
+    }
+
+    .csma-node {
+      background: var(--mid-blue);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700
+    }
+
+    .csma-node.sending {
+      border-color: var(--accent);
+      background: rgba(0, 200, 255, .12);
+      color: var(--accent)
+    }
+
+    .csma-node.collision {
+      border-color: var(--red);
+      background: rgba(255, 95, 109, .1);
+      color: var(--red)
+    }
+
+    .csma-node.waiting {
+      border-color: var(--gold);
+      background: rgba(255, 201, 64, .05);
+      color: var(--gold)
+    }
+
+    .contention-vis {
+      display: flex;
+      gap: 6px;
+      margin: 12px 0;
+      flex-wrap: wrap
+    }
+
+    .cw-slot {
+      width: 38px;
+      height: 38px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace
+    }
+
+    .cw-slot.win {
+      background: rgba(62, 255, 160, .2);
+      border: 1px solid var(--green);
+      color: var(--green)
+    }
+
+    .cw-slot.lose {
+      background: rgba(16, 35, 64, .8);
+      border: 1px solid rgba(0, 200, 255, .15);
+      color: var(--muted)
+    }
+
+    .persist-vis {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 12px 0
+    }
+
+    .persist-card {
+      background: var(--mid-blue);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center
+    }
+
+    .persist-card .pc-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 8px
+    }
+
+    .persist-card .pc-ar {
+      font-family: Cairo, sans-serif;
+      font-size: 12px;
+      color: var(--gold);
+      margin-bottom: 6px;
+      direction: rtl
+    }
+
+    @media(max-width:640px) {
+
+      .grid2,
+      .grid3 {
+        grid-template-columns: 1fr
+      }
+
+      .hero h1 {
+        font-size: 2.15rem
+      }
+
+      .container {
+        padding: 28px 14px 70px
+      }
+
+      .card {
+        padding: 18px 16px
+      }
+
+      .csma-vis {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .persist-vis {
+        grid-template-columns: 1fr
+      }
+
+      .topic-nav a {
+        font-size: 10.5px;
+        padding: 6px 9px
+      }
+    }
+  </style>
+
+  <style>
+    /* Clearer Pure ALOHA vulnerable-time diagram */
+    .diagram {
+      overflow-x: auto
+    }
+
+    .diagram sub {
+      font-size: .72em
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HERO -->
+  <div class="hero">
+    <div class="badge">Chapter 6 · Data Communication &amp; Networks</div>
+    <h1>Multiple Access &amp; <span>Error Detection</span></h1>
+    <div class="ar-title">الفصل السادس: الوصول المتعدد وكشف الأخطاء — دليل المراجعة الشامل</div>
+    <p>Complete study guide · All slides covered · Diagrams · Formulas · Solved examples · Exam Q&amp;A
+    </p>
+  </div>
+  <div class="lang-bar">📚 <strong>English</strong> — Main content  |  🌙 <strong
+      style="color:var(--gold)">العربي</strong> — Translation &amp; explanation boxes</div>
+  <!-- STICKY TOPIC NAV -->
+  <nav class="topic-nav">
+    <a href="index.html" class="active">🏠 Home</a>
+    <a href="#overview">🗂 Overview</a>
+    <a href="#pure-aloha">📡 Pure ALOHA</a>
+    <a href="#slotted-aloha">🔲 Slotted ALOHA</a>
+    <a href="#csma">📶 CSMA</a>
+    <a href="#csma-cd">⚡ CSMA/CD</a>
+    <a href="#csma-ca">🛡 CSMA/CA</a>
+    <a href="#comparison">📊 Comparison</a>
+    <a href="#examples">🔢 Solved Examples</a>
+    <a href="#exam">🎯 Exam Q&amp;A</a>
+    <a href="#quickref">📋 Quick Ref</a>
+  </nav>
+  <div class="container">
+    <!-- CHAPTER BANNER -->
+    <div class="chapter-banner">
+      <div class="ch-num">6</div>
+      <div class="ch-titles">
+        <h2>Multiple Access &amp; Error Detection</h2>
+        <div class="ar">الوصول المتعدد وكشف الأخطاء</div>
+        <div class="desc">ALOHA · Slotted ALOHA · CSMA · CSMA/CD · CSMA/CA ·
+          Throughput formulas · Flow diagrams</div>
+      </div>
+    </div>
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 1: OVERVIEW -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section-header" id="overview">
+      <div class="sec-num">1</div>
+      <div class="sec-titles">
+        <h3>Multiple Access — Big Picture</h3>
+        <div class="ar">الصورة الكاملة للوصول المتعدد</div>
+        <div class="desc">Data Link Layer sublayers · Three access categories</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Data Link Layer Sublayers <span class="ar">طبقات الـ Data Link</span></div>
+      <div class="diagram">
+        <div class="diagram-title">DLL Sublayer Architecture</div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:center">
+          <div class="fbox a" style="width:340px;padding:12px">LLC — Logical Link Control<br /><span
+              style="font-family:Inter,sans-serif;font-size:11px;color:var(--muted)">Flow control, Error control,
+              Framing</span></div>
+          <div class="arrow-down">↕</div>
+          <div class="fbox p" style="width:340px;padding:12px">MAC — Medium Access Control<br /><span
+              style="font-family:Inter,sans-serif;font-size:11px;color:var(--muted)">Controls who gets to use the shared
+              channel</span></div>
+          <div class="arrow-down">↕</div>
+          <div class="fbox" style="width:340px;padding:12px">Physical Layer<br /><span
+              style="font-family:Inter,sans-serif;font-size:11px;color:var(--muted)">Bits on the wire/air</span></div>
+        </div>
+      </div>
+      <div class="highlight">The <strong>MAC sublayer</strong> is what Chapter 6 is all about — the rules that decide
+        <em>when and how</em> each device gets to transmit on a shared medium.
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        طبقة Data Link مقسمة لطبقتين: LLC (تتحكم في تدفق البيانات والأخطاء) وMAC (تتحكم في من يرسل على القناة المشتركة).
+        الفصل السادس كله عن MAC.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Three Categories of Multiple Access <span class="ar">الفئات الثلاث للوصول المتعدد</span>
+      </div>
+      <div class="grid3">
+        <div class="highlight">
+          <strong style="color:var(--accent)">① Random Access</strong><br />
+          <span class="tag">Contention-based</span><br /><br />
+          No station controls another. Any station can transmit at any time. Risk of <strong>collision</strong>.
+          <br /><br />
+          <em style="color:var(--muted);font-size:12px">Examples: ALOHA, CSMA, CSMA/CD, CSMA/CA</em>
+        </div>
+        <div class="highlight">
+          <strong style="color:var(--gold)">② Controlled Access</strong><br />
+          <span class="tag" style="border-color:var(--gold);color:var(--gold);background:rgba(255,201,64,.1)">Orderly
+            turns</span><br /><br />
+          Stations take turns in an organized manner. No collision. Requires coordination.
+          <br /><br />
+          <em style="color:var(--muted);font-size:12px">Examples: Polling, Token Passing</em>
+        </div>
+        <div class="highlight">
+          <strong style="color:var(--purple)">③ Channelization</strong><br />
+          <span class="tag"
+            style="border-color:var(--purple);color:var(--purple);background:rgba(180,138,255,.1)">Divided
+            bandwidth</span><br /><br />
+          Bandwidth is divided so each station gets its own piece. No collision.
+          <br /><br />
+          <em style="color:var(--muted);font-size:12px">FDMA (freq), TDMA (time), CDMA (code)</em>
+        </div>
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        Random Access: أي جهاز يرسل متى يريد — خطر التصادم (Collision). الفصل يركز على هذه الفئة.<br />
+        Controlled Access: الأجهزة تأخذ دورها بالترتيب — لا تصادم لكن تنسيق مطلوب.<br />
+        Channelization: القناة تُقسم بين الأجهزة بالتردد أو الوقت أو الكود — كل جهاز له حصته.
+      </div>
+    </div>
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 2: PURE ALOHA -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section-header" id="pure-aloha">
+      <div class="sec-num">2</div>
+      <div class="sec-titles">
+        <h3>Pure ALOHA</h3>
+        <div class="ar">ALOHA الخالص</div>
+        <div class="desc">The simplest random access protocol — send whenever you want</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">How Pure ALOHA Works <span class="ar">كيف يعمل ALOHA الخالص</span></div>
+      <p>Originally developed for satellite communication. The simplest multiple access protocol: <strong>transmit
+          whenever you have data</strong>. If a collision occurs, wait a random time and retransmit.</p>
+      <div class="grid2">
+        <div>
+          <div class="step-box">
+            <div class="step-num">1</div> Station has data → transmits immediately
+          </div>
+          <div class="step-box">
+            <div class="step-num">2</div> Wait for ACK from receiver
+          </div>
+          <div class="step-box">
+            <div class="step-num">3</div> <span class="g">If ACK received</span> → success, done
+          </div>
+          <div class="step-box" style="border-color:rgba(255,95,109,.3);background:rgba(255,95,109,.05)">
+            <div class="step-num" style="background:var(--red)">4</div> <span class="r">If no ACK</span> (collision
+            assumed) → wait random backoff time T<sub>B</sub>, then retransmit
+          </div>
+          <div class="step-box">
+            <div class="step-num">5</div> After max retries (K<sub>max</sub>) → abort
+          </div>
+        </div>
+        <div>
+          <div class="diagram">
+            <div class="diagram-title">Pure ALOHA — Collision Scenario</div>
+            <div class="aloha-vis">
+              <div class="t-axis">
+                <div class="t-label">t0</div>
+                <div class="t-label">t1</div>
+                <div class="t-label">t2</div>
+                <div class="t-label">t3</div>
+                <div class="t-label">t4</div>
+                <div class="t-label">t5</div>
+                <div class="t-label">t6</div>
+              </div>
+              <div class="aloha-row">
+                <div class="aloha-station">Station A</div>
+                <div class="aloha-time">
+                  <div class="aloha-slot idle"></div>
+                  <div class="aloha-slot tx">TX</div>
+                  <div class="aloha-slot col">✕</div>
+                  <div class="aloha-slot idle"></div>
+                  <div class="aloha-slot idle"></div>
+                  <div class="aloha-slot tx">TX</div>
+                  <div class="aloha-slot tx">OK</div>
+                </div>
+              </div>
+              <div class="aloha-row">
+                <div class="aloha-station">Station B</div>
+                <div class="aloha-time">
+                  <div class="aloha-slot idle"></div>
+                  <div class="aloha-slot idle"></div>
+                  <div class="aloha-slot col">✕</div>
+                  <div class="aloha-slot tx">TX</div>
+                  <div class="aloha-slot idle"></div>
+                  <div class="aloha-slot idle"></div>
+                  <div class="aloha-slot idle"></div>
+                </div>
+              </div>
+              <div style="margin-top:8px;font-size:11px;color:var(--muted);direction:ltr;text-align:left">
+                <span style="color:var(--accent)">■</span> Transmitting  
+                <span style="color:var(--red)">■</span> Collision  
+                <span style="color:var(--muted)">■</span> Idle
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        الفكرة بسيطة: أرسل متى ما أردت. إذا صدم الإرسال مع جهاز آخر (تصادم/Collision) → انتظر وقتاً عشوائياً (T_B) ثم
+        أعد الإرسال. الجهاز يعرف أن التصادم حدث عند عدم استلام ACK خلال وقت محدد.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Vulnerable Time in Pure ALOHA <span class="ar">وقت التعرض للتصادم</span></div>
+      <div class="highlight">
+        <strong>Vulnerable Time = 2 × T<sub>frame</sub></strong><br />
+        A collision can occur if another station starts transmitting anywhere within one frame-time <em>before</em> or
+        one frame-time <em>after</em> the current frame starts.
+      </div>
+      <div class="diagram">
+        <div class="diagram-title">Vulnerable Time Window — Pure ALOHA</div>
+        <div style="padding:25px 15px;direction:ltr">
+          <div style="position:relative;height:155px;min-width:620px">
+            <!-- Timeline -->
+            <div style="position:absolute;top:82px;left:5%;right:5%;height:4px;background:#0d5c7a;border-radius:4px">
+            </div>
+            <!-- Vulnerable Area -->
+            <div style="
+        position:absolute;
+        top:36px;
+        left:15%;
+        width:70%;
+        height:72px;
+        border:2px dashed #ffc940;
+        background:rgba(255,201,64,.08);
+        border-radius:10px;">
+            </div>
+            <!-- Vulnerable Label -->
+            <div style="
+        position:absolute;
+        top:8px;
+        left:15%;
+        width:70%;
+        text-align:center;
+        color:#ffc940;
+        font-weight:800;
+        font-size:13px;">
+              Vulnerable Time = 2 × T<sub>frame</sub>
+            </div>
+            <!-- Left danger frame -->
+            <div style="
+        position:absolute;
+        top:53px;
+        left:18%;
+        width:22%;
+        height:24px;
+        background:rgba(255,95,109,.14);
+        border:1px solid #ff5f6d;
+        border-radius:6px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color:#ff9aa3;
+        font-size:11px;
+        font-weight:700;">
+              Collision if another frame starts before
+            </div>
+            <!-- Main Frame A -->
+            <div style="
+        position:absolute;
+        top:58px;
+        left:41%;
+        width:18%;
+        height:36px;
+        background:rgba(0,200,255,.20);
+        border:2px solid #00c8ff;
+        border-radius:7px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-weight:800;
+        color:#00c8ff;
+        box-shadow:0 0 12px rgba(0,200,255,.18);">
+              Frame A
+            </div>
+            <!-- Right danger frame -->
+            <div style="
+        position:absolute;
+        top:53px;
+        left:60%;
+        width:22%;
+        height:24px;
+        background:rgba(255,95,109,.14);
+        border:1px solid #ff5f6d;
+        border-radius:6px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color:#ff9aa3;
+        font-size:11px;
+        font-weight:700;">
+              Collision if another frame starts after
+            </div>
+            <!-- Time marks -->
+            <div style="position:absolute;top:100px;left:15%;color:#ffc940;font-size:12px;font-weight:700;">
+              −T<sub>f</sub></div>
+            <div style="position:absolute;top:100px;left:41%;color:#7d93ad;font-size:12px;font-weight:700;">0</div>
+            <div style="position:absolute;top:100px;left:57%;color:#7d93ad;font-size:12px;font-weight:700;">
+              T<sub>f</sub></div>
+            <div style="position:absolute;top:100px;left:83%;color:#ffc940;font-size:12px;font-weight:700;">
+              +T<sub>f</sub></div>
+            <!-- bottom explanation -->
+            <div style="
+        position:absolute;
+        top:127px;
+        left:10%;
+        width:80%;
+        text-align:center;
+        font-size:11px;
+        color:#a9b7c9;
+        font-family:Inter,sans-serif;">
+              Any frame that starts between −T<sub>f</sub> and +T<sub>f</sub> can overlap with Frame A and cause
+              collision.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        وقت التعرض للتصادم في Pure ALOHA = 2 × T_frame. أي إطار (Frame) آخر يُرسل خلال فترة T_frame قبل بداية إرسالنا أو
+        خلال T_frame بعده سيتصادم معنا. لذلك النافذة الخطرة هي ضعف زمن الإطار.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Backoff Time (T<sub>B</sub>) — Binary Exponential Backoff <span class="ar">وقت الانتظار
+          العشوائي</span></div>
+      <div class="grid2">
+        <div>
+          <p>After a collision, station waits a <strong>random backoff time</strong> before retransmitting:</p>
+          <div class="formula">
+            <div class="flabel">Backoff Time</div>TB = R × Tp
+
+            R = random integer from {0, 1, ..., 2^K - 1}
+            K = attempt number (1, 2, 3, ...)
+            Tp = propagation time (one-way max distance)
+          </div>
+          <div class="note">
+            <div class="note-label">Important</div>
+            K increases with each failed attempt → larger range → longer wait → reduces chance of re-collision.
+          </div>
+        </div>
+        <div>
+          <div class="diagram">
+            <div class="diagram-title">Backoff Range vs Attempt K</div>
+            <div style="display:flex;flex-direction:column;gap:8px;direction:ltr;text-align:left">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:20px;font-weight:700;color:var(--accent)">K=1</span>
+                <div style="display:flex;gap:3px">
+                  <div class="cw-slot win">0</div>
+                  <div class="cw-slot win">1</div>
+                </div>
+                <span style="font-size:11px;color:var(--muted)">2 choices</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:20px;font-weight:700;color:var(--accent)">K=2</span>
+                <div style="display:flex;gap:3px">
+                  <div class="cw-slot win">0</div>
+                  <div class="cw-slot win">1</div>
+                  <div class="cw-slot win">2</div>
+                  <div class="cw-slot win">3</div>
+                </div>
+                <span style="font-size:11px;color:var(--muted)">4 choices</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:20px;font-weight:700;color:var(--accent)">K=3</span>
+                <div style="display:flex;gap:3px">
+                  <div class="cw-slot win">0</div>
+                  <div class="cw-slot win">1</div>
+                  <div class="cw-slot win">2</div>
+                  <div class="cw-slot win">3</div>
+                  <div class="cw-slot win">4</div>
+                  <div class="cw-slot win">5</div>
+                  <div class="cw-slot win">6</div>
+                  <div class="cw-slot win">7</div>
+                </div>
+                <span style="font-size:11px;color:var(--muted)">8 choices</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        بعد كل تصادم، الجهاز ينتظر وقتاً عشوائياً = R × Tp حيث R عدد عشوائي بين 0 و (2^K − 1). كلما زاد عدد المحاولات K،
+        زاد نطاق الانتظار → أقل احتمال للتصادم مجدداً. مثال: إذا الأجهزة على بعد 600 كم، Tp = 2ms. عند K=1: TB ∈ {0ms,
+        2ms}.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Pure ALOHA Throughput Formula <span class="ar">معادلة الإنتاجية</span></div>
+      <div class="grid2">
+        <div>
+          <div class="formula">
+            <div class="flabel">Pure ALOHA Throughput</div>S = G × e^(-2G)
+
+            S = throughput (fraction of time channel carries
+            successful frames)
+            G = offered load (avg frames per frame-time)
+            e = 2.718...
+
+            Maximum: S_max = 1/(2e) ≈ 0.184 = 18.4%
+            at G = 0.5
+          </div>
+          <div class="tip">
+            <div class="tip-label">Key Insight</div>
+            Even at best conditions, Pure ALOHA wastes ~81.6% of channel capacity due to collisions and idle time. It's
+            simple but <em>very</em> inefficient.
+          </div>
+        </div>
+        <div>
+          <div class="diagram">
+            <div class="diagram-title">Throughput vs Load (G)</div>
+            <svg style="width:100%;max-width:260px" viewbox="0 0 260 160" xmlns="http://www.w3.org/2000/svg">
+              <!-- Axes -->
+              <line stroke="#7d93ad" stroke-width="1" x1="30" x2="240" y1="130" y2="130"></line>
+              <line stroke="#7d93ad" stroke-width="1" x1="30" x2="30" y1="130" y2="15"></line>
+              <!-- Labels -->
+              <text fill="#7d93ad" font-size="9" text-anchor="middle" x="135" y="148">G (offered load)</text>
+              <text fill="#7d93ad" font-size="9" text-anchor="middle" transform="rotate(-90,10,75)" x="10" y="75">S
+                (throughput)</text>
+              <!-- Pure ALOHA curve: S = G*exp(-2G), G from 0 to 2 -->
+              <polyline fill="none"
+                points="
+              30,130 45,113 60,101 75,94 87,91 100,91 112,93 124,97 137,101 149,105 162,110 175,115 187,119 200,122 212,124 225,126 237,128"
+                stroke="#00c8ff" stroke-width="2"></polyline>
+              <!-- Slotted ALOHA curve: S = G*exp(-G) -->
+              <polyline fill="none"
+                points="
+              30,130 45,119 60,111 75,105 87,101 100,98 112,97 124,97 137,98 149,100 162,103 175,106 187,109 200,113 212,116 225,119 237,122"
+                stroke="#ff6b35" stroke-dasharray="4,2" stroke-width="2"></polyline>
+              <!-- Max lines -->
+              <line opacity="0.5" stroke="#00c8ff" stroke-dasharray="3,2" stroke-width="1" x1="87" x2="87" y1="91"
+                y2="130"></line>
+              <line opacity="0.5" stroke="#ff6b35" stroke-dasharray="3,2" stroke-width="1" x1="112" x2="112" y1="97"
+                y2="130"></line>
+              <!-- Annotations -->
+              <text fill="#00c8ff" font-size="7.5" text-anchor="middle" x="87" y="88">18.4%</text>
+              <text fill="#ff6b35" font-size="7.5" text-anchor="middle" x="112" y="94">36.8%</text>
+              <text fill="#00c8ff" font-size="7.5" text-anchor="middle" x="87" y="135">G=0.5</text>
+              <text fill="#ff6b35" font-size="7.5" text-anchor="middle" x="112" y="135">G=1</text>
+              <!-- Legend -->
+              <line stroke="#00c8ff" stroke-width="2" x1="140" x2="155" y1="20" y2="20"></line>
+              <text fill="#00c8ff" font-size="7.5" x="158" y="24">Pure ALOHA</text>
+              <line stroke="#ff6b35" stroke-dasharray="4,2" stroke-width="2" x1="140" x2="155" y1="32" y2="32"></line>
+              <text fill="#ff6b35" font-size="7.5" x="158" y="36">Slotted ALOHA</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        المعادلة: S = G × e^(−2G). الحد الأقصى للإنتاجية هو 18.4% عند G = 0.5. هذا يعني أن القناة مستغلة بنسبة 18.4% فقط
+        في أحسن الأحوال — كفاءة منخفضة جداً!
+      </div>
+    </div>
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 3: SLOTTED ALOHA -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section-header" id="slotted-aloha">
+      <div class="sec-num">3</div>
+      <div class="sec-titles">
+        <h3>Slotted ALOHA</h3>
+        <div class="ar">ALOHA المجزأ بفترات زمنية</div>
+        <div class="desc">Better efficiency by synchronizing transmissions to time slots</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">How Slotted ALOHA Works <span class="ar">كيف يعمل Slotted ALOHA</span></div>
+      <div class="grid2">
+        <div>
+          <p>Time is divided into <strong>equal-length slots</strong> (each = T<sub>frame</sub>). Stations can
+            <strong>only begin transmitting at the start of a slot</strong>.
+          </p>
+          <div class="highlight">
+            <strong>Key Rule:</strong> A station with data must wait for the next slot boundary. It cannot transmit in
+            the middle of a slot.
+          </div>
+          <div class="highlight">
+            <strong>Effect:</strong> Vulnerable time is cut in half (only 1×T<sub>frame</sub> instead of
+            2×T<sub>frame</sub>), so efficiency doubles.
+          </div>
+          <div class="note">
+            <div class="note-label">Requirement</div>
+            Stations must be <strong>synchronized</strong> to know when slots begin. This adds complexity compared to
+            Pure ALOHA.
+          </div>
+        </div>
+        <div>
+          <div class="diagram">
+            <div class="diagram-title">Slotted ALOHA — Time Slots</div>
+            <div class="aloha-vis">
+              <div class="t-axis">
+                <div class="t-label">Slot1</div>
+                <div class="t-label">Slot2</div>
+                <div class="t-label">Slot3</div>
+                <div class="t-label">Slot4</div>
+                <div class="t-label">Slot5</div>
+              </div>
+              <div class="aloha-row">
+                <div class="aloha-station">Station A</div>
+                <div class="aloha-time">
+                  <div class="aloha-slot idle"></div>
+                  <div class="aloha-slot tx">TX</div>
+                  <div class="aloha-slot idle"></div>
+                  <div class="aloha-slot tx">OK</div>
+                  <div class="aloha-slot idle"></div>
+                </div>
+              </div>
+              <div class="aloha-row">
+                <div class="aloha-station">Station B</div>
+                <div class="aloha-time">
+                  <div class="aloha-slot tx">TX</div>
+                  <div class="aloha-slot col">✕</div>
+                  <div class="aloha-slot idle"></div>
+                  <div class="aloha-slot idle"></div>
+                  <div class="aloha-slot tx">OK</div>
+                </div>
+              </div>
+              <div class="aloha-row">
+                <div class="aloha-station">Station C</div>
+                <div class="aloha-time">
+                  <div class="aloha-slot idle"></div>
+                  <div class="aloha-slot col">✕</div>
+                  <div class="aloha-slot tx">TX</div>
+                  <div class="aloha-slot idle"></div>
+                  <div class="aloha-slot idle"></div>
+                </div>
+              </div>
+            </div>
+            <p style="font-size:11px;color:var(--muted);margin-top:6px;text-align:left">Collisions only happen when ≥2
+              stations pick the SAME slot</p>
+          </div>
+        </div>
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        في Slotted ALOHA، الوقت مقسم إلى "خانات" متساوية. الجهاز لا يرسل إلا في بداية خانة جديدة. هذا يقلص وقت التعرض
+        للتصادم إلى النصف (T_frame بدل 2×T_frame) → الكفاءة تتضاعف.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Slotted ALOHA Throughput &amp; Vulnerable Time <span class="ar">إنتاجية وزمن التعرض</span>
+      </div>
+      <div class="grid2">
+        <div>
+          <div class="formula">
+            <div class="flabel">Slotted ALOHA Throughput</div>S = G × e^(-G)
+
+            Maximum: S_max = 1/e ≈ 0.368 = 36.8%
+            at G = 1
+
+            Vulnerable Time = 1 × T_frame
+            (Half of Pure ALOHA!)
+          </div>
+        </div>
+        <div class="card" style="margin:0">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Property</th>
+                  <th>Pure ALOHA</th>
+                  <th>Slotted ALOHA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Vulnerable Time</td>
+                  <td class="r">2 × T<sub>f</sub></td>
+                  <td class="g">1 × T<sub>f</sub></td>
+                </tr>
+                <tr>
+                  <td>Max Throughput</td>
+                  <td class="r">18.4%</td>
+                  <td class="g">36.8%</td>
+                </tr>
+                <tr>
+                  <td>Optimal G</td>
+                  <td>0.5</td>
+                  <td>1.0</td>
+                </tr>
+                <tr>
+                  <td>Synchronization</td>
+                  <td class="g">Not needed</td>
+                  <td class="r">Required</td>
+                </tr>
+                <tr>
+                  <td>Complexity</td>
+                  <td class="g">Simple</td>
+                  <td class="r">More complex</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        S = G × e^(−G). الحد الأقصى = 36.8% عند G = 1 — أي ضعف كفاءة Pure ALOHA. التحسين جاء بتقليل نافذة التصادم للنصف
+        عبر التزامن على الفترات الزمنية.
+      </div>
+    </div>
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 4: CSMA -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section-header" id="csma">
+      <div class="sec-num">4</div>
+      <div class="sec-titles">
+        <h3>CSMA — Carrier Sense Multiple Access</h3>
+        <div class="ar">CSMA — الوصول المتعدد مع الاستماع للناقل</div>
+        <div class="desc">"Listen before talk" — reduces but does not eliminate collisions</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">CSMA Core Idea <span class="ar">المفهوم الأساسي</span></div>
+      <div class="highlight">
+        <strong>"Listen before talk"</strong> — Before transmitting, a station senses (listens to) the channel.<br />
+        ✅ If channel is <strong class="g">idle</strong> → may transmit<br />
+        ⚠️ If channel is <strong class="r">busy</strong> → defer based on persistence method
+      </div>
+      <p>CSMA significantly <strong>reduces collisions</strong> compared to ALOHA because stations don't transmit into
+        an already-busy channel. However, collisions can still occur due to <strong>propagation delay</strong>: two
+        stations may both sense idle and start transmitting simultaneously.</p>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        الفكرة: "استمع قبل أن تتحدث". قبل الإرسال، الجهاز يتحقق من القناة. إذا فارغة → أرسل. إذا مشغولة → تصرف حسب طريقة
+        الـ Persistence. التصادم ممكن رغم الاستماع بسبب زمن الانتشار (Propagation delay) — قد يستمع جهازان في نفس الوقت
+        ويجدان القناة فارغة ثم يرسلان معاً.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Three Persistence Methods <span class="ar">طرق الاستمرار الثلاث</span></div>
+      <div class="persist-vis">
+        <div class="persist-card">
+          <div class="pc-title">1-Persistent</div>
+          <div class="pc-ar">الاستمرارية الكاملة</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px"><strong>Busy:</strong> Keep sensing
+            continuously<br /><strong>Idle:</strong> Transmit immediately (p = 1)</div>
+          <div class="tag" style="border-color:var(--red);color:var(--red);background:rgba(255,95,109,.1)">High
+            collision risk</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px">When channel goes idle, ALL waiting stations
+            transmit at once → collision likely</div>
+        </div>
+        <div class="persist-card">
+          <div class="pc-title">Non-Persistent</div>
+          <div class="pc-ar">غير الاستمرارية</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px"><strong>Busy:</strong> Wait a <em>random</em>
+            time, then sense again<br /><strong>Idle:</strong> Transmit immediately</div>
+          <div class="tag" style="border-color:var(--green);color:var(--green);background:rgba(62,255,160,.08)">Better
+            efficiency</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px">Random wait → less likely multiple stations
+            collide; channel may sit idle unnecessarily</div>
+        </div>
+        <div class="persist-card">
+          <div class="pc-title">p-Persistent</div>
+          <div class="pc-ar">الاستمرارية الاحتمالية</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px"><strong>Busy:</strong> Wait for next idle
+            slot<br /><strong>Idle:</strong> Transmit with probability <em>p</em>; defer with (1−p)</div>
+          <div class="tag" style="border-color:var(--accent);color:var(--accent);background:rgba(0,200,255,.08)">Best
+            balance</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px">Balance between collision risk and channel
+            utilization</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Channel Busy Action</th>
+              <th>Channel Idle Action</th>
+              <th>Trade-off</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1-Persistent</td>
+              <td>Keep sensing (wait for idle)</td>
+              <td>Transmit immediately (p=1)</td>
+              <td class="r">High collision probability</td>
+            </tr>
+            <tr>
+              <td>Non-Persistent</td>
+              <td>Wait random time, sense again</td>
+              <td>Transmit immediately</td>
+              <td class="y">May waste channel time</td>
+            </tr>
+            <tr>
+              <td>p-Persistent</td>
+              <td>Wait for next slot</td>
+              <td>Transmit with prob. p; defer (1−p)</td>
+              <td class="g">Best balance</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        ثلاث طرق للتعامل مع القناة:<br />
+        • 1-Persistent: انتظر حتى القناة فارغة ثم أرسل فوراً — خطر تصادم عالٍ لأن كل الأجهزة ترسل في نفس اللحظة.<br />
+        • Non-Persistent: انتظر وقتاً عشوائياً ثم استمع مجدداً — أفضل لكن القناة قد تضيع وقتاً فارغة.<br />
+        • p-Persistent: إذا فارغة، أرسل باحتمال p أو أجّل باحتمال (1−p) — أفضل توازن.
+      </div>
+    </div>
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 5: CSMA/CD -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section-header" id="csma-cd">
+      <div class="sec-num">5</div>
+      <div class="sec-titles">
+        <h3>CSMA/CD — Collision Detection</h3>
+        <div class="ar">CSMA/CD — كشف التصادم</div>
+        <div class="desc">Used in wired Ethernet (IEEE 802.3) — detect and abort on collision</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">CSMA/CD Operation <span class="ar">عمل CSMA/CD</span></div>
+      <div class="grid2">
+        <div>
+          <p><strong>Carrier Sense Multiple Access with Collision Detection</strong> — the station transmits AND
+            monitors the channel simultaneously. If it detects a collision, it immediately aborts.</p>
+          <div class="step-box">
+            <div class="step-num">1</div> Sense channel → if idle, start transmitting
+          </div>
+          <div class="step-box">
+            <div class="step-num">2</div> While transmitting, listen to the channel
+          </div>
+          <div class="step-box" style="border-color:rgba(255,95,109,.3);background:rgba(255,95,109,.05)">
+            <div class="step-num" style="background:var(--red)">3</div> <span class="r">Collision detected?</span> →
+            Stop immediately, send JAM signal
+          </div>
+          <div class="step-box">
+            <div class="step-num">4</div> Wait binary exponential backoff time
+          </div>
+          <div class="step-box">
+            <div class="step-num">5</div> Retry from step 1 (up to 16 attempts)
+          </div>
+          <div class="tip">
+            <div class="tip-label">Used In</div>
+            <strong>Wired Ethernet — IEEE 802.3</strong>. Works because wired signals can be detected in both directions
+            simultaneously.
+          </div>
+        </div>
+        <div>
+          <div class="diagram">
+            <div class="diagram-title">CSMA/CD Flow Diagram</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px">
+              <div class="fbox a" style="width:200px;text-align:center">Ready to transmit</div>
+              <div class="arrow-down">↓</div>
+              <div class="fbox" style="width:200px;text-align:center">Sense channel</div>
+              <div class="arrow-down">↓</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <div class="fbox r" style="padding:6px 10px;font-size:11px">Busy → wait</div>
+                <span style="color:var(--muted)">or</span>
+                <div class="fbox g" style="padding:6px 10px;font-size:11px">Idle → transmit</div>
+              </div>
+              <div class="arrow-down">↓</div>
+              <div class="fbox a" style="width:200px;text-align:center">Monitor while transmitting</div>
+              <div class="arrow-down">↓</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <div class="fbox r" style="padding:6px 10px;font-size:11px">Collision! → JAM</div>
+                <span style="color:var(--muted)">or</span>
+                <div class="fbox g" style="padding:6px 10px;font-size:11px">Done! ✓</div>
+              </div>
+              <div class="arrow-down" style="margin-left:-85px">↓</div>
+              <div class="fbox o" style="width:120px;text-align:center;font-size:11px">Backoff
+                &amp; retry</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        CSMA/CD يرسل ويستمع في نفس الوقت. إذا اكتشف تصادماً: يتوقف فوراً، يرسل إشارة JAM لتنبيه الجميع، ينتظر وقتاً
+        عشوائياً ثم يعيد المحاولة. يُستخدم في Ethernet السلكي لأن الأسلاك تسمح بكشف التصادم.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Minimum Frame Size in CSMA/CD <span class="ar">الحد الأدنى لحجم الإطار</span></div>
+      <div class="highlight">
+        <strong>Why does minimum frame size matter?</strong><br />
+        The sender must be <em>still transmitting</em> when the collision signal arrives back. If the frame is too
+        short, the sender finishes before hearing the collision → never knows it happened!
+      </div>
+      <div class="grid2">
+        <div>
+          <div class="formula">
+            <div class="flabel">Minimum Frame Size Formula</div>T_transmission ≥ 2 × T_propagation
+
+            Min Frame Size = 2 × T_prop × Bandwidth
+
+            Where:
+            T_prop = max propagation delay (one way)
+            2 × T_prop = round-trip time (worst case)
+          </div>
+          <div class="note">
+            <div class="note-label">Worst Case Scenario</div>
+            Station A transmits, station D (farthest away) starts transmitting just before A's signal arrives. A must be
+            transmitting long enough to hear D's collision signal return.
+          </div>
+        </div>
+        <div>
+          <div class="diagram">
+            <div class="diagram-title">Worst Case — Collision Detection</div>
+            <div style="display:flex;flex-direction:column;gap:4px;direction:ltr">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="fbox a" style="padding:6px 12px">A</div>
+                <div style="flex:1;height:2px;background:linear-gradient(90deg,var(--accent),rgba(0,200,255,0.1))">
+                </div>
+                <div class="fbox" style="padding:6px 12px">B</div>
+                <div style="flex:1;height:2px;background:rgba(0,200,255,0.1)"></div>
+                <div class="fbox" style="padding:6px 12px">C</div>
+                <div style="flex:1;height:2px;background:rgba(0,200,255,0.1)"></div>
+                <div class="fbox o" style="padding:6px 12px">D</div>
+              </div>
+              <div style="font-size:10px;color:var(--muted);margin-top:8px">
+                A starts transmitting →<br />
+                Signal travels: T_prop time<br />
+                D senses idle, starts transmitting<br />
+                Collision at D → signal travels back T_prop<br />
+                Total: A must transmit for ≥ 2×T_prop
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        الإطار يجب أن يكون كبيراً بما يكفي لكي يظل المُرسِل يرسل حتى يصله صدى التصادم. السيناريو الأسوأ: A يرسل، D يبدأ
+        في اللحظة الأخيرة قبل وصول إشارة A. وقت الجولة الكاملة = 2 × T_propagation. إذن: حجم الإطار ≥ 2 × T_prop ×
+        Bandwidth.
+      </div>
+    </div>
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 6: CSMA/CA -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section-header" id="csma-ca">
+      <div class="sec-num">6</div>
+      <div class="sec-titles">
+        <h3>CSMA/CA — Collision Avoidance</h3>
+        <div class="ar">CSMA/CA — تجنب التصادم</div>
+        <div class="desc">Used in wireless LANs (IEEE 802.11 / Wi-Fi) — avoid before they happen</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Why Can't Wireless Use CSMA/CD? <span class="ar">لماذا لا يستطيع الاتصال اللاسلكي استخدام
+          CSMA/CD؟</span></div>
+      <div class="grid2">
+        <div>
+          <div class="note">
+            <div class="note-label">The Hidden Terminal Problem</div>
+            Station B can hear A and C, but A cannot hear C (and vice versa). A and C might transmit simultaneously
+            without knowing it — collision happens at B but neither A nor C can detect it.
+          </div>
+          <div class="note">
+            <div class="note-label">Signal Fading</div>
+            A wireless transmitter's own signal is much stronger than any incoming signal. While transmitting, the
+            station cannot hear a collision signal — it's drowned out.
+          </div>
+        </div>
+        <div>
+          <div class="diagram">
+            <div class="diagram-title">Hidden Terminal Problem</div>
+            <div style="position:relative;height:120px;direction:ltr">
+              <div class="fbox a" style="position:absolute;left:5px;top:40px;padding:6px 10px;font-size:12px">A</div>
+              <div class="fbox"
+                style="position:absolute;left:50%;transform:translateX(-50%);top:40px;padding:6px 10px;font-size:12px">B
+              </div>
+              <div class="fbox o" style="position:absolute;right:5px;top:40px;padding:6px 10px;font-size:12px">C</div>
+              <!-- range A -->
+              <div
+                style="position:absolute;left:8px;top:25px;width:55%;height:55px;border:1px dashed rgba(0,200,255,.3);border-radius:50%;">
+              </div>
+              <!-- range C -->
+              <div
+                style="position:absolute;right:8px;top:25px;width:55%;height:55px;border:1px dashed rgba(255,107,53,.3);border-radius:50%;">
+              </div>
+              <div
+                style="position:absolute;bottom:5px;left:0;right:0;font-size:10px;color:var(--muted);text-align:center">
+                A can't hear C — both may transmit, collide at B</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        في الشبكات اللاسلكية: (1) مشكلة الجهاز المخفي — A لا يسمع C لذا لا يعلم أنه يرسل → تصادم عند B. (2) المُرسِل لا
+        يستطيع سماع التصادم لأن إشارته القوية تطغى على الإشارات الأخرى. لذلك نتجنب التصادم بدلاً من كشفه.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">CSMA/CA — How It Works <span class="ar">كيف يعمل CSMA/CA</span></div>
+      <div class="grid2">
+        <div>
+          <p>CSMA/CA uses two mechanisms to avoid collisions:</p>
+          <div class="highlight"><strong>① IFS — Interframe Space</strong><br />A mandatory waiting gap between frames.
+            Different priority levels use different IFS lengths — shorter IFS = higher priority access.</div>
+          <div class="highlight"><strong>② Contention Window</strong><br />After sensing idle + waiting IFS, the station
+            waits a <em>random number of slots</em> within a window before transmitting. All competing stations pick
+            different random numbers → less collision chance.</div>
+          <div class="formula">
+            <div class="flabel">Contention Window Size</div>Window Size = 2^K - 1
+
+            K = attempt number (K=1,2,3,...)
+
+            K=1: window = {0..1} → 2 slots
+            K=2: window = {0..3} → 4 slots
+            K=3: window = {0..7} → 8 slots
+
+            (Larger K = larger window = less collision)
+          </div>
+          <div class="tip">
+            <div class="tip-label">Counter Freezing</div>
+            While counting down the random slots, if the channel goes <strong>busy</strong>, the station <em>freezes its
+              counter</em> and resumes counting only after the channel becomes idle again.
+          </div>
+        </div>
+        <div>
+          <div class="diagram">
+            <div class="diagram-title">CSMA/CA Flow Diagram</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px">
+              <div class="fbox a" style="width:190px;text-align:center;font-size:11px">Ready to transmit</div>
+              <div class="arrow-down">↓</div>
+              <div class="fbox" style="width:190px;text-align:center;font-size:11px">Sense channel</div>
+              <div class="arrow-down">↓</div>
+              <div style="display:flex;gap:6px">
+                <div class="fbox r" style="padding:5px 8px;font-size:10px">Busy → wait</div>
+                <div class="fbox g" style="padding:5px 8px;font-size:10px">Idle → wait IFS</div>
+              </div>
+              <div class="arrow-down">↓</div>
+              <div class="fbox p" style="width:190px;text-align:center;font-size:11px">Pick random backoff
+                slots<br />(Contention Window)</div>
+              <div class="arrow-down">↓</div>
+              <div class="fbox" style="width:190px;text-align:center;font-size:11px">Count down slots<br />(freeze if
+                channel busy)</div>
+              <div class="arrow-down">↓</div>
+              <div class="fbox g" style="width:190px;text-align:center;font-size:11px">Counter = 0 → Transmit!</div>
+              <div class="arrow-down">↓</div>
+              <div style="display:flex;gap:6px">
+                <div class="fbox r" style="padding:5px 8px;font-size:10px">No ACK → retry</div>
+                <div class="fbox g" style="padding:5px 8px;font-size:10px">ACK → success ✓</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        CSMA/CA يتجنب التصادم بطريقتين:<br />
+        ① IFS (فترة بين الإطارات): انتظر فترة إجبارية قبل الإرسال.<br />
+        ② نافذة التنافس (Contention Window): اختر عدداً عشوائياً من الخانات وانتظر. إذا صارت القناة مشغولة أثناء العد →
+        جمّد العداد حتى تفرغ القناة. حجم النافذة = 2^K − 1.
+      </div>
+    </div>
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 7: COMPARISON -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section-header" id="comparison">
+      <div class="sec-num">7</div>
+      <div class="sec-titles">
+        <h3>Full Protocol Comparison</h3>
+        <div class="ar">المقارنة الشاملة بين البروتوكولات</div>
+        <div class="desc">All random access protocols side by side</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Complete Comparison Table <span class="ar">جدول مقارنة كامل</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Protocol</th>
+              <th>Vulnerable Time</th>
+              <th>Max Throughput</th>
+              <th>Optimal G</th>
+              <th>Collision Handling</th>
+              <th>Medium</th>
+              <th>Standard</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pure ALOHA</td>
+              <td class="r">2 × T<sub>frame</sub></td>
+              <td class="r">18.4%</td>
+              <td>G = 0.5</td>
+              <td>Random wait, retransmit</td>
+              <td>Wireless/Satellite</td>
+              <td>Original (1970)</td>
+            </tr>
+            <tr>
+              <td>Slotted ALOHA</td>
+              <td class="y">1 × T<sub>frame</sub></td>
+              <td class="y">36.8%</td>
+              <td>G = 1</td>
+              <td>Retransmit at slot boundary</td>
+              <td>Satellite</td>
+              <td>Improved ALOHA</td>
+            </tr>
+            <tr>
+              <td>CSMA</td>
+              <td class="g">&lt; T<sub>frame</sub></td>
+              <td class="g">Higher than ALOHA</td>
+              <td>—</td>
+              <td>Listen before transmit</td>
+              <td>Wired</td>
+              <td>Base CSMA</td>
+            </tr>
+            <tr>
+              <td>CSMA/CD</td>
+              <td class="g">2 × T<sub>prop</sub></td>
+              <td class="g">Very high</td>
+              <td>—</td>
+              <td>Detect during TX → abort + backoff</td>
+              <td>Wired</td>
+              <td>IEEE 802.3</td>
+            </tr>
+            <tr>
+              <td>CSMA/CA</td>
+              <td class="g">Avoided (IFS+window)</td>
+              <td class="g">Good for wireless</td>
+              <td>—</td>
+              <td>Avoid using IFS + random backoff</td>
+              <td>Wireless</td>
+              <td>IEEE 802.11</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        ترتيب الكفاءة (من الأقل إلى الأكثر):<br />
+        Pure ALOHA (18.4%) → Slotted ALOHA (36.8%) → CSMA → CSMA/CD أو CSMA/CA<br />
+        • CSMA/CD: يكشف التصادم → للشبكات السلكية (Ethernet 802.3)<br />
+        • CSMA/CA: يتجنب التصادم → للشبكات اللاسلكية (WiFi 802.11)
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">CSMA/CD vs CSMA/CA — Key Differences <span class="ar">الفرق الجوهري بينهما</span></div>
+      <div class="grid2">
+        <div class="card" style="margin:0;border-color:rgba(0,200,255,.4)">
+          <div style="text-align:center;margin-bottom:12px">
+            <span class="tag" style="font-size:13px;padding:4px 16px">CSMA/CD</span>
+            <div style="font-family:Cairo,sans-serif;color:var(--gold);margin-top:4px;direction:rtl">كشف التصادم</div>
+          </div>
+          <ul style="font-size:13px">
+            <li>Used in <strong>wired networks</strong> (Ethernet)</li>
+            <li>Station transmits and <strong>listens simultaneously</strong></li>
+            <li>If collision: <strong>abort + jam + backoff</strong></li>
+            <li>Frame must be large enough for round-trip detection</li>
+            <li>Min frame size: <strong>2 × T<sub>prop</sub> × BW</strong></li>
+            <li>Efficient — wastes little time on collisions</li>
+          </ul>
+        </div>
+        <div class="card" style="margin:0;border-color:rgba(180,138,255,.4)">
+          <div style="text-align:center;margin-bottom:12px">
+            <span class="tag"
+              style="font-size:13px;padding:4px 16px;border-color:var(--purple);color:var(--purple);background:rgba(180,138,255,.1)">CSMA/CA</span>
+            <div style="font-family:Cairo,sans-serif;color:var(--gold);margin-top:4px;direction:rtl">تجنب التصادم</div>
+          </div>
+          <ul style="font-size:13px">
+            <li>Used in <strong>wireless networks</strong> (Wi-Fi)</li>
+            <li>Station cannot detect its own collision</li>
+            <li>Uses <strong>IFS + contention window</strong> to avoid collision</li>
+            <li>Counter freezes when channel goes busy</li>
+            <li>Window = <strong>2<sup>K</sup> − 1</strong> slots</li>
+            <li>Waits for ACK to confirm success</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        CSMA/CD = اكشف التصادم وأوقف الإرسال. يعمل على الأسلاك لأن الإشارة الصادمة يمكن سماعها.<br />
+        CSMA/CA = تجنب التصادم من الأصل. يعمل على الهواء (WiFi) لأن الجهاز اللاسلكي لا يستطيع سماع التصادم أثناء إرساله.
+      </div>
+    </div>
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 8: SOLVED EXAMPLES -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section-header" id="examples">
+      <div class="sec-num">8</div>
+      <div class="sec-titles">
+        <h3>Solved Examples</h3>
+        <div class="ar">أمثلة محلولة خطوة بخطوة</div>
+        <div class="desc">All textbook examples with step-by-step solutions</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--accent2)">Example 1 — ALOHA Backoff Times <span class="ar">مثال: أوقات
+          الانتظار في ALOHA</span></div>
+      <div class="highlight">
+        <strong>Problem:</strong> Calculate possible values of T<sub>B</sub> when stations on an ALOHA network are a
+        maximum of 600 km apart.
+      </div>
+      <div class="formula">
+        <div class="flabel">Step-by-step solution</div>Step 1: Calculate propagation time (one way)
+        Tp = distance / speed
+        Tp = (600 × 10³ m) / (3 × 10⁸ m/s)
+        Tp = 2 ms
+
+        Step 2: Backoff time formula
+        TB = R × Tp, where R ∈ {0, 1, ..., 2^K - 1}
+
+        Step 3: Apply for K=1
+        R ∈ {0, 1} → TB ∈ {0 × 2ms, 1 × 2ms}
+        TB ∈ {0ms, 2ms}
+
+        Step 4: Apply for K=2
+        R ∈ {0, 1, 2, 3} → TB ∈ {0ms, 2ms, 4ms, 6ms}
+
+        Step 5: Pattern — for K=3:
+        TB ∈ {0ms, 2ms, 4ms, 6ms, 8ms, 10ms, 12ms, 14ms}
+      </div>
+      <div class="tip">
+        <div class="tip-label">Key takeaway</div>
+        Each collision attempt doubles the possible wait times. This is <strong>Binary Exponential Backoff</strong> —
+        same concept used in CSMA/CD Ethernet.
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        أولاً: حساب Tp = 600,000 ÷ 300,000,000 = 2ms<br />
+        عند K=1: يختار R من {0,1} → TB ∈ {0ms, 2ms}<br />
+        عند K=2: يختار R من {0,1,2,3} → TB ∈ {0ms, 2ms, 4ms, 6ms}<br />
+        كلما زاد عدد المحاولات، زادت الخيارات → أقل احتمال للتصادم مجدداً.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--accent2)">Example 2 — CSMA/CD Minimum Frame Size <span class="ar">مثال:
+          الحد الأدنى لحجم الإطار</span></div>
+      <div class="highlight">
+        <strong>Problem:</strong> A CSMA/CD network has a bandwidth of 10 Mbps. If the maximum propagation time is 25.6
+        μs, what is the minimum size of the frame?
+      </div>
+      <div class="formula">
+        <div class="flabel">Step-by-step solution</div>Given:
+        Bandwidth (BW) = 10 Mbps = 10 × 10⁶ bps
+        Propagation delay = 25.6 μs = 25.6 × 10⁻⁶ s
+
+        Formula:
+        Min Frame Size = 2 × T_propagation × Bandwidth
+
+        Calculation:
+        Min Frame Size = 2 × (25.6 × 10⁻⁶) × (10 × 10⁶)
+        Min Frame Size = 2 × 25.6 × 10
+        Min Frame Size = 512 bits
+
+        Convert to bytes:
+        512 bits ÷ 8 = 64 bytes
+
+        Answer: Minimum frame size = 512 bits = 64 bytes
+      </div>
+      <div class="tip">
+        <div class="tip-label">Real World</div>
+        This is exactly why the minimum Ethernet frame size is <strong>64 bytes</strong>! Frames smaller than 64 bytes
+        are called "runts" and are discarded by Ethernet switches.
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        Min Frame Size = 2 × T_prop × BW = 2 × 25.6μs × 10Mbps = 512 bits = 64 bytes<br />
+        هذا هو سبب أن الحد الأدنى لحجم إطار Ethernet هو 64 بايت في الواقع!
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--accent2)">Example 3 — ALOHA Throughput Calculation <span
+          class="ar">مثال: حساب الإنتاجية</span></div>
+      <div class="highlight">
+        <strong>Problem:</strong> A Pure ALOHA network has G = 0.5. What is the throughput? A Slotted ALOHA network has
+        G = 1. What is its throughput?
+      </div>
+      <div class="formula">
+        <div class="flabel">Solution</div>Pure ALOHA at G = 0.5:
+        S = G × e^(-2G)
+        S = 0.5 × e^(-2 × 0.5)
+        S = 0.5 × e^(-1)
+        S = 0.5 × 0.3679
+        S = 0.184 = 18.4% ← MAXIMUM for Pure ALOHA
+
+        Slotted ALOHA at G = 1:
+        S = G × e^(-G)
+        S = 1 × e^(-1)
+        S = 1 × 0.3679
+        S = 0.368 = 36.8% ← MAXIMUM for Slotted ALOHA
+      </div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        Pure ALOHA: S = 0.5 × e^(−1) = 0.184 = 18.4% (الحد الأقصى عند G=0.5)<br />
+        Slotted ALOHA: S = 1 × e^(−1) = 0.368 = 36.8% (الحد الأقصى عند G=1)
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--accent2)">Example 4 — CSMA/CA Contention Window <span class="ar">مثال:
+          نافذة التنافس</span></div>
+      <div class="highlight">
+        <strong>Problem:</strong> In CSMA/CA, a station has already attempted to transmit 3 times without success. What
+        is the contention window size? List all possible backoff values.
+      </div>
+      <div class="formula">
+        <div class="flabel">Solution</div>Given: K = 3 (third attempt)
+
+        Window Size = 2^K - 1 = 2^3 - 1 = 8 - 1 = 7
+
+        The station picks a random number R from {0, 1, 2, 3, 4, 5, 6, 7}
+        → 8 possible backoff values (slots numbered 0 through 7)
+
+        Comparison:
+        K=1: window = {0,1} → 2 choices
+        K=2: window = {0,1,2,3} → 4 choices
+        K=3: window = {0,1,...,7} → 8 choices
+        K=4: window = {0,1,...,15} → 16 choices
+      </div>
+      <div class="contention-vis">
+        <div class="cw-slot lose">0</div>
+        <div class="cw-slot lose">1</div>
+        <div class="cw-slot lose">2</div>
+        <div class="cw-slot win">3</div>
+        <div class="cw-slot lose">4</div>
+        <div class="cw-slot lose">5</div>
+        <div class="cw-slot lose">6</div>
+        <div class="cw-slot lose">7</div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Example: station randomly chose slot 3 (shown in
+        green) — it waits 3 slot-times then transmits</div>
+      <div class="ar-box">
+        <div class="ar-label">Arabic</div>
+        عند K=3: حجم النافذة = 2^3 − 1 = 7. الجهاز يختار عشوائياً من {0,1,2,3,4,5,6,7}. كلما زاد K، زادت الخيارات → أقل
+        احتمال أن يختار جهازان نفس الرقم → أقل تصادم.
+      </div>
+    </div>
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 9: EXAM Q&A -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section-header" id="exam">
+      <div class="sec-num">9</div>
+      <div class="sec-titles">
+        <h3>Exam Questions &amp; Answers</h3>
+        <div class="ar">أسئلة الامتحان والإجابات</div>
+        <div class="desc">Expected exam questions with complete answers</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="exam-q">
+        <div class="q-label">Q1 — Conceptual</div>
+        What is the maximum throughput of Pure ALOHA and Slotted ALOHA? Why is Slotted ALOHA more efficient?<br /><br />
+        <span class="answer">Answer:</span> Pure ALOHA max = <strong>18.4%</strong> at G = 0.5 (formula: S =
+        G·e<sup>−2G</sup>). Slotted ALOHA max = <strong>36.8%</strong> at G = 1 (formula: S = G·e<sup>−G</sup>). Slotted
+        ALOHA is exactly twice as efficient because it halves the vulnerable time from 2×T<sub>frame</sub> to
+        1×T<sub>frame</sub> by only allowing transmissions at slot boundaries.
+      </div>
+      <div class="exam-q">
+        <div class="q-label">Q2 — Calculation</div>
+        A CSMA/CD network has a bandwidth of 10 Mbps. If the maximum propagation delay is 25.6 μs, what is the minimum
+        frame size?<br /><br />
+        <span class="answer">Answer:</span> Min Frame Size = 2 × T<sub>prop</sub> × BW = 2 × 25.6 μs × 10 Mbps =
+        <strong>512 bits = 64 bytes</strong>.
+      </div>
+      <div class="exam-q">
+        <div class="q-label">Q3 — Conceptual</div>
+        Why is CSMA/CA used in wireless LANs instead of CSMA/CD?<br /><br />
+        <span class="answer">Answer:</span> Wireless networks cannot detect collisions while transmitting because (1)
+        the sender's own signal overpowers any collision signal, and (2) the <em>hidden terminal problem</em> means not
+        all stations can hear each other. Therefore, collision <em>avoidance</em> using IFS and random backoff
+        (contention window) is used instead of collision <em>detection</em>.
+      </div>
+      <div class="exam-q">
+        <div class="q-label">Q4 — Comparison</div>
+        What is the vulnerable time in Pure ALOHA vs Slotted ALOHA? What does this mean for efficiency?<br /><br />
+        <span class="answer">Answer:</span> Pure ALOHA vulnerable time = <strong>2 × T<sub>frame</sub></strong>
+        (collision can occur T<sub>f</sub> before or after current frame starts). Slotted ALOHA vulnerable time =
+        <strong>1 × T<sub>frame</sub></strong>. This halving of vulnerable time means Slotted ALOHA has exactly double
+        the maximum throughput (36.8% vs 18.4%).
+      </div>
+      <div class="exam-q">
+        <div class="q-label">Q5 — Formula</div>
+        What does the contention window size formula give in CSMA/CA? What happens as collisions increase?<br /><br />
+        <span class="answer">Answer:</span> Window Size = 2<sup>K</sup> − 1, where K is the attempt number. K=1 → 2
+        choices; K=2 → 4 choices; K=3 → 8 choices. As K increases, the window grows exponentially → stations are more
+        spread out in time → lower collision probability. This is the same Binary Exponential Backoff principle as
+        CSMA/CD.
+      </div>
+      <div class="exam-q">
+        <div class="q-label">Q6 — ALOHA Backoff</div>
+        Stations on an ALOHA network are 600 km apart. List possible backoff times for K=1 and K=2.<br /><br />
+        <span class="answer">Answer:</span> T<sub>p</sub> = 600×10<sup>3</sup> / 3×10<sup>8</sup> = 2 ms.<br />
+        K=1: T<sub>B</sub> ∈ {<strong>0 ms, 2 ms</strong>}<br />
+        K=2: T<sub>B</sub> ∈ {<strong>0 ms, 2 ms, 4 ms, 6 ms</strong>}
+      </div>
+      <div class="exam-q">
+        <div class="q-label">Q7 — Multiple Access Categories</div>
+        Name and describe the three categories of multiple access protocols.<br /><br />
+        <span class="answer">Answer:</span><br />
+        <strong>① Random Access:</strong> Contention-based — any station transmits anytime, collision possible.
+        Examples: ALOHA, CSMA/CD, CSMA/CA.<br />
+        <strong>② Controlled Access:</strong> Stations take ordered turns (polling, token passing). No collision, but
+        coordination required.<br />
+        <strong>③ Channelization:</strong> Bandwidth divided among stations — FDMA (frequency), TDMA (time), CDMA
+        (code).
+      </div>
+      <div class="exam-q">
+        <div class="q-label">Q8 — Persistence Methods</div>
+        Compare 1-Persistent, Non-Persistent, and p-Persistent CSMA. Which is best and why?<br /><br />
+        <span class="answer">Answer:</span><br />
+        <strong>1-Persistent:</strong> Waits until idle, then transmits immediately. High collision risk when multiple
+        stations waiting.<br />
+        <strong>Non-Persistent:</strong> Waits random time before sensing again. Better efficiency but may leave channel
+        idle unnecessarily.<br />
+        <strong>p-Persistent:</strong> Transmits with probability p when idle; defers with (1−p). Best balance between
+        collision reduction and channel utilization.
+      </div>
+      <div class="exam-q">
+        <div class="q-label">Q9 — Why Minimum Frame Size</div>
+        Why must CSMA/CD frames have a minimum size? What determines this size?<br /><br />
+        <span class="answer">Answer:</span> The sender must still be transmitting when the collision signal arrives
+        back. Worst case: station D starts transmitting just before A's signal reaches it, then the collision must
+        travel all the way back. Min frame size = 2 × T<sub>propagation</sub> × Bandwidth. For 10 Mbps Ethernet with
+        25.6 μs propagation: 512 bits = 64 bytes.
+      </div>
+      <div class="exam-q">
+        <div class="q-label">Q10 — CSMA/CA Counter Freeze</div>
+        In CSMA/CA, what happens to the countdown counter when the channel becomes busy?<br /><br />
+        <span class="answer">Answer:</span> The station <strong>freezes</strong> (pauses) its countdown counter. It does
+        not reset. When the channel becomes idle again (after IFS), the station resumes counting from where it left off.
+        This ensures stations that have already waited don't lose their progress — fairer distribution of access.
+      </div>
+    </div>
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 10: QUICK REFERENCE -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section-header" id="quickref">
+      <div class="sec-num">10</div>
+      <div class="sec-titles">
+        <h3>Quick Reference — All Formulas &amp; Facts</h3>
+        <div class="ar">مرجع سريع — كل القوانين والحقائق</div>
+        <div class="desc">Everything you need for the exam on one card</div>
+      </div>
+    </div>
+    <div class="final">
+      <h2>📋 Chapter 6 — Complete Formula &amp; Fact Sheet
+        <span class="ar">ورقة القوانين والحقائق الكاملة للفصل السادس</span>
+      </h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Topic</th>
+              <th>Formula / Fact</th>
+              <th>Key Values</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pure ALOHA Throughput</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold)">S = G × e^(−2G)</td>
+              <td><span class="g">S_max = 18.4%</span> at G = 0.5</td>
+            </tr>
+            <tr>
+              <td>Pure ALOHA Vulnerable Time</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold)">2 × T_frame</td>
+              <td>Both before AND after current frame</td>
+            </tr>
+            <tr>
+              <td>Slotted ALOHA Throughput</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold)">S = G × e^(−G)</td>
+              <td><span class="g">S_max = 36.8%</span> at G = 1</td>
+            </tr>
+            <tr>
+              <td>Slotted ALOHA Vulnerable Time</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold)">1 × T_frame</td>
+              <td>Only within current slot</td>
+            </tr>
+            <tr>
+              <td>ALOHA Backoff Time</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold)">T_B = R × T_p, R ∈
+                {0..2^K−1}</td>
+              <td>K = attempt #; T_p = prop delay</td>
+            </tr>
+            <tr>
+              <td>CSMA/CD Min Frame Size</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold)">2 × T_prop × Bandwidth
+              </td>
+              <td>10 Mbps, 25.6μs → <span class="g">512 bits = 64 bytes</span></td>
+            </tr>
+            <tr>
+              <td>CSMA/CA Window Size</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold)">2^K − 1</td>
+              <td>K=1→1, K=2→3, K=3→7, K=4→15</td>
+            </tr>
+            <tr>
+              <td>CSMA = ?</td>
+              <td>Carrier Sense Multiple Access</td>
+              <td>"Listen before talk"</td>
+            </tr>
+            <tr>
+              <td>CSMA/CD = ?</td>
+              <td>Collision <strong>Detection</strong></td>
+              <td>Wired Ethernet, IEEE 802.3</td>
+            </tr>
+            <tr>
+              <td>CSMA/CA = ?</td>
+              <td>Collision <strong>Avoidance</strong></td>
+              <td>Wireless Wi-Fi, IEEE 802.11</td>
+            </tr>
+            <tr>
+              <td>1-Persistent</td>
+              <td>Transmit immediately when idle (p=1)</td>
+              <td class="r">High collision risk</td>
+            </tr>
+            <tr>
+              <td>Non-Persistent</td>
+              <td>Wait random time, sense again</td>
+              <td class="y">Medium efficiency</td>
+            </tr>
+            <tr>
+              <td>p-Persistent</td>
+              <td>Transmit with prob. p; defer (1−p)</td>
+              <td class="g">Best balance</td>
+            </tr>
+            <tr>
+              <td>Random Access</td>
+              <td>Any station transmits anytime</td>
+              <td>Collision possible; no central control</td>
+            </tr>
+            <tr>
+              <td>Controlled Access</td>
+              <td>Orderly turns (polling, token)</td>
+              <td>No collision; coordination needed</td>
+            </tr>
+            <tr>
+              <td>Channelization</td>
+              <td>FDMA / TDMA / CDMA</td>
+              <td>Bandwidth divided; no collision</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:24px">
+        <div class="grid3">
+          <div class="note" style="text-align:center">
+            <div class="note-label">Remember</div>
+            Pure ALOHA → <strong>18.4%</strong><br />
+            Slotted ALOHA → <strong>36.8%</strong><br />
+            Exactly double efficiency!
+          </div>
+          <div class="tip" style="text-align:center">
+            <div class="tip-label">Remember</div>
+            CSMA/CD → <strong>Wired</strong> (Ethernet)<br />
+            CSMA/CA → <strong>Wireless</strong> (Wi-Fi)<br />
+            CD = detect, CA = avoid
+          </div>
+          <div class="highlight" style="text-align:center">
+            <strong>Min Frame Size</strong><br />
+            = 2 × T<sub>prop</sub> × BW<br />
+            Ethernet: 64 bytes!
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:36px">Networks and Data Transmissions
+      01204325 — Chapter 6 (Part 7) Complete Study Guide · Good Luck! 🎯</p>
+  </div>
+  <!-- Smooth scroll highlight active nav link -->
+  <script>
+    const sections = document.querySelectorAll('[id]');
+    const navLinks = document.querySelectorAll('.topic-nav a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 100) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+      });
+    });
+  </script>
+</body>
+
+</html>

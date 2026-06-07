@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 2 — Network Models | Networks and Data Transmissions</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#07111f;
+    --deep:#0b1a2e;
+    --mid:#102340;
+    --card:rgba(16,35,64,.72);
+    --border:rgba(0,200,255,.18);
+    --accent:#00c8ff;
+    --accent2:#ff6b35;
+    --gold:#ffc940;
+    --green:#3effa0;
+    --red:#ff5f6d;
+    --purple:#b48aff;
+    --teal:#58d7ff;
+    --text:#dce8f5;
+    --muted:#91a5bd;
+    --hi:rgba(0,200,255,.07);
+    --ar-bg:rgba(255,201,64,.055);
+    --ar-bdr:rgba(255,201,64,.25);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.75}
+  strong,b{color:inherit}
+
+  /* HERO */
+  .hero{background:linear-gradient(135deg,#0a2156 0%,#1a4a9e 55%,#0c3060 100%);padding:60px 40px 48px;text-align:center;position:relative;overflow:hidden}
+  .hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(100,180,255,0.18),transparent 70%);pointer-events:none}
+  .hero .chip{display:inline-block;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:4px 18px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#a8d0ff;margin-bottom:20px}
+  .hero h1{font-size:2.7rem;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1.15;margin-bottom:8px}
+  .hero h1 span{color:#60b4ff}
+  .hero .ar-title{font-family:Cairo,sans-serif;font-size:1.1rem;color:#ffd080;font-weight:600;margin-bottom:14px}
+  .hero p{color:rgba(255,255,255,0.65);font-size:13px;max-width:600px;margin:0 auto}
+  .legend{display:flex;justify-content:center;gap:24px;margin-top:22px;flex-wrap:wrap}
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.7)}
+  .legend-dot{width:10px;height:10px;border-radius:50%}
+
+  /* NAV */
+  .top-nav{position:sticky;top:0;z-index:99;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .top-nav a{text-decoration:none;color:var(--muted);border:1px solid var(--border);background:var(--deep);padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;transition:.2s}
+  .top-nav a:hover,.top-nav a.active{color:#fff;background:var(--accent);border-color:var(--accent)}
+
+  /* CONTAINER */
+  .container{max-width:980px;margin:0 auto;padding:36px 24px 70px}
+
+  /* SECTION HEADER */
+  .section-header{display:flex;align-items:flex-start;gap:14px;margin:44px 0 18px;padding-bottom:14px;border-bottom:2px solid var(--mid)}
+  .sec-num{width:44px;height:44px;background:var(--accent);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;flex-shrink:0;margin-top:2px}
+  .sec-num.g{background:var(--green)}
+  .sec-num.o{background:var(--accent2)}
+  .sec-num.p{background:var(--purple)}
+  .sec-title h2{font-size:1.2rem;font-weight:800;color:var(--accent);line-height:1.2}
+  .sec-title .ar{font-family:Cairo,sans-serif;font-size:.85rem;color:var(--gold);font-weight:600;direction:rtl}
+
+  /* CARDS */
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .card-title{font-size:.95rem;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .card-title .ar{font-family:Cairo,sans-serif;font-size:.8rem;color:var(--gold);font-weight:600;direction:rtl}
+  .card p{margin-bottom:6px;font-size:13.5px}
+  .card ul,.card ol{padding-left:22px;font-size:13.5px}
+  .card li{margin-bottom:5px}
+
+  /* AR BOX */
+  .ar-box{background:var(--ar-bg);border:1px solid var(--ar-bdr);border-right:4px solid var(--gold);border-radius:0 10px 10px 0;padding:12px 16px;margin-top:12px;direction:rtl;text-align:right;font-family:Cairo,sans-serif;font-size:13.5px;color:#1a1a2e;line-height:1.9}
+  .ar-label{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;direction:ltr;text-align:left}
+
+  /* HIGHLIGHT / NOTE */
+  .highlight{background:rgba(26,111,212,0.06);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:11px 15px;margin:10px 0;font-size:13.5px}
+  .hl-label{font-size:10px;font-weight:700;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+  .note{background:rgba(217,79,0,0.06);border-left:4px solid var(--accent2);border-radius:0 8px 8px 0;padding:11px 15px;margin:10px 0;font-size:13.5px}
+  .note-label{font-size:10px;font-weight:700;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+  .success{background:rgba(30,122,66,0.06);border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:11px 15px;margin:10px 0;font-size:13.5px}
+  .success-label{font-size:10px;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+
+  /* TABLES */
+  .table-wrap{overflow-x:auto;margin:12px 0}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:var(--mid);color:var(--accent);padding:10px 13px;text-align:left;font-weight:700;font-size:11.5px;letter-spacing:.3px;border-bottom:2px solid var(--accent)}
+  td{padding:9px 13px;border-bottom:1px solid var(--border);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  tr:nth-child(even) td{background:#fafbfd}
+  .tc{color:var(--teal);font-weight:600}
+  .gc{color:var(--green);font-weight:600}
+  .rc{color:var(--red);font-weight:600}
+  .bc{color:var(--accent);font-weight:600}
+  .pc{color:var(--purple);font-weight:600}
+  .oc{color:var(--accent2);font-weight:600}
+  .yc{color:var(--gold);font-weight:600}
+
+  /* TAGS */
+  .tag{display:inline-block;border:1px solid var(--accent);color:var(--accent);background:rgba(26,111,212,0.08);border-radius:4px;padding:1px 8px;font-size:11px;font-weight:700;margin:2px}
+  .tag.o{border-color:var(--accent2);color:var(--accent2);background:rgba(217,79,0,0.08)}
+  .tag.g{border-color:var(--green);color:var(--green);background:rgba(30,122,66,0.08)}
+  .tag.p{border-color:var(--purple);color:var(--purple);background:rgba(107,33,168,0.08)}
+  .tag.y{border-color:var(--gold);color:var(--gold);background:rgba(168,124,0,0.08)}
+  .tag.t{border-color:var(--teal);color:var(--teal);background:rgba(14,116,144,0.08)}
+
+  /* GRID */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  @media(max-width:680px){.grid2,.grid3{grid-template-columns:1fr}}
+
+  /* FLOW */
+  .flow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0;margin:14px 0;overflow-x:auto}
+  .fbox{border:2px solid var(--border);border-radius:9px;padding:10px 14px;font-size:12.5px;font-weight:600;text-align:center;background:var(--deep)}
+  .fbox.a{border-color:var(--accent);color:var(--accent);background:rgba(26,111,212,0.08)}
+  .fbox.o{border-color:var(--accent2);color:var(--accent2);background:rgba(217,79,0,0.08)}
+  .fbox.p{border-color:var(--purple);color:var(--purple);background:rgba(107,33,168,0.08)}
+  .fbox.g{border-color:var(--green);color:var(--green);background:rgba(30,122,66,0.08)}
+  .fbox.t{border-color:var(--teal);color:var(--teal);background:rgba(14,116,144,0.08)}
+  .fbox.y{border-color:var(--gold);color:var(--gold);background:rgba(168,124,0,0.08)}
+  .arrow{color:var(--muted);font-size:18px;padding:0 6px}
+  .arrow.d{display:block;text-align:center}
+
+  /* LAYER STACK VISUAL */
+  .layer-stack{border:2px solid var(--border);border-radius:12px;overflow:hidden;margin:14px 0}
+  .layer-row{display:grid;grid-template-columns:120px 1fr 120px;align-items:stretch;border-bottom:1px solid var(--border)}
+  .layer-row:last-child{border-bottom:none}
+  .lr-num{background:var(--mid);padding:12px 10px;text-align:center;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--border)}
+  .lr-body{padding:12px 16px}
+  .lr-name{font-weight:700;font-size:13px;margin-bottom:2px}
+  .lr-unit{font-size:11px;color:var(--muted)}
+  .lr-addr{background:var(--mid);padding:12px 10px;text-align:center;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;border-left:1px solid var(--border);color:var(--muted)}
+  .lr-app{background:rgba(107,33,168,0.08);border-color:var(--purple)}
+  .lr-trn{background:rgba(26,111,212,0.08)}
+  .lr-net{background:rgba(217,79,0,0.08)}
+  .lr-dll{background:rgba(30,122,66,0.08)}
+  .lr-phy{background:rgba(14,116,144,0.08)}
+
+  /* COMPARE */
+  .compare-wrap{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:12px 0}
+  .compare-head{display:grid;grid-template-columns:1fr 1fr;background:var(--mid);border-bottom:2px solid var(--border)}
+  .ch-cell{padding:12px 18px;font-weight:800;text-align:center;font-size:14px}
+  .ch-cell.tcp{color:var(--accent)}
+  .ch-cell.osi{color:var(--accent2);border-left:1px solid var(--border)}
+  .compare-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
+  .compare-row:last-child{border-bottom:none}
+  .cc{padding:10px 16px;font-size:13px}
+  .cc.tcp-c{background:rgba(26,111,212,0.03);border-right:1px solid var(--border)}
+  .cc.osi-c{background:rgba(217,79,0,0.03)}
+
+  /* STEPS */
+  .steps{margin:10px 0}
+  .step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+  .step-num{width:26px;height:26px;background:var(--accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+  .step-body{font-size:13.5px;line-height:1.7}
+
+  /* Q ITEMS */
+  .q-item{background:var(--deep);border:1px solid var(--border);border-left:4px solid var(--purple);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:12px}
+  .q-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--purple);margin-bottom:4px}
+  .q-text{font-size:13.5px;font-weight:600;margin-bottom:6px}
+  .answer-box{background:rgba(30,122,66,0.06);border:1px solid rgba(30,122,66,0.2);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:13px}
+  .ans-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green);margin-bottom:5px}
+
+  /* FINAL */
+  hr.div{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:44px 0}
+  .final{background:#eef3fc;border:2px solid var(--accent);border-radius:14px;padding:28px;margin-top:48px}
+  .final h2{font-size:1.15rem;font-weight:800;color:var(--accent);margin-bottom:14px}
+
+  /* PRINT */
+  @media print{
+    .hero{padding:28px 20px}.container{padding:12px 14px 40px}
+    .card{break-inside:avoid;box-shadow:none}.top-nav{display:none}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+
+<style>
+/* ===== FINAL CONSISTENT CHAPTER 1 THEME OVERRIDES ===== */
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(ellipse 80% 35% at 50% -5%, rgba(0,200,255,.10), transparent 70%),
+    var(--bg) !important;
+  color:var(--text) !important;
+}
+strong,b{color:#ffffff}
+.hero{
+  background:linear-gradient(160deg,#07111f 0%,#0b1a2e 45%,#130c30 100%) !important;
+  border-bottom:1px solid var(--accent) !important;
+}
+.hero::after{
+  background:radial-gradient(ellipse 80% 55% at 50% -5%,rgba(0,200,255,.13),transparent 70%) !important;
+}
+.hero .chip{
+  border:1px solid var(--accent) !important;
+  color:var(--accent) !important;
+  background:rgba(0,200,255,.06) !important;
+}
+.hero h1 span{color:var(--accent) !important}
+.hero .ar-title{color:var(--gold) !important}
+.hero p,.legend-item{color:var(--muted) !important}
+
+.top-nav{
+  background:rgba(7,17,31,.95) !important;
+  border-bottom:1px solid var(--border) !important;
+  backdrop-filter:blur(10px) !important;
+}
+.top-nav a{
+  background:rgba(16,35,64,.75) !important;
+  border:1px solid var(--border) !important;
+  color:var(--text) !important;
+  font-weight:700 !important;
+}
+.top-nav a:hover,.top-nav a.active{
+  background:var(--accent) !important;
+  border-color:var(--accent) !important;
+  color:#07111f !important;
+}
+
+.section-header{border-bottom:1px solid rgba(0,200,255,.18) !important}
+.sec-num{
+  background:var(--accent) !important;
+  color:#07111f !important;
+  border-radius:12px !important;
+}
+.sec-title h2{color:#ffffff !important}
+.sec-title .ar{color:var(--gold) !important}
+
+.card{
+  background:var(--card) !important;
+  border:1px solid var(--border) !important;
+  color:var(--text) !important;
+  box-shadow:none !important;
+  backdrop-filter:blur(4px) !important;
+}
+.card-title{color:var(--accent) !important}
+.card-title .ar{color:var(--gold) !important}
+.card p,.card li,td{color:var(--text)}
+.ar-box{
+  background:var(--ar-bg) !important;
+  border:1px solid var(--ar-bdr) !important;
+  border-right:4px solid var(--gold) !important;
+  color:#ccd6e8 !important;
+}
+.ar-label{color:var(--gold) !important}
+
+.highlight{
+  background:var(--hi) !important;
+  border-left:4px solid var(--accent) !important;
+  color:var(--text) !important;
+}
+.hl-label{color:var(--accent) !important}
+.note{
+  background:rgba(255,107,53,.07) !important;
+  border-left:4px solid var(--accent2) !important;
+  color:var(--text) !important;
+}
+.note-label{color:var(--accent2) !important}
+.success{
+  background:rgba(62,255,160,.07) !important;
+  border-left:4px solid var(--green) !important;
+  color:var(--text) !important;
+}
+.success-label{color:var(--green) !important}
+
+table{background:rgba(16,35,64,.55) !important}
+th{
+  background:var(--mid) !important;
+  color:var(--accent) !important;
+  border-bottom:2px solid var(--accent) !important;
+}
+td{
+  background:rgba(16,35,64,.42) !important;
+  border-bottom:1px solid rgba(0,200,255,.10) !important;
+}
+tr:nth-child(even) td{background:rgba(0,200,255,.035) !important}
+tr:hover td{background:rgba(0,200,255,.07) !important}
+
+.layer-stack{
+  border:2px solid rgba(0,0,0,.85) !important;
+  border-radius:12px !important;
+  box-shadow:0 10px 24px rgba(0,0,0,.28) !important;
+}
+.layer-row{
+  border-bottom:6px solid rgba(0,0,0,.85) !important;
+  grid-template-columns:120px 1fr 120px !important;
+}
+.layer-row:last-child{border-bottom:none !important}
+.lr-num,.lr-addr{
+  background:rgba(0,0,0,.10) !important;
+  border-color:rgba(0,0,0,.35) !important;
+  color:#111 !important;
+}
+.lr-body,
+.lr-body *,
+.lr-name,
+.lr-unit{
+color:#111 !important;
+}
+.lr-body strong,
+.lr-unit strong{
+color:#000 !important;
+font-weight:700;
+}
+.lr-body span,
+.lr-body small,
+.lr-body em{
+color:#222 !important;
+}
+
+/* TCP/IP 5-layer stack colors based on requested visual harmony */
+.lr-app{background:#c7cedd !important;border-color:#111 !important}
+.lr-trn{background:#f4c7c3 !important;border-color:#111 !important}
+.lr-net{background:#cde8b7 !important;border-color:#111 !important}
+.lr-dll{background:#cbe2ee !important;border-color:#111 !important}
+.lr-phy{background:#f7f34a !important;border-color:#111 !important}
+
+/* OSI table row colors matching the image */
+#osi table tbody tr:nth-child(1) td{background:#c7cedd !important;color:#111 !important}
+#osi table tbody tr:nth-child(2) td{background:#ffffff !important;color:#111 !important}
+#osi table tbody tr:nth-child(3) td{background:#ffffff !important;color:#111 !important}
+#osi table tbody tr:nth-child(4) td{background:#f4c7c3 !important;color:#111 !important}
+#osi table tbody tr:nth-child(5) td{background:#cde8b7 !important;color:#111 !important}
+#osi table tbody tr:nth-child(6) td{background:#cbe2ee !important;color:#111 !important}
+#osi table tbody tr:nth-child(7) td{background:#f7f34a !important;color:#111 !important}
+#osi table tbody td strong{color:#111 !important}
+#osi .tag{color:#111 !important;border-color:rgba(0,0,0,.45) !important;background:rgba(255,255,255,.25) !important}
+
+.fbox{
+  background:rgba(16,35,64,.75) !important;
+  border-color:var(--border) !important;
+  color:var(--text) !important;
+}
+.fbox.a{border-color:var(--accent) !important;color:var(--accent) !important;background:rgba(0,200,255,.10) !important}
+.fbox.o{border-color:var(--accent2) !important;color:var(--accent2) !important;background:rgba(255,107,53,.10) !important}
+.fbox.p{border-color:var(--purple) !important;color:var(--purple) !important;background:rgba(180,138,255,.10) !important}
+.fbox.g{border-color:var(--green) !important;color:var(--green) !important;background:rgba(62,255,160,.08) !important}
+.fbox.t{border-color:var(--teal) !important;color:var(--teal) !important;background:rgba(0,200,255,.08) !important}
+.fbox.y{border-color:var(--gold) !important;color:var(--gold) !important;background:rgba(255,201,64,.08) !important}
+.arrow{color:var(--muted) !important}
+
+.compare-wrap{border-color:var(--border) !important}
+.compare-head{background:var(--mid) !important}
+.cc.tcp-c,.cc.osi-c{background:rgba(16,35,64,.45) !important;color:var(--text) !important}
+
+.q-item{
+  background:rgba(16,35,64,.65) !important;
+  border:1px solid var(--border) !important;
+  border-left:4px solid var(--purple) !important;
+}
+.answer-box{
+  background:rgba(62,255,160,.07) !important;
+  border:1px solid rgba(62,255,160,.25) !important;
+  color:var(--text) !important;
+}
+.final{
+  background:linear-gradient(135deg,rgba(0,200,255,.06),rgba(7,17,31,.8)) !important;
+  border:1px solid var(--accent) !important;
+}
+.final h2{color:var(--accent) !important}
+hr.div{background:linear-gradient(90deg,transparent,var(--accent),transparent) !important;opacity:.25 !important}
+</style>
+
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="chip">Networks and Data Transmissions · 4123702</div>
+  <h1>Chapter 2 — <span>Network Models</span></h1>
+  <div class="ar-title">نماذج الشبكات — TCP/IP وOSI — دليل الدراسة الشامل</div>
+  <p>Complete bilingual study guide · TCP/IP 5 Layers · OSI 7 Layers · Addresses · Responsibilities · Examples · Exam Questions</p>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#60b4ff"></div>English — Main Content</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ffd080"></div>العربي — شرح وترجمة</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#80ffb0"></div>Examples & Exam Questions</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <a href="index.html" class="active">🏠 Home</a>
+  <a href="#why-layers">Why Layers?</a>
+  <a href="#tcpip">TCP/IP Model</a>
+  <a href="#layers-detail">Layer Details</a>
+  <a href="#osi">OSI Model</a>
+  <a href="#addresses">Addresses</a>
+  <a href="#examples">Examples</a>
+  <a href="#compare">Comparison</a>
+  <a href="#questions">Exam Questions</a>
+</nav>
+
+<div class="container">
+
+<!-- ══════════ §0 WHY LAYERS ══════════ -->
+<div id="why-layers" class="section-header">
+  <div class="sec-num">0</div>
+  <div class="sec-title">
+    <h2>Why Layered Architecture? — The Big Picture</h2>
+    <div class="ar">لماذا نستخدم الطبقات؟ — الصورة الكاملة</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">📬 The Postal Mail Analogy <span class="ar">تشبيه البريد</span></div>
+  <p>Networks require a combination of hardware and software. To make communications efficient, the problem is divided into layers — each layer with a <strong>specific function or service</strong>.</p>
+  <p style="margin-top:8px">Think of sending a letter: you write it (cognitive layer), use a common language (linguistic layer), and the post office physically moves it (physical layer). Each "layer" does its own job without knowing the details of the others.</p>
+  <div class="ar-box">
+    <div class="ar-label">Arabic Explanation</div>
+    لماذا نستخدم الطبقات؟ لأن التواصل الشبكي معقد جداً إذا حاولنا حله دفعة واحدة.<br>
+    <strong>مثال البريد:</strong> المرسل يكتب الرسالة (طبقة المحتوى) → يكتب عليها عنواناً (طبقة العنونة) → يضعها في ظرف (طبقة التغليف) → يرسلها بالبريد (طبقة النقل الفيزيائي).<br>
+    كل طبقة تؤدي عملها المحدد <strong>دون</strong> أن تعرف تفاصيل الطبقات الأخرى — هذا يُبسّط التصميم والتطوير والصيانة.<br>
+    <strong>مثال التواصل بين أشخاص:</strong><br>
+    • Cognitive Layer: يحدد هدف الرسالة (ما أريد قوله)<br>
+    • Linguistic Layer: يوفر لغة مشتركة (عربي، إنجليزي...)<br>
+    • Physical Layer: ينقل المعلومات فيزيائياً (صوت، ورق، إلكترونيات)
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">🔑 Key Properties of Layered Architecture <span class="ar">خصائص البنية الطبقية</span></div>
+  <ul>
+    <li>Each layer defines <strong>distinct functions</strong></li>
+    <li>Each layer <strong>calls services</strong> of the layer below it, and <strong>provides services</strong> to the layer above it</li>
+    <li>Between two machines, <strong>corresponding layers</strong> communicate with each other — called <strong>peer-to-peer processes</strong></li>
+    <li>This inter-layer communication is governed by <strong>protocols</strong></li>
+    <li>At the sender: each layer <strong>adds a header</strong> (encapsulation) going down</li>
+    <li>At the receiver: each layer <strong>removes its header</strong> (decapsulation) going up</li>
+  </ul>
+  <div class="highlight">
+    <div class="hl-label">Peer-to-Peer</div>
+    The network layer on Device A "talks" logically to the network layer on Device B — even though physically the data passes through all layers at both ends.
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    <strong>Peer-to-Peer:</strong> كل طبقة في الجهاز المُرسِل تتحدث "منطقياً" مع نظيرتها في الجهاز المستقبِل.<br>
+    مثلاً: طبقة الشبكة في الكمبيوتر A تتواصل منطقياً مع طبقة الشبكة في الكمبيوتر B.<br>
+    لكن فيزيائياً: البيانات تنزل من طبقة لطبقة في الجهاز المُرسِل، ثم تصعد في الجهاز المستقبِل.<br><br>
+    <strong>عند الإرسال:</strong> كل طبقة تُضيف Header (معلومات التحكم الخاصة بها) → التغليف Encapsulation<br>
+    <strong>عند الاستقبال:</strong> كل طبقة تنزع الـ Header الخاص بها → فك التغليف Decapsulation
+  </div>
+</div>
+
+<!-- ══════════ §1 TCP/IP ══════════ -->
+<div id="tcpip" class="section-header">
+  <div class="sec-num">1</div>
+  <div class="sec-title">
+    <h2>The TCP/IP Internet Model — 5 Layers</h2>
+    <div class="ar">نموذج الإنترنت TCP/IP — الخماسي</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">🌐 What is TCP/IP? <span class="ar">ما هو نموذج TCP/IP؟</span></div>
+  <p>The <strong>dominant model</strong> in data communications and networking today. Developed from the ARPANET project. Has <strong>5 ordered layers</strong>, often referred to as the TCP/IP protocol suite.</p>
+  <div class="grid2">
+    <div>
+      <ul style="font-size:13.5px; line-height:2.1; margin-left:18px">
+        <li>Developed from ARPANET (US Defense project)</li>
+        <li>Used by the entire modern Internet</li>
+        <li>5 layers: Physical → Data Link → Network → Transport → Application</li>
+        <li>Real-world, practical model (not theoretical)</li>
+      </ul>
+    </div>
+    <div>
+      <div class="note">
+        <div class="note-label">vs OSI</div>
+        OSI is a <strong>theoretical 7-layer model</strong>. TCP/IP is the <strong>practical 5-layer model</strong> actually used. OSI adds Session and Presentation layers between Transport and Application.
+      </div>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    TCP/IP هو النموذج العملي المستخدم في الإنترنت الحقيقي اليوم.<br>
+    طُوِّر من مشروع ARPANET الأمريكي العسكري — وأصبح معيار الإنترنت العالمي.<br>
+    5 طبقات مرتبة من الأسفل للأعلى: فيزيائية → ربط بيانات → شبكة → نقل → تطبيق<br>
+    <strong>الفرق عن OSI:</strong> TCP/IP عملي وأبسط (5 طبقات) | OSI نظري ومرجعي (7 طبقات)
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">📊 TCP/IP — Complete Layer Summary Table <span class="ar">جدول الطبقات الكامل</span></div>
+  <div class="layer-stack">
+    <div class="layer-row lr-app">
+      <div class="lr-num" style="color:var(--purple)">5<br><span style="font-size:9px;font-weight:400">Top</span></div>
+      <div class="lr-body">
+        <div class="lr-name" style="color:var(--purple)">Application Layer — طبقة التطبيق</div>
+        <div class="lr-unit">Data unit: <strong>Message</strong></div>
+        <div style="font-size:12.5px; margin-top:4px">Provides user access to the network. Services: E-mail, FTP, HTTP, DNS, Telnet, WWW</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px">Delivery: <strong>User ↔ User</strong></div>
+      </div>
+      <div class="lr-addr" style="color:var(--purple)">App name / URL</div>
+    </div>
+    <div class="layer-row lr-trn">
+      <div class="lr-num" style="color:var(--accent)">4</div>
+      <div class="lr-body">
+        <div class="lr-name" style="color:var(--accent)">Transport Layer — طبقة النقل</div>
+        <div class="lr-unit">Data unit: <strong>Segment</strong></div>
+        <div style="font-size:12.5px; margin-top:4px">Process-to-process delivery. Port addressing, segmentation, flow control, error control, TCP/UDP</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px">Delivery: <strong>Process ↔ Process</strong></div>
+      </div>
+      <div class="lr-addr" style="color:var(--accent)">Port Number<br><span style="font-size:10px">(16-bit)</span></div>
+    </div>
+    <div class="layer-row lr-net">
+      <div class="lr-num" style="color:var(--accent2)">3</div>
+      <div class="lr-body">
+        <div class="lr-name" style="color:var(--accent2)">Network Layer — طبقة الشبكة</div>
+        <div class="lr-unit">Data unit: <strong>Packet (Datagram)</strong></div>
+        <div style="font-size:12.5px; margin-top:4px">Source-to-destination delivery across multiple networks. Logical addressing (IP), routing, packet switching</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px">Delivery: <strong>Host ↔ Host (end-to-end)</strong></div>
+      </div>
+      <div class="lr-addr" style="color:var(--accent2)">IP Address<br><span style="font-size:10px">(32-bit)</span></div>
+    </div>
+    <div class="layer-row lr-dll">
+      <div class="lr-num" style="color:var(--green)">2</div>
+      <div class="lr-body">
+        <div class="lr-name" style="color:var(--green)">Data Link Layer — طبقة ربط البيانات</div>
+        <div class="lr-unit">Data unit: <strong>Frame</strong></div>
+        <div style="font-size:12.5px; margin-top:4px">Node-to-node delivery. Framing, physical (MAC) addressing, error control, flow control, access control</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px">Delivery: <strong>Node ↔ Node (hop-by-hop)</strong></div>
+      </div>
+      <div class="lr-addr" style="color:var(--green)">MAC Address<br><span style="font-size:10px">(48-bit)</span></div>
+    </div>
+    <div class="layer-row lr-phy">
+      <div class="lr-num" style="color:var(--teal)">1<br><span style="font-size:9px;font-weight:400">Bottom</span></div>
+      <div class="lr-body">
+        <div class="lr-name" style="color:var(--teal)">Physical Layer — الطبقة الفيزيائية</div>
+        <div class="lr-unit">Data unit: <strong>Bit (0 or 1)</strong></div>
+        <div style="font-size:12.5px; margin-top:4px">Transmits raw bits over physical medium. Defines interfaces, data rate, bit synchronization, connection control</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px">Delivery: <strong>Bit-by-Bit over physical medium</strong></div>
+      </div>
+      <div class="lr-addr" style="color:var(--teal)">None<br><span style="font-size:10px">(no address)</span></div>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic — طريقة تذكر الطبقات</div>
+    من الأسفل للأعلى: <strong>فيزيائية ← ربط بيانات ← شبكة ← نقل ← تطبيق</strong><br>
+    طريقة التذكر: "<strong>أرسل نقل شبكة ربط فيزيائي</strong>" أو "Please Do Not Touch Steve's Appendix"<br><br>
+    وحدات البيانات من الأعلى للأسفل:<br>
+    Message → Segment → Packet → Frame → Bit<br>
+    كل طبقة تُغلّف (تلف) الوحدة التي فوقها وتُضيف رأس (Header) يحمل معلوماتها الخاصة.
+  </div>
+</div>
+
+<!-- ══════════ §2 LAYER DETAILS ══════════ -->
+<div id="layers-detail" class="section-header">
+  <div class="sec-num">2</div>
+  <div class="sec-title">
+    <h2>Layer-by-Layer Deep Dive</h2>
+    <div class="ar">تفصيل كل طبقة بعمق</div>
+  </div>
+</div>
+
+<!-- PHYSICAL -->
+<div class="card" style="border-color:rgba(14,116,144,0.3); background:rgba(14,116,144,0.02)">
+  <div class="card-title" style="color:var(--teal)">🔌 Layer 1 — Physical Layer <span class="ar" style="color:var(--gold)">الطبقة الفيزيائية</span></div>
+  <div class="highlight" style="border-color:var(--teal); background:rgba(14,116,144,0.06)">
+    <div class="hl-label" style="color:var(--teal)">Core Definition</div>
+    <strong>The physical layer is responsible for transmitting individual bits from one node to the next.</strong>
+  </div>
+  <div class="grid2" style="margin-top:12px">
+    <div>
+      <p style="font-weight:700; font-size:13px; margin-bottom:8px; color:var(--teal)">Responsibilities:</p>
+      <ul>
+        <li><strong>Physical characteristics</strong> of interfaces and media (cable type, voltage levels, pin layout)</li>
+        <li><strong>Bit representation</strong> — transmits raw bits without interpretation (no meaning applied)</li>
+        <li><strong>Data rate</strong> — defines how many bits per second can be transmitted</li>
+        <li><strong>Synchronization</strong> — sender and receiver clocks must agree when each bit starts/ends</li>
+        <li><strong>Connection control</strong> — manages start and end of physical connection</li>
+      </ul>
+    </div>
+    <div>
+      <p style="font-weight:700; font-size:13px; margin-bottom:8px">Examples of Physical Media:</p>
+      <div class="grid2" style="gap:8px">
+        <div style="background:var(--deep);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:12.5px">
+          <div style="font-weight:700;color:var(--teal);margin-bottom:4px">Copper Wire</div>
+          Twisted pair, coaxial cable
+        </div>
+        <div style="background:var(--deep);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:12.5px">
+          <div style="font-weight:700;color:var(--teal);margin-bottom:4px">Fiber Optic</div>
+          Light pulses, very high speed
+        </div>
+        <div style="background:var(--deep);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:12.5px">
+          <div style="font-weight:700;color:var(--teal);margin-bottom:4px">Wireless</div>
+          Radio waves, WiFi, Bluetooth
+        </div>
+        <div style="background:var(--deep);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:12.5px">
+          <div style="font-weight:700;color:var(--teal);margin-bottom:4px">Data Unit</div>
+          Individual <strong>Bit</strong> (0 or 1)
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic — الطبقة الفيزيائية</div>
+    الطبقة الفيزيائية مسؤولة عن نقل البتات الفردية (0 و1) من node لـ node.<br>
+    <strong>لا تهتم بالمعنى</strong> — فقط تُرسِل الإشارات الكهربائية أو الضوئية أو الراديوية.<br>
+    مسؤولياتها الخمس:<br>
+    &nbsp;&nbsp;① <strong>الخصائص الفيزيائية:</strong> نوع الكابل، الجهد، التوصيلات<br>
+    &nbsp;&nbsp;② <strong>تمثيل البتات:</strong> كيف يمثل الـ 0 والـ 1 (جهد عالي/منخفض)<br>
+    &nbsp;&nbsp;③ <strong>معدل البيانات:</strong> كم بت في الثانية (bps)<br>
+    &nbsp;&nbsp;④ <strong>التزامن:</strong> اتفاق المرسِل والمستقبِل على توقيت كل بت<br>
+    &nbsp;&nbsp;⑤ <strong>التحكم بالاتصال:</strong> بدء ونهاية الاتصال الفيزيائي
+  </div>
+</div>
+
+<!-- DATA LINK -->
+<div class="card" style="border-color:rgba(30,122,66,0.3); background:rgba(30,122,66,0.02)">
+  <div class="card-title" style="color:var(--green)">🔗 Layer 2 — Data Link Layer <span class="ar" style="color:var(--gold)">طبقة ربط البيانات</span></div>
+  <div class="highlight" style="border-color:var(--green); background:rgba(30,122,66,0.06)">
+    <div class="hl-label" style="color:var(--green)">Core Definition</div>
+    <strong>The data link layer is responsible for transmitting frames from one node to the next (node-to-node delivery).</strong>
+  </div>
+  <div class="grid2" style="margin-top:12px">
+    <div>
+      <p style="font-weight:700; font-size:13px; margin-bottom:8px; color:var(--green)">Responsibilities:</p>
+      <ul>
+        <li><strong>Framing</strong> — divides raw bits into manageable, structured data units called frames</li>
+        <li><strong>Physical (MAC) Addressing</strong> — adds sender &amp; receiver MAC address to each frame header</li>
+        <li><strong>Error Control</strong> — detects errors; requests retransmission if error occurs (via trailer)</li>
+        <li><strong>Flow Control</strong> — manages speed mismatch between fast sender and slow receiver</li>
+        <li><strong>Access Control</strong> — determines which device can use the shared medium at a given time</li>
+      </ul>
+    </div>
+    <div>
+      <p style="font-weight:700; font-size:13px; margin-bottom:8px">Frame Structure:</p>
+      <div style="border:2px solid var(--green);border-radius:8px;overflow:hidden;font-size:12px;text-align:center;margin-bottom:10px">
+        <div style="display:grid;grid-template-columns:1fr 2fr 1fr">
+          <div style="background:rgba(30,122,66,0.15);padding:8px;border-right:1px solid var(--green);font-weight:700;color:var(--green)">Header<br><span style="font-weight:400;font-size:11px">MAC addresses<br>+ control</span></div>
+          <div style="padding:8px;border-right:1px solid var(--green)">Data<br><span style="font-size:11px;color:var(--muted)">Network layer packet</span></div>
+          <div style="background:rgba(30,122,66,0.15);padding:8px;font-weight:700;color:var(--green)">Trailer<br><span style="font-weight:400;font-size:11px">Error detection bits</span></div>
+        </div>
+      </div>
+      <div class="note" style="font-size:12.5px">
+        <div class="note-label">Important!</div>
+        The trailer (unlike other layers) contains error-detection bits, not just a header.
+      </div>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic — طبقة ربط البيانات</div>
+    مسؤولة عن نقل الـ Frames من node لـ node (القفزة بالقفزة — hop-by-hop).<br>
+    <strong>Framing:</strong> تُقسّم البتات إلى وحدات منظمة تُسمى Frames لسهولة المعالجة والتحكم.<br>
+    <strong>العنونة الفيزيائية (MAC):</strong> كل frame يحمل عنوان MAC المرسل والمستقبل — عنوان محلي فقط.<br>
+    <strong>التحكم بالأخطاء:</strong> تكتشف الأخطاء وتطلب إعادة الإرسال (الـ Trailer يحمل bits للكشف عن الأخطاء).<br>
+    <strong>التحكم بالتدفق:</strong> تمنع المرسل السريع من إغراق المستقبل البطيء.<br>
+    <strong>التحكم بالوصول:</strong> تحدد من يحق له استخدام الوسط المشترك (مهم في الشبكات المحلية LAN).
+  </div>
+</div>
+
+<!-- NETWORK -->
+<div class="card" style="border-color:rgba(217,79,0,0.3); background:rgba(217,79,0,0.02)">
+  <div class="card-title" style="color:var(--accent2)">🌍 Layer 3 — Network Layer <span class="ar" style="color:var(--gold)">طبقة الشبكة</span></div>
+  <div class="highlight" style="border-color:var(--accent2); background:rgba(217,79,0,0.06)">
+    <div class="hl-label" style="color:var(--accent2)">Core Definition</div>
+    <strong>The network layer is responsible for the delivery of packets from the original source to the final destination (source-to-destination), possibly crossing multiple networks.</strong>
+  </div>
+  <div class="grid2" style="margin-top:12px">
+    <div>
+      <p style="font-weight:700; font-size:13px; margin-bottom:8px; color:var(--accent2)">Responsibilities:</p>
+      <ul>
+        <li><strong>Source-to-Destination Delivery</strong> — routes data across multiple networks and routers</li>
+        <li><strong>Logical (IP) Addressing</strong> — assigns universal addresses that cross LAN boundaries (unlike MAC which is local only)</li>
+        <li><strong>Routing</strong> — finds the best path from source to destination</li>
+        <li><strong>Packet Switching</strong> — breaks data into packets and routes each independently</li>
+      </ul>
+    </div>
+    <div>
+      <p style="font-weight:700; font-size:13px; margin-bottom:8px">Why we need the Network Layer:</p>
+      <div class="note" style="font-size:12.5px">
+        <div class="note-label">Key Problem</div>
+        If two devices are on <strong>different networks</strong> (different LANs), MAC addresses alone are not enough — they only work locally. We need <strong>IP addresses</strong> which are universal and can cross network boundaries.
+      </div>
+      <div style="background:var(--deep);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:12.5px;margin-top:8px">
+        <strong>Data unit:</strong> Packet (also called Datagram)<br>
+        <strong>Device:</strong> Router<br>
+        <strong>Address:</strong> IP Address (32-bit in IPv4)
+      </div>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic — طبقة الشبكة</div>
+    مسؤولة عن توصيل الـ Packets من المصدر الأصلي للوجهة النهائية — حتى لو كانا على شبكات مختلفة.<br>
+    <strong>لماذا نحتاجها؟</strong> عناوين MAC محلية فقط (تعمل داخل الـ LAN). عندما نريد التواصل مع شبكة أخرى نحتاج عناوين IP التي تعبر حدود الشبكات.<br>
+    <strong>التوجيه (Routing):</strong> الـ Routers تستخدم هذه الطبقة لتحديد أفضل مسار للبيانات.<br>
+    <strong>Packet Switching:</strong> البيانات تُقسَّم إلى Packets، كل Packet يُوجَّه بشكل مستقل، ثم تُعاد التجميع عند الوجهة.
+  </div>
+</div>
+
+<!-- TRANSPORT -->
+<div class="card" style="border-color:rgba(26,111,212,0.3); background:rgba(26,111,212,0.02)">
+  <div class="card-title" style="color:var(--accent)">📦 Layer 4 — Transport Layer <span class="ar" style="color:var(--gold)">طبقة النقل</span></div>
+  <div class="highlight" style="border-color:var(--accent)">
+    <div class="hl-label">Core Definition</div>
+    <strong>The transport layer is responsible for delivery of a message from one process to another (process-to-process delivery).</strong>
+  </div>
+  <div class="grid2" style="margin-top:12px">
+    <div>
+      <p style="font-weight:700; font-size:13px; margin-bottom:8px; color:var(--accent)">Responsibilities:</p>
+      <ul>
+        <li><strong>Port Addressing</strong> — identifies which process (application) on the machine is communicating</li>
+        <li><strong>Segmentation and Reassembly</strong> — breaks large messages into segments; reassembles at destination</li>
+        <li><strong>Connection Control</strong>:
+          <ul style="margin-top:4px">
+            <li><strong>Connectionless</strong> — UDP: fast, no guarantee (streaming, games)</li>
+            <li><strong>Connection-oriented</strong> — TCP: reliable, ordered, confirmed delivery</li>
+          </ul>
+        </li>
+        <li><strong>End-to-End Flow Control</strong> — manages speed between processes</li>
+        <li><strong>End-to-End Error Control</strong> — ensures complete, correct delivery</li>
+      </ul>
+    </div>
+    <div>
+      <div class="compare-wrap">
+        <div class="compare-head">
+          <div class="ch-cell tcp">TCP</div>
+          <div class="ch-cell osi">UDP</div>
+        </div>
+        <div class="compare-row">
+          <div class="cc tcp-c">Connection-oriented</div>
+          <div class="cc osi-c">Connectionless</div>
+        </div>
+        <div class="compare-row">
+          <div class="cc tcp-c">Reliable delivery</div>
+          <div class="cc osi-c">No guarantee</div>
+        </div>
+        <div class="compare-row">
+          <div class="cc tcp-c">Flow + Error control</div>
+          <div class="cc osi-c">Minimal overhead</div>
+        </div>
+        <div class="compare-row">
+          <div class="cc tcp-c">HTTP, FTP, email</div>
+          <div class="cc osi-c">Streaming, DNS, VoIP</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic — طبقة النقل</div>
+    مسؤولة عن توصيل الرسائل من <strong>عملية (process) لأخرى</strong>.<br>
+    لا تكفي عناوين IP لتحديد التطبيق — فكل جهاز يُشغّل عدة برامج في نفس الوقت.<br>
+    <strong>Port Number</strong> يحدد أي برنامج (عملية) يُرسِل أو يستقبل.<br>
+    مثال: المتصفح يستخدم Port 80 (HTTP) | البريد الإلكتروني Port 25 (SMTP)<br>
+    <strong>TCP:</strong> موثوق، مرتب، يضمن الوصول — للتطبيقات الحساسة (ويب، بريد، ملفات)<br>
+    <strong>UDP:</strong> سريع، غير موثوق — للتطبيقات الحية (بث فيديو، ألعاب، DNS)
+  </div>
+</div>
+
+<!-- APPLICATION -->
+<div class="card" style="border-color:rgba(107,33,168,0.3); background:rgba(107,33,168,0.02)">
+  <div class="card-title" style="color:var(--purple)">💻 Layer 5 — Application Layer <span class="ar" style="color:var(--gold)">طبقة التطبيق</span></div>
+  <div class="highlight" style="border-color:var(--purple); background:rgba(107,33,168,0.06)">
+    <div class="hl-label" style="color:var(--purple)">Core Definition</div>
+    <strong>The application layer is responsible for providing services to the user.</strong>
+  </div>
+  <div class="grid2" style="margin-top:12px">
+    <div>
+      <p style="font-weight:700; font-size:13px; margin-bottom:8px; color:var(--purple)">Responsibilities:</p>
+      <ul>
+        <li>Enables <strong>user access</strong> to the network</li>
+        <li>Provides <strong>user interfaces</strong> for network services</li>
+        <li>Services: E-mail, File transfer (FTP), Remote login (Telnet/SSH), WWW (HTTP), DNS</li>
+      </ul>
+    </div>
+    <div>
+      <div class="table-wrap" style="margin:0">
+        <table>
+          <thead><tr><th>Protocol</th><th>Service</th><th>Port</th></tr></thead>
+          <tbody>
+            <tr><td class="pc">HTTP</td><td>World Wide Web</td><td>80</td></tr>
+            <tr><td class="pc">HTTPS</td><td>Secure Web</td><td>443</td></tr>
+            <tr><td class="pc">FTP</td><td>File Transfer</td><td>21</td></tr>
+            <tr><td class="pc">SMTP</td><td>Send E-mail</td><td>25</td></tr>
+            <tr><td class="pc">DNS</td><td>Name Resolution</td><td>53</td></tr>
+            <tr><td class="pc">Telnet</td><td>Remote Login</td><td>23</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    الطبقة الأعلى — تتعامل مع المستخدم مباشرة.<br>
+    مسؤولة عن تقديم الخدمات الشبكية للمستخدم: تصفح الإنترنت، البريد، نقل الملفات...<br>
+    <strong>لاحظ:</strong> "التطبيق" هنا يعني البروتوكولات (HTTP, FTP) وليس التطبيق المرئي (المتصفح).<br>
+    البروتوكولات الأهم: HTTP (ويب) | FTP (ملفات) | SMTP (بريد صادر) | DNS (تحويل اسم لـ IP)
+  </div>
+</div>
+
+<!-- ══════════ §3 OSI MODEL ══════════ -->
+<div id="osi" class="section-header">
+  <div class="sec-num sec-num" style="background:var(--accent2)">3</div>
+  <div class="sec-title">
+    <h2>The OSI Model — 7 Layers</h2>
+    <div class="ar">نموذج OSI السباعي — النموذج المرجعي</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">📐 OSI Overview <span class="ar">نظرة عامة على OSI</span></div>
+  <p>The <strong>Open Systems Interconnection (OSI)</strong> model is a <strong>theoretical 7-layer model</strong> developed by ISO that describes how a protocol stack should be implemented. It is a <strong>reference model</strong> — not widely used in practice (TCP/IP is used instead).</p>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    OSI = Open Systems Interconnection — طُوِّر من قبل منظمة ISO كنموذج مرجعي نظري.<br>
+    <strong>الغرض:</strong> يصف كيف يجب أن تعمل الشبكات — لكنه لم يُطبَّق تجارياً بشكل كامل.<br>
+    في الواقع: TCP/IP هو المعيار المستخدم.<br>
+    OSI مفيد كأداة تعليمية لفهم مبادئ الطبقات.
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">📊 OSI 7-Layer Full Table <span class="ar">جدول طبقات OSI السبع</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Layer Name</th><th>Data Unit</th><th>Key Responsibilities</th><th>TCP/IP Equivalent</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="pc">7</td><td><strong style="color:var(--purple)">Application</strong></td><td>Message</td>
+          <td>User interface; HTTP, FTP, DNS, SMTP services</td><td rowspan="3" style="vertical-align:middle;text-align:center"><span class="tag p">Application</span></td>
+        </tr>
+        <tr>
+          <td class="pc">6</td><td><strong style="color:var(--purple)">Presentation</strong></td><td>Message</td>
+          <td>Data translation, encryption/decryption, compression</td>
+        </tr>
+        <tr>
+          <td class="pc">5</td><td><strong style="color:var(--purple)">Session</strong></td><td>Message</td>
+          <td>Dialog control, synchronization, session management</td>
+        </tr>
+        <tr>
+          <td class="bc">4</td><td><strong style="color:var(--accent)">Transport</strong></td><td>Segment</td>
+          <td>Process-to-process, TCP/UDP, port addressing</td><td><span class="tag">Transport</span></td>
+        </tr>
+        <tr>
+          <td class="oc">3</td><td><strong style="color:var(--accent2)">Network</strong></td><td>Packet</td>
+          <td>Logical addressing (IP), routing</td><td><span class="tag o">Network</span></td>
+        </tr>
+        <tr>
+          <td class="gc">2</td><td><strong style="color:var(--green)">Data Link</strong></td><td>Frame</td>
+          <td>MAC addressing, framing, error/flow control</td><td><span class="tag g">Data Link</span></td>
+        </tr>
+        <tr>
+          <td class="tc">1</td><td><strong style="color:var(--teal)">Physical</strong></td><td>Bit</td>
+          <td>Bit transmission over physical medium</td><td><span class="tag t">Physical</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">🆕 The Two Extra OSI Layers <span class="ar">الطبقتان الإضافيتان في OSI</span></div>
+  <div class="grid2">
+    <div>
+      <div style="border:2px solid var(--purple);border-radius:10px;padding:16px;margin-bottom:0">
+        <div style="font-weight:800;color:var(--purple);font-size:14px;margin-bottom:8px">Layer 5 — Session Layer</div>
+        <p style="font-size:13.5px;margin-bottom:6px"><strong>Network dialog controller</strong></p>
+        <ul style="font-size:13px">
+          <li>Establishes, maintains, and <strong>synchronizes</strong> communications between systems</li>
+          <li>Manages dialog control (who speaks when)</li>
+          <li>Handles session setup and teardown</li>
+          <li>Supports synchronization checkpoints (resume from error)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div style="border:2px solid var(--purple);border-radius:10px;padding:16px">
+        <div style="font-weight:800;color:var(--purple);font-size:14px;margin-bottom:8px">Layer 6 — Presentation Layer</div>
+        <p style="font-size:13.5px;margin-bottom:6px"><strong>Handles syntax and semantics of information exchange</strong></p>
+        <ul style="font-size:13px">
+          <li><strong>Data translation</strong> — converts between different formats (e.g., EBCDIC ↔ ASCII)</li>
+          <li><strong>Encryption / Decryption</strong> — security</li>
+          <li><strong>Compression</strong> — reduces data size for transmission</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="note" style="margin-top:12px">
+    <div class="note-label">Why TCP/IP Doesn't Have Them</div>
+    In the TCP/IP model, the duties of Session and Presentation layers are handled by the Application layer itself (or by individual application protocols). This is why OSI has 7 layers but TCP/IP only has 5.
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic — الطبقتان الإضافيتان</div>
+    <strong>Session Layer (طبقة الجلسة):</strong><br>
+    تتحكم في الحوار بين الأجهزة — تُنشئ الجلسات وتُحافظ عليها وتنهيها.<br>
+    مثال: جلسة فيديو كول — تُنشئ الاتصال وتُزامنه وتُنهيه بشكل منظم.<br><br>
+    <strong>Presentation Layer (طبقة العرض):</strong><br>
+    تُعالج صياغة البيانات وتنسيقها:<br>
+    • الترجمة: تحويل أنظمة ترميز مختلفة (مثل ASCII ↔ Unicode)<br>
+    • التشفير/فك التشفير: حماية البيانات أثناء النقل<br>
+    • الضغط: تقليل حجم البيانات لتسريع النقل<br><br>
+    في TCP/IP: هذه المهام تؤديها طبقة التطبيق مباشرة — لذلك اختفت كطبقات مستقلة.
+  </div>
+</div>
+
+<!-- ══════════ §4 ADDRESSES ══════════ -->
+<div id="addresses" class="section-header">
+  <div class="sec-num" style="background:var(--gold)">4</div>
+  <div class="sec-title">
+    <h2>Addresses in TCP/IP — The Critical Rules</h2>
+    <div class="ar">العناوين في TCP/IP — القواعد الأساسية</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">📍 4 Types of Addresses <span class="ar">أنواع العناوين الأربعة</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Layer</th><th>Address Type</th><th>Size</th><th>Scope</th><th>Changes at Each Hop?</th><th>Example</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="pc">Application</td><td>App name / URL</td><td>Variable</td><td>Global</td><td style="color:var(--muted)">N/A</td><td>www.example.com</td>
+        </tr>
+        <tr>
+          <td class="bc">Transport</td><td><strong>Port Number</strong></td><td class="bc">16 bits</td><td>Per machine</td><td class="gc">NO — end-to-end</td><td>753, 80, 443</td>
+        </tr>
+        <tr>
+          <td class="oc">Network</td><td><strong>IP Address</strong></td><td class="oc">32 bits (IPv4)</td><td>Global</td><td class="gc">NO — end-to-end</td><td>192.168.1.1</td>
+        </tr>
+        <tr>
+          <td class="gc">Data Link</td><td><strong>MAC Address</strong></td><td class="gc">48 bits (6 bytes)</td><td>Local (LAN only)</td><td class="rc">YES — at every hop</td><td>07:01:02:01:2C:4B</td>
+        </tr>
+        <tr>
+          <td class="tc">Physical</td><td>None</td><td>—</td><td>—</td><td>—</td><td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="highlight" style="margin-top:12px">
+    <div class="hl-label">🔑 The Most Important Rule</div>
+    <strong>Physical (MAC) addresses change at every hop.</strong> Logical (IP) addresses and port numbers remain the same from source to final destination.
+  </div>
+
+  <div class="grid2" style="margin-top:12px">
+    <div>
+      <p style="font-weight:700;font-size:13px;margin-bottom:6px;color:var(--green)">✅ MAC Address Details:</p>
+      <ul style="font-size:13px">
+        <li>48-bit (6 bytes) physical address</li>
+        <li>Written as 12 hexadecimal digits</li>
+        <li>Each byte separated by colon: <code>07:01:02:01:2C:4B</code></li>
+        <li>Unique to each network interface card (NIC)</li>
+        <li><strong>Local only</strong> — has no meaning outside its LAN</li>
+      </ul>
+    </div>
+    <div>
+      <p style="font-weight:700;font-size:13px;margin-bottom:6px;color:var(--accent)">✅ Port Number Details:</p>
+      <ul style="font-size:13px">
+        <li>16-bit address — represented as one decimal number</li>
+        <li>Range: 0 – 65535</li>
+        <li>Example: Port 753 (as shown in textbook)</li>
+        <li>Identifies the <strong>process (application)</strong> not the machine</li>
+        <li>Same port used throughout entire communication</li>
+      </ul>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic — العناوين</div>
+    <strong>عنوان MAC (48 بت):</strong> عنوان فيزيائي محلي، يتغير من hop لـ hop.<br>
+    مثال: عندما تُرسِل بيانات من حاسوبك للإنترنت، يتغير عنوان MAC في كل router تمر به.<br><br>
+    <strong>عنوان IP (32 بت):</strong> عنوان منطقي عالمي، يبقى ثابتاً من المصدر للوجهة.<br>
+    مثال: IP الخادم الذي تتصل به يبقى نفسه طوال الرحلة.<br><br>
+    <strong>رقم الـ Port (16 بت):</strong> يُحدد البرنامج (العملية) على الجهاز.<br>
+    مثال: المتصفح يستخدم Port 80/443، بينما البريد يستخدم Port 25.<br>
+    رقم الـ Port الموضح في المادة: 753 — يُمثَّل كرقم عشري واحد.
+  </div>
+</div>
+
+<!-- ADDRESS FLOW DIAGRAM -->
+<div class="card">
+  <div class="card-title">🔄 How Addresses Work Together — Data Flow <span class="ar">كيف تعمل العناوين معاً</span></div>
+  <div style="margin:14px 0">
+    <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">At the SENDER — Adding headers (Encapsulation)</div>
+    <div class="flow">
+      <div class="fbox p" style="font-size:12px">Application<br>Data</div>
+      <div class="arrow">→</div>
+      <div class="fbox a" style="font-size:12px">+ Transport Header<br><span style="font-size:10px">Port j | Port k</span></div>
+      <div class="arrow">→</div>
+      <div class="fbox o" style="font-size:12px">+ Network Header<br><span style="font-size:10px">IP A | IP P</span></div>
+      <div class="arrow">→</div>
+      <div class="fbox g" style="font-size:12px">+ Data Link Header<br><span style="font-size:10px">MAC src | MAC dst</span></div>
+      <div class="arrow">→</div>
+      <div class="fbox t" style="font-size:12px">Physical<br>Bits</div>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px">At Each ROUTER (hop) — MAC changes, IP stays same</div>
+    <div class="flow">
+      <div class="fbox g" style="font-size:12px">OLD MAC<br><span style="font-size:10px">stripped</span></div>
+      <div class="arrow">→</div>
+      <div class="fbox o" style="font-size:12px">IP unchanged<br><span style="font-size:10px">A → P stays</span></div>
+      <div class="arrow">→</div>
+      <div class="fbox g" style="font-size:12px">NEW MAC<br><span style="font-size:10px">added for next hop</span></div>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic — رحلة البيانات</div>
+    <strong>عند الإرسال (Encapsulation):</strong><br>
+    البيانات تنزل من طبقة لطبقة — كل طبقة تُضيف Header خاص بها (مثل تغليف هدية في صناديق متداخلة).<br><br>
+    <strong>عند كل Router (hop):</strong><br>
+    الـ Router ينزع الـ Data Link Header القديم (MAC القديم) ويُضيف Header جديد بعنوان MAC الجديد للشبكة التالية.<br>
+    لكن الـ IP Header يبقى كما هو!<br><br>
+    <strong>عند الاستقبال (Decapsulation):</strong><br>
+    البيانات تصعد من طبقة لطبقة — كل طبقة تنزع الـ Header الخاص بها حتى تصل البيانات نقية للتطبيق.
+  </div>
+</div>
+
+<!-- ══════════ §5 EXAMPLES ══════════ -->
+<div id="examples" class="section-header">
+  <div class="sec-num" style="background:var(--green)">5</div>
+  <div class="sec-title">
+    <h2>Worked Examples from the Textbook</h2>
+    <div class="ar">أمثلة محلولة من الكتاب</div>
+  </div>
+</div>
+
+<div class="card" style="border-color:rgba(30,122,66,0.3)">
+  <div class="card-title">📘 Example 1 — Data Link Layer (Physical Addressing) <span class="ar">مثال 1 — العنونة الفيزيائية</span></div>
+  <p style="font-size:13.5px">A node with physical address <strong>10</strong> sends a frame to a node with physical address <strong>87</strong>. The two nodes are connected by a link.</p>
+  <div class="success" style="margin-top:10px">
+    <div class="success-label">Solution / Analysis</div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body">Both nodes are on the <strong>same link</strong> (same LAN) — so we only need Data Link layer (physical/MAC addresses)</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body">The frame header contains: <span class="tag g">Source MAC: 10</span> <span class="tag g">Destination MAC: 87</span></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body">The trailer contains extra bits for <strong>error detection</strong></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body">Since they're on the same physical link, <strong>no Network layer (IP) needed</strong></div></div>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    Node ذو عنوان 10 يُرسِل frame لـ Node ذو عنوان 87 على نفس الرابط.<br>
+    <strong>الحل:</strong> لأنهما على نفس LAN، نحتاج فقط عناوين MAC.<br>
+    Frame Header: عنوان MAC المصدر (10) + عنوان MAC الوجهة (87) + معلومات تحكم أخرى.<br>
+    Frame Trailer: بتات اضافية للكشف عن الأخطاء (error detection bits).<br>
+    لا حاجة لعناوين IP هنا لأنهما على نفس الشبكة المحلية.
+  </div>
+</div>
+
+<div class="card" style="border-color:rgba(26,111,212,0.3)">
+  <div class="card-title">📘 Example 2 — Network Layer (Two Different LANs) <span class="ar">مثال 2 — شبكتان مختلفتان</span></div>
+  <p style="font-size:13.5px">We want to send data from a node with <strong>network address A</strong> and physical address <strong>10</strong> on one LAN, to a node with <strong>network address P</strong> and physical address <strong>95</strong> on another LAN.</p>
+  <div class="success" style="margin-top:10px">
+    <div class="success-label">Solution / Analysis</div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body">Two devices on <strong>different networks</strong> — physical (MAC) addresses alone won't work (they're local only)</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body">We need <strong>logical (IP/network) addresses</strong> — they are universal and cross LAN boundaries</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body">Network layer adds IP header: <span class="tag o">Source IP: A</span> <span class="tag o">Dest IP: P</span></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body">Data Link layer adds MAC header for <em>each hop</em>: changes at every router, but IP stays the same</div></div>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    جهازان على شبكتين مختلفتين — لا يمكن استخدام عناوين MAC وحدها.<br>
+    <strong>السبب:</strong> عناوين MAC محلية فقط، لا تعمل خارج الـ LAN الواحدة.<br>
+    <strong>الحل:</strong> نستخدم عناوين IP (منطقية) التي لها صلاحية عالمية.<br>
+    طبقة الشبكة تُضيف: IP المصدر (A) + IP الوجهة (P) → تبقى ثابتة في كل الرحلة.<br>
+    طبقة ربط البيانات تُضيف MAC جديد في كل hop (router) للشبكة التالية.
+  </div>
+</div>
+
+<div class="card" style="border-color:rgba(107,33,168,0.3)">
+  <div class="card-title">📘 Example 3 — Transport Layer (Process-to-Process) <span class="ar">مثال 3 — طبقة النقل</span></div>
+  <p style="font-size:13.5px">Data from upper layers has port addresses <strong>j</strong> (sending process) and <strong>k</strong> (receiving process). The data size is larger than the network layer can handle.</p>
+  <div class="success" style="margin-top:10px">
+    <div class="success-label">Solution / Analysis</div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body">Transport layer identifies processes: <span class="tag p">Source Port: j</span> <span class="tag p">Dest Port: k</span></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body">Data is too large → transport layer <strong>splits into two segments</strong> (segmentation)</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body">Each segment retains <strong>both port addresses (j and k)</strong></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body">Network layer adds IP addresses (A and P) to each packet separately</div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-body">At destination: transport layer <strong>reassembles</strong> segments in correct order</div></div>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    البيانات أكبر من حجم الـ Packet — طبقة النقل تُقسّمها لـ Segments.<br>
+    كل Segment يحتفظ بأرقام الـ Ports (j للإرسال، k للاستقبال).<br>
+    ثم طبقة الشبكة تُضيف عناوين IP (A وP) لكل Packet على حدة.<br>
+    عند الوصول: طبقة النقل تُعيد تجميع الـ Segments بالترتيب الصحيح.
+  </div>
+</div>
+
+<div class="card" style="border-color:rgba(217,79,0,0.3)">
+  <div class="card-title">📘 Example 4 — Complete Communication (Two Computers via Internet) <span class="ar">مثال 4 — تواصل كامل عبر الإنترنت</span></div>
+  <p style="font-size:13.5px">Sending computer runs 3 processes (ports a, b, c). Receiving computer runs 2 processes (ports j, k). Process <strong>a</strong> needs to communicate with process <strong>j</strong>.</p>
+  <div class="success" style="margin-top:10px">
+    <div class="success-label">Key Observations</div>
+    <ul style="font-size:13.5px; line-height:2.1">
+      <li>Physical (MAC) addresses <strong>change from hop to hop</strong></li>
+      <li>Logical (IP) addresses <strong>remain the same</strong> from source to destination</li>
+      <li>Port addresses <strong>remain the same</strong> from source to destination</li>
+      <li>Port <strong>a</strong> identifies the sending process; port <strong>j</strong> identifies the receiving process</li>
+    </ul>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    جهاز الإرسال يُشغّل 3 عمليات (a, b, c) | جهاز الاستقبال يُشغّل 2 (j, k).<br>
+    العملية a تتواصل مع العملية j → Port a (مصدر) إلى Port j (وجهة).<br>
+    <strong>الملاحظة الأهم:</strong><br>
+    • عنوان MAC: يتغير في كل router على الطريق (hop-by-hop)<br>
+    • عنوان IP: يبقى ثابتاً طول الرحلة (end-to-end)<br>
+    • رقم الـ Port: يبقى ثابتاً طول الرحلة (end-to-end)
+  </div>
+</div>
+
+<!-- ══════════ §6 COMPARISON ══════════ -->
+<div id="compare" class="section-header">
+  <div class="sec-num" style="background:var(--purple)">6</div>
+  <div class="sec-title">
+    <h2>Full Comparisons — TCP/IP vs OSI &amp; More</h2>
+    <div class="ar">المقارنات الشاملة</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">⚖️ TCP/IP vs OSI — Detailed Comparison <span class="ar">مقارنة تفصيلية بين النموذجين</span></div>
+  <div class="compare-wrap">
+    <div class="compare-head">
+      <div class="ch-cell tcp">TCP/IP Model</div>
+      <div class="ch-cell osi">OSI Model</div>
+    </div>
+    <div class="compare-row">
+      <div class="cc tcp-c"><strong>5 layers</strong></div>
+      <div class="cc osi-c"><strong>7 layers</strong></div>
+    </div>
+    <div class="compare-row">
+      <div class="cc tcp-c"><strong>Practical</strong> — used in real Internet</div>
+      <div class="cc osi-c"><strong>Theoretical</strong> — reference model only</div>
+    </div>
+    <div class="compare-row">
+      <div class="cc tcp-c">Developed from ARPANET</div>
+      <div class="cc osi-c">Developed by ISO</div>
+    </div>
+    <div class="compare-row">
+      <div class="cc tcp-c">Application layer = App + Session + Presentation</div>
+      <div class="cc osi-c">Has separate Session (5) and Presentation (6) layers</div>
+    </div>
+    <div class="compare-row">
+      <div class="cc tcp-c">No explicit Session/Presentation layer</div>
+      <div class="cc osi-c">Session: dialog control | Presentation: encryption, translation, compression</div>
+    </div>
+    <div class="compare-row">
+      <div class="cc tcp-c">Widely implemented and tested</div>
+      <div class="cc osi-c">Never fully implemented commercially</div>
+    </div>
+    <div class="compare-row">
+      <div class="cc tcp-c">Protocols defined first, model defined later</div>
+      <div class="cc osi-c">Model defined first, then protocols</div>
+    </div>
+    <div class="compare-row">
+      <div class="cc tcp-c">Less rigid — works in practice</div>
+      <div class="cc osi-c">Very strict layering — useful for understanding</div>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic — ملخص المقارنة</div>
+    TCP/IP عملي (5 طبقات) | OSI نظري مرجعي (7 طبقات)<br>
+    الفرق الأساسي: OSI يضيف Session (إدارة الجلسات) وPresentation (تشفير وترجمة وضغط)<br>
+    في الواقع: TCP/IP هو المستخدم — OSI يُدرَّس للفهم النظري فقط.
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">📊 Layer Comparison: Unit / Delivery / Address / Device <span class="ar">مقارنة الطبقات: الوحدة والتوصيل والعنوان والجهاز</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Layer</th><th>Data Unit</th><th>Delivery Scope</th><th>Address</th><th>Key Device</th><th>Protocols</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="pc">Application (5)</td><td>Message</td><td>User ↔ User</td><td>URL/App name</td><td>End systems</td><td class="pc">HTTP, FTP, DNS, SMTP</td>
+        </tr>
+        <tr>
+          <td class="bc">Transport (4)</td><td>Segment</td><td>Process ↔ Process</td><td class="bc">Port # (16-bit)</td><td>End systems</td><td class="bc">TCP, UDP</td>
+        </tr>
+        <tr>
+          <td class="oc">Network (3)</td><td>Packet</td><td>Host ↔ Host (global)</td><td class="oc">IP (32-bit)</td><td class="oc">Router</td><td class="oc">IP, ICMP, ARP</td>
+        </tr>
+        <tr>
+          <td class="gc">Data Link (2)</td><td>Frame</td><td>Node ↔ Node (local)</td><td class="gc">MAC (48-bit)</td><td class="gc">Switch, Bridge</td><td class="gc">Ethernet, WiFi</td>
+        </tr>
+        <tr>
+          <td class="tc">Physical (1)</td><td>Bit</td><td>Bit-by-bit</td><td class="tc">None</td><td class="tc">Hub, Repeater</td><td class="tc">DSL, USB, Bluetooth</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic — الأجهزة الشبكية لكل طبقة</div>
+    Physical → Hub/Repeater (يُضخّم الإشارة بدون تحليل)<br>
+    Data Link → Switch/Bridge (يُوجّه بالـ MAC داخل الـ LAN)<br>
+    Network → Router (يُوجّه بالـ IP بين الشبكات المختلفة)<br>
+    Transport/Application → End systems فقط (الحاسوب، الهاتف...)
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">🔄 Encapsulation vs Decapsulation Visual <span class="ar">التغليف وفك التغليف</span></div>
+  <div class="grid2">
+    <div>
+      <div style="font-weight:700;color:var(--accent2);font-size:13px;margin-bottom:8px">📤 SENDER — Adding Headers (Encapsulation)</div>
+      <div style="font-family:monospace;font-size:12.5px;line-height:2.2">
+        <div style="background:rgba(107,33,168,0.1);border:1px solid var(--purple);border-radius:4px;padding:4px 10px;margin-bottom:4px"><span style="color:var(--purple)">App Layer:</span> [DATA]</div>
+        <div style="background:rgba(26,111,212,0.1);border:1px solid var(--accent);border-radius:4px;padding:4px 10px;margin-bottom:4px"><span style="color:var(--accent)">Transport:</span> [TCP Header | DATA]</div>
+        <div style="background:rgba(217,79,0,0.1);border:1px solid var(--accent2);border-radius:4px;padding:4px 10px;margin-bottom:4px"><span style="color:var(--accent2)">Network:</span> [IP Header | TCP | DATA]</div>
+        <div style="background:rgba(30,122,66,0.1);border:1px solid var(--green);border-radius:4px;padding:4px 10px;margin-bottom:4px"><span style="color:var(--green)">Data Link:</span> [MAC Hdr | IP | TCP | DATA | Trailer]</div>
+        <div style="background:rgba(14,116,144,0.1);border:1px solid var(--teal);border-radius:4px;padding:4px 10px"><span style="color:var(--teal)">Physical:</span> 010110101001... (bits)</div>
+      </div>
+    </div>
+    <div>
+      <div style="font-weight:700;color:var(--green);font-size:13px;margin-bottom:8px">📥 RECEIVER — Removing Headers (Decapsulation)</div>
+      <div style="font-family:monospace;font-size:12.5px;line-height:2.2">
+        <div style="background:rgba(14,116,144,0.1);border:1px solid var(--teal);border-radius:4px;padding:4px 10px;margin-bottom:4px"><span style="color:var(--teal)">Physical:</span> 010110101001... → bits</div>
+        <div style="background:rgba(30,122,66,0.1);border:1px solid var(--green);border-radius:4px;padding:4px 10px;margin-bottom:4px"><span style="color:var(--green)">Data Link:</span> removes MAC header/trailer</div>
+        <div style="background:rgba(217,79,0,0.1);border:1px solid var(--accent2);border-radius:4px;padding:4px 10px;margin-bottom:4px"><span style="color:var(--accent2)">Network:</span> removes IP header</div>
+        <div style="background:rgba(26,111,212,0.1);border:1px solid var(--accent);border-radius:4px;padding:4px 10px;margin-bottom:4px"><span style="color:var(--accent)">Transport:</span> removes TCP header</div>
+        <div style="background:rgba(107,33,168,0.1);border:1px solid var(--purple);border-radius:4px;padding:4px 10px"><span style="color:var(--purple)">App Layer:</span> [DATA] ← original!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ §7 EXAM QUESTIONS ══════════ -->
+<div id="questions" class="section-header">
+  <div class="sec-num" style="background:var(--purple)">Q</div>
+  <div class="sec-title">
+    <h2>Exam Questions &amp; Complete Solutions</h2>
+    <div class="ar">أسئلة الامتحان مع الحلول الكاملة</div>
+  </div>
+</div>
+
+<div class="q-item">
+  <div class="q-num">Question 1</div>
+  <div class="q-text">What is the responsibility of each TCP/IP layer? Give the data unit name for each.</div>
+  <div class="answer-box">
+    <div class="ans-label">✅ Answer</div>
+    <strong>Physical (1):</strong> Transmit individual <em>bits</em> node-to-node over physical medium.<br>
+    <strong>Data Link (2):</strong> Transmit <em>frames</em> node-to-node; framing, MAC addressing, error + flow control.<br>
+    <strong>Network (3):</strong> Deliver <em>packets</em> source-to-destination across multiple networks; IP addressing + routing.<br>
+    <strong>Transport (4):</strong> Deliver <em>segments/messages</em> process-to-process; port addressing, segmentation, TCP/UDP.<br>
+    <strong>Application (5):</strong> Provide services (<em>messages</em>) to the user; HTTP, FTP, DNS, email.
+  </div>
+</div>
+
+<div class="q-item">
+  <div class="q-num">Question 2</div>
+  <div class="q-text">What address does each layer use? What is the size of each address type?</div>
+  <div class="answer-box">
+    <div class="ans-label">✅ Answer</div>
+    <strong>Data Link Layer:</strong> MAC Address — 48 bits (6 bytes), written as 12 hex digits separated by colons (e.g., 07:01:02:01:2C:4B)<br>
+    <strong>Network Layer:</strong> IP Address — 32 bits (IPv4)<br>
+    <strong>Transport Layer:</strong> Port Number — 16 bits, represented as a single decimal number (e.g., 753)
+  </div>
+</div>
+
+<div class="q-item">
+  <div class="q-num">Question 3</div>
+  <div class="q-text">What are the two extra layers in OSI compared to TCP/IP? What does each do?</div>
+  <div class="answer-box">
+    <div class="ans-label">✅ Answer</div>
+    <strong>Session Layer (Layer 5 in OSI):</strong> Network dialog controller — establishes, maintains, and synchronizes communication sessions between systems.<br>
+    <strong>Presentation Layer (Layer 6 in OSI):</strong> Handles data translation (format conversion), encryption/decryption, and compression. Both are absorbed into the Application layer in TCP/IP.
+  </div>
+</div>
+
+<div class="q-item">
+  <div class="q-num">Question 4</div>
+  <div class="q-text">Does the MAC address change at each hop? What about IP and Port addresses?</div>
+  <div class="answer-box">
+    <div class="ans-label">✅ Answer</div>
+    <strong>MAC address:</strong> YES — changes at every hop (router). It is local to each link.<br>
+    <strong>IP address:</strong> NO — remains the same from source to destination (end-to-end).<br>
+    <strong>Port number:</strong> NO — remains the same from source to destination (end-to-end).
+  </div>
+</div>
+
+<div class="q-item">
+  <div class="q-num">Question 5</div>
+  <div class="q-text">What is peer-to-peer communication in networking? Give an example.</div>
+  <div class="answer-box">
+    <div class="ans-label">✅ Answer</div>
+    Peer-to-peer communication means corresponding layers on two different machines communicate logically with each other. Example: The network layer on Computer A communicates logically with the network layer on Computer B using the IP protocol — even though physically the data passes through all five layers at both ends and all intermediate nodes.
+  </div>
+</div>
+
+<div class="q-item">
+  <div class="q-num">Question 6</div>
+  <div class="q-text">Why is the Network layer needed when we already have the Data Link layer?</div>
+  <div class="answer-box">
+    <div class="ans-label">✅ Answer</div>
+    The Data Link layer uses MAC addresses which are local — they only work within a single LAN (no meaning outside). If two devices are on different networks, we cannot use MAC addresses to route between them. The Network layer provides logical (IP) addresses that are universal and can cross LAN boundaries, enabling source-to-destination delivery across multiple networks.
+  </div>
+</div>
+
+<div class="q-item">
+  <div class="q-num">Question 7</div>
+  <div class="q-text">What is encapsulation? Describe the process as data travels from Application to Physical layer.</div>
+  <div class="answer-box">
+    <div class="ans-label">✅ Answer</div>
+    Encapsulation is the process where each layer adds its own header (control information) to the data received from the layer above.<br>
+    <strong>Process:</strong><br>
+    1. Application creates a message (DATA)<br>
+    2. Transport adds TCP/UDP header → Segment [TCP | DATA]<br>
+    3. Network adds IP header → Packet [IP | TCP | DATA]<br>
+    4. Data Link adds MAC header + trailer → Frame [MAC-H | IP | TCP | DATA | Trailer]<br>
+    5. Physical converts to bits and transmits
+  </div>
+</div>
+
+<div class="q-item">
+  <div class="q-num">Question 8</div>
+  <div class="q-text">What is the difference between TCP and UDP at the Transport layer?</div>
+  <div class="answer-box">
+    <div class="ans-label">✅ Answer</div>
+    <strong>TCP (Transmission Control Protocol):</strong> Connection-oriented, reliable delivery, flow control, error control, ordered segments. Used for: HTTP, FTP, email — where accuracy matters.<br>
+    <strong>UDP (User Datagram Protocol):</strong> Connectionless, no delivery guarantee, minimal overhead, fast. Used for: streaming video, VoIP, DNS, gaming — where speed matters more than reliability.
+  </div>
+</div>
+
+<div class="q-item">
+  <div class="q-num">Question 9</div>
+  <div class="q-text">What is the difference between the Internet Model (TCP/IP) and the OSI model? Which is actually used?</div>
+  <div class="answer-box">
+    <div class="ans-label">✅ Answer</div>
+    TCP/IP: 5 layers, practical model, developed from ARPANET, widely used in the real Internet.<br>
+    OSI: 7 layers, theoretical reference model, developed by ISO, never fully implemented commercially.<br>
+    <strong>The TCP/IP model is actually used</strong> in practice. OSI is used as a teaching/reference framework only.
+  </div>
+</div>
+
+<div class="q-item">
+  <div class="q-num">Question 10 — Scenario</div>
+  <div class="q-text">You send an email from your PC in Jordan to a server in the USA. At which layer does each of the following happen? (a) Your email text is created. (b) The email is split into segments. (c) Each segment gets an IP address. (d) Each packet gets a MAC address for the next hop. (e) Bits are sent over the cable.</div>
+  <div class="answer-box">
+    <div class="ans-label">✅ Answer</div>
+    (a) <strong>Application Layer</strong> — message created by email protocol (SMTP)<br>
+    (b) <strong>Transport Layer</strong> — segmentation and port addressing<br>
+    (c) <strong>Network Layer</strong> — IP header added with your IP and server's IP<br>
+    (d) <strong>Data Link Layer</strong> — MAC header added for the local next-hop router<br>
+    (e) <strong>Physical Layer</strong> — electrical/optical signals transmitted
+  </div>
+</div>
+
+<!-- FINAL SUMMARY -->
+<hr class="div">
+<div class="final">
+  <h2>📚 Chapter 2 — Complete Review Sheet <span style="font-family:Cairo,sans-serif;font-size:.85rem;color:var(--gold);display:block;font-weight:600;margin-top:2px;direction:rtl">ورقة المراجعة النهائية الشاملة</span></h2>
+  <div class="grid2">
+    <div>
+      <div style="font-weight:700;color:var(--accent);font-size:12px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">TCP/IP — 5 Layers (Bottom → Top)</div>
+      <ol style="font-size:13px;line-height:2.2;margin-left:16px">
+        <li><strong style="color:var(--teal)">Physical</strong> → Bits → Node-to-Node → No address</li>
+        <li><strong style="color:var(--green)">Data Link</strong> → Frames → Node-to-Node → MAC (48-bit)</li>
+        <li><strong style="color:var(--accent2)">Network</strong> → Packets → Host-to-Host → IP (32-bit)</li>
+        <li><strong style="color:var(--accent)">Transport</strong> → Segments → Process-to-Process → Port (16-bit)</li>
+        <li><strong style="color:var(--purple)">Application</strong> → Messages → User-to-User → URL/App</li>
+      </ol>
+    </div>
+    <div>
+      <div style="font-weight:700;color:var(--accent2);font-size:12px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">OSI Extra Layers</div>
+      <ul style="font-size:13px;line-height:2.2;margin-left:16px">
+        <li><strong>Session (5):</strong> Dialog control &amp; sync</li>
+        <li><strong>Presentation (6):</strong> Translation, encryption, compression</li>
+      </ul>
+      <div style="font-weight:700;color:var(--green);font-size:12px;margin:12px 0 6px;text-transform:uppercase;letter-spacing:.5px">Critical Rules</div>
+      <ul style="font-size:13px;line-height:2;margin-left:16px">
+        <li>MAC changes every hop ✓</li>
+        <li>IP &amp; Port stay same end-to-end ✓</li>
+        <li>Encapsulation = add headers going down ✓</li>
+        <li>Decapsulation = remove headers going up ✓</li>
+      </ul>
+    </div>
+  </div>
+  <div class="ar-box" style="margin-top:16px">
+    <div class="ar-label">Arabic — ورقة المراجعة</div>
+    <strong>طبقات TCP/IP من الأسفل للأعلى:</strong><br>
+    ① فيزيائي (Bit) | ② ربط بيانات (Frame/MAC) | ③ شبكة (Packet/IP) | ④ نقل (Segment/Port) | ⑤ تطبيق (Message)<br><br>
+    <strong>القواعد الذهبية:</strong><br>
+    • MAC يتغير كل hop | IP وPort يبقيان ثابتَين من المصدر للوجهة<br>
+    • التغليف (Encapsulation): إضافة Headers نزولاً | فك التغليف: إزالة Headers صعوداً<br>
+    • OSI = 7 طبقات نظري | TCP/IP = 5 طبقات عملي<br>
+    • الطبقتان الإضافيتان في OSI: Session (جلسات) + Presentation (تشفير/ترجمة/ضغط)<br>
+    • Peer-to-Peer: تواصل منطقي بين طبقات متماثلة في جهازين مختلفين
+  </div>
+</div>
+
+</div><!-- /container -->
+</body>
+</html>

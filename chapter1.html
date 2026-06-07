@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 1 &mdash; Introduction to Data Communications | Study Guide</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --navy: #07111f;
+      --deep: #0b1a2e;
+      --mid-blue: #102340;
+      --card-bg: rgba(16, 35, 64, .6);
+      --border: rgba(0, 200, 255, .18);
+      --accent: #00c8ff;
+      --accent2: #ff6b35;
+      --gold: #ffc940;
+      --green: #3effa0;
+      --red: #ff5f6d;
+      --purple: #b48aff;
+      --text: #dce8f5;
+      --muted: #7d93ad;
+      --highlight: rgba(0, 200, 255, .07);
+      --ar-bg: rgba(255, 201, 64, .05);
+      --ar-border: rgba(255, 201, 64, .25)
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    body {
+      font-family: Inter, sans-serif;
+      background: var(--navy);
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 14.5px
+    }
+
+    b,
+    strong {
+      color: #fff
+    }
+
+    .hero {
+      background: linear-gradient(160deg, #07111f 0%, #0b1a2e 45%, #130c30 100%);
+      padding: 64px 40px 52px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--accent)
+    }
+
+    .hero:before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 55% at 50% -5%, rgba(0, 200, 255, .13), transparent 70%);
+      pointer-events: none
+    }
+
+    .badge {
+      display: inline-block;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      padding: 5px 20px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      text-transform: uppercase
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -1px;
+      margin-bottom: 6px
+    }
+
+    .hero h1 span {
+      color: var(--accent)
+    }
+
+    .hero .ar-title {
+      font-family: Cairo, sans-serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      margin-bottom: 18px;
+      direction: rtl
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 13px;
+      max-width: 620px;
+      margin: 0 auto
+    }
+
+    .lang-bar {
+      background: var(--deep);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .lang-bar strong {
+      color: var(--accent)
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 36px 24px 90px
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin: 52px 0 20px
+    }
+
+    .sec-num {
+      width: 46px;
+      height: 46px;
+      background: var(--accent);
+      color: var(--navy);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 2px
+    }
+
+    .sec-titles h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -.3px
+    }
+
+    .sec-titles .ar {
+      font-family: Cairo, sans-serif;
+      font-size: .92rem;
+      color: var(--gold);
+      direction: rtl;
+      text-align: right;
+      margin-top: 1px
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 26px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(4px)
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .card-title:before {
+      content: '&#9658;';
+      color: var(--accent2);
+      font-size: 11px;
+      flex-shrink: 0
+    }
+
+    .card-title .ar {
+      font-family: Cairo, sans-serif;
+      font-size: .8rem;
+      color: var(--gold);
+      font-weight: 600;
+      direction: rtl
+    }
+
+    .card p,
+    .card li {
+      margin-bottom: 5px
+    }
+
+    .card ul,
+    .card ol {
+      padding-left: 22px
+    }
+
+    .ar-box {
+      background: var(--ar-bg);
+      border: 1px solid var(--ar-border);
+      border-right: 4px solid var(--gold);
+      border-radius: 0 10px 10px 0;
+      padding: 13px 16px;
+      margin-top: 12px;
+      direction: rtl;
+      text-align: right;
+      font-family: Cairo, sans-serif;
+      font-size: 13.5px;
+      color: #ccd6e8;
+      line-height: 1.9
+    }
+
+    .ar-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      direction: ltr;
+      text-align: left
+    }
+
+    .highlight {
+      background: var(--highlight);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 13px 16px;
+      margin: 10px 0;
+      font-size: 13.5px
+    }
+
+    .note {
+      background: rgba(255, 107, 53, .07);
+      border: 1px solid rgba(255, 107, 53, .28);
+      border-radius: 10px;
+      padding: 13px 16px;
+      margin: 10px 0;
+      font-size: 13.5px
+    }
+
+    .note-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent2);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 5px
+    }
+
+    .formula,
+    pre {
+      background: rgba(0, 0, 0, .45);
+      border: 1px solid rgba(255, 201, 64, .25);
+      border-radius: 8px;
+      padding: 12px 18px;
+      margin: 10px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      color: var(--gold);
+      direction: ltr;
+      overflow-x: auto;
+      white-space: pre
+    }
+
+    .formula .flabel {
+      font-family: Inter, sans-serif;
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 5px;
+      letter-spacing: .5px;
+      text-transform: uppercase
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 14px 0
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px
+    }
+
+    thead th {
+      background: var(--mid-blue);
+      color: var(--accent);
+      padding: 11px 14px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: .4px;
+      white-space: nowrap
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(0, 200, 255, .07)
+    }
+
+    tbody tr:hover {
+      background: var(--highlight)
+    }
+
+    tbody td {
+      padding: 10px 14px;
+      vertical-align: top
+    }
+
+    tbody td:first-child {
+      font-weight: 600;
+      color: var(--gold);
+      white-space: nowrap
+    }
+
+    .g {
+      color: var(--green)
+    }
+
+    .r {
+      color: var(--red)
+    }
+
+    .y {
+      color: var(--gold)
+    }
+
+    .p {
+      color: var(--purple)
+    }
+
+    .tag {
+      display: inline-block;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      background: rgba(0, 200, 255, .1);
+      border-radius: 5px;
+      padding: 1px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      margin: 2px
+    }
+
+    .tag.o {
+      border-color: var(--accent2);
+      color: var(--accent2);
+      background: rgba(255, 107, 53, .1)
+    }
+
+    .tag.g {
+      border-color: var(--green);
+      color: var(--green);
+      background: rgba(62, 255, 160, .08)
+    }
+
+    .tag.y {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(255, 201, 64, .08)
+    }
+
+    .tag.r {
+      border-color: var(--red);
+      color: var(--red);
+      background: rgba(255, 95, 109, .08)
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px
+    }
+
+    .grid3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px
+    }
+
+    @media(max-width:640px) {
+
+      .grid2,
+      .grid3 {
+        grid-template-columns: 1fr
+      }
+
+      .hero h1 {
+        font-size: 2.15rem
+      }
+
+      .container {
+        padding: 28px 14px 70px
+      }
+
+      .card {
+        padding: 18px 16px
+      }
+    }
+
+    .flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0;
+      margin: 14px 0;
+      overflow-x: auto
+    }
+
+    .fbox {
+      background: var(--mid-blue);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 9px 14px;
+      font-size: 12.5px;
+      font-weight: 600;
+      text-align: center;
+      white-space: nowrap
+    }
+
+    .fbox.a {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0, 200, 255, .1)
+    }
+
+    .fbox.o {
+      border-color: var(--accent2);
+      color: var(--accent2);
+      background: rgba(255, 107, 53, .1)
+    }
+
+    .fbox.p {
+      border-color: var(--purple);
+      color: var(--purple);
+      background: rgba(180, 138, 255, .1)
+    }
+
+    .fbox.g {
+      border-color: var(--green);
+      color: var(--green);
+      background: rgba(62, 255, 160, .08)
+    }
+
+    .arrow {
+      color: var(--muted);
+      font-size: 18px;
+      padding: 0 8px
+    }
+
+    hr.div {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: .2;
+      margin: 44px 0
+    }
+
+    .final {
+      background: linear-gradient(135deg, rgba(0, 200, 255, .06), rgba(7, 17, 31, .8));
+      border: 1px solid var(--accent);
+      border-radius: 16px;
+      padding: 30px;
+      margin-top: 52px
+    }
+
+    .final h2 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 18px
+    }
+
+    .final h2 .ar {
+      font-family: Cairo, sans-serif;
+      font-size: .85rem;
+      color: var(--gold);
+      font-weight: 600;
+      direction: rtl;
+      display: block;
+      margin-top: 2px
+    }
+
+    .answer {
+      color: var(--green);
+      font-weight: 700
+    }
+
+    .small {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .exam-q {
+      border-left: 3px solid var(--purple);
+      background: rgba(180, 138, 255, .05);
+      border-radius: 0 8px 8px 0;
+      padding: 13px 16px;
+      margin: 10px 0;
+      font-size: 13.5px
+    }
+
+    .exam-q .q-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--purple);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 5px
+    }
+
+    /* topology visual cards */
+    .topo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 16px 0
+    }
+
+    .topo-card {
+      background: var(--mid-blue);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      text-align: center
+    }
+
+    .topo-card .t-title {
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 8px;
+      font-size: 15px
+    }
+
+    .topo-card svg {
+      display: block;
+      margin: 0 auto 10px
+    }
+
+    .topo-card .pros {
+      color: var(--green);
+      font-size: 12px;
+      text-align: left;
+      margin-bottom: 4px
+    }
+
+    .topo-card .cons {
+      color: var(--red);
+      font-size: 12px;
+      text-align: left
+    }
+
+    @media(max-width:600px) {
+      .topo-grid {
+        grid-template-columns: 1fr
+      }
+    }
+
+    /* comparison table highlight rows */
+    .cmp-good {
+      background: rgba(62, 255, 160, .05) !important
+    }
+
+    .cmp-bad {
+      background: rgba(255, 95, 109, .05) !important
+    }
+
+    /* sticky nav */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: rgba(7, 17, 31, .95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap
+    }
+
+    .top-nav a {
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid var(--border);
+      background: rgba(16, 35, 64, .75);
+      padding: 7px 14px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 700;
+      transition: .2s
+    }
+
+    .top-nav a:hover,
+    .top-nav a.active {
+      color: var(--navy);
+      background: var(--accent);
+      border-color: var(--accent)
+    }
+
+    /* deep-dive ar card */
+    .deep-ar {
+      background: rgba(255, 201, 64, .04);
+      border: 1px solid var(--ar-border);
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin: 14px 0;
+      direction: rtl;
+      text-align: right;
+      font-family: Cairo, sans-serif;
+      line-height: 2.1;
+      color: #ccd6e8
+    }
+
+    .deep-ar h4 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--gold);
+      margin-bottom: 10px
+    }
+
+    .deep-ar li {
+      margin-bottom: 6px;
+      list-style: disc inside
+    }
+
+    .deep-ar .en {
+      font-family: Inter, sans-serif;
+      direction: ltr;
+      display: inline;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700
+    }
+
+    .sep {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--purple));
+      border-radius: 2px;
+      margin: 16px 0
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="hero">
+    <div class="badge">Chapter 1 &middot; Data Communications System 4123702</div>
+    <h1>Introduction to <span>Data Communications</span></h1>
+    <div class="ar-title">الشابتر الأول: مقدمة في الاتصالات الرقمية والشبكات &mdash; دليل الدراسة الشامل</div>
+    <p>Complete bilingual study guide &middot; English primary with Arabic explanation &middot; All topics, examples,
+      comparisons, and exam questions</p>
+  </div>
+  <div class="lang-bar">&#128218; <strong>English</strong> &mdash; Main content &nbsp;|&nbsp; &#127769; <strong
+      style="color:var(--gold)">العربي</strong> &mdash; شرح مفصل بالعربي في كل قسم</div>
+
+  <nav class="top-nav">
+    <a href="index.html" class="active">🏠 Home</a>
+    <a href="#sec1">Data Communication</a>
+    <a href="#sec2">Components</a>
+    <a href="#sec3">Data Representation</a>
+    <a href="#sec4">Data Flow</a>
+    <a href="#sec5">Networks</a>
+    <a href="#sec6">Topologies</a>
+    <a href="#sec7">Review</a>
+    <a href="#sec8">Exam Q&amp;A</a>
+  </nav>
+
+  <div class="container">
+
+    <!-- ═══════════════════════════════════════════════ SECTION 1 ═══ -->
+    <div class="section-header" id="sec1">
+      <div class="sec-num">1</div>
+      <div class="sec-titles">
+        <h2>Data Communication &mdash; What &amp; Why</h2>
+        <div class="ar">ما هي الاتصالات الرقمية ولماذا ندرسها؟</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Definition <span class="ar">التعريف</span></div>
+      <p><strong>Data communication</strong> is the exchange of data between two devices via a <strong>transmission
+          medium</strong> (wire, cable, or wireless). The devices must be part of a communication system made up of
+        hardware and software.</p>
+      <div class="highlight">&#128161; <strong>Key idea:</strong> Two devices can be physically connected yet still fail
+        to communicate if they do not share a common <strong>protocol</strong>. Protocol is the agreement that makes
+        communication possible.</div>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; شرح بالعربي &mdash; ما هو الاتصال الرقمي؟</h4>
+        الاتصال الرقمي <span class="en">(Data Communication)</span> هو عملية تبادل البيانات بين جهازين أو أكثر عبر وسط
+        نقل. مثلاً لما ترسل رسالة من هاتفك لصديقك عبر الإنترنت، هذه عملية اتصال رقمي.<br><br>
+        <strong>لماذا ندرسها؟</strong> لأن كل شيء حولنا اليوم يعتمد على الشبكات: الإنترنت، الهواتف، البنوك، المستشفيات،
+        الجامعات. فهم أساسيات الاتصال الرقمي ضروري لأي مهندس حاسوب أو شبكات.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">The Four Fundamental Characteristics <span class="ar">الخصائص الأربع الأساسية</span></div>
+      <p>For a data communication system to be useful, it must satisfy four key characteristics:</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Characteristic</th>
+              <th>Full Meaning</th>
+              <th>Real-World Failure Example</th>
+              <th>بالعربي</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><strong>Delivery</strong></td>
+              <td>Data must arrive at the correct and intended destination &mdash; not at the wrong device</td>
+              <td>An email arriving in the wrong inbox</td>
+              <td>التسليم للجهة الصحيحة</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><strong>Accuracy</strong></td>
+              <td>Data must arrive exactly as sent, without any alteration or corruption. Corrupted data is useless</td>
+              <td>A file that arrives with bit errors and cannot open</td>
+              <td>دقة البيانات — لا تعديل ولا فساد</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><strong>Timeliness</strong></td>
+              <td>Data must arrive in time to be useful. For audio/video, this means real-time delivery in the correct
+                order</td>
+              <td>A video call freezing due to delayed packets</td>
+              <td>التوقيت — وصول البيانات في الوقت المناسب</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td><strong>Jitter</strong></td>
+              <td>Variation in the delay (arrival time) of packets. High jitter causes choppy audio/video</td>
+              <td>Voice packets arriving with uneven timing causing garbled speech</td>
+              <td>الـ Jitter: التفاوت في وقت وصول الحزم</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; شرح بالعربي &mdash; الخصائص الأربع</h4>
+        <ul>
+          <li><strong>التسليم <span class="en">(Delivery)</span>:</strong> الرسالة لازم توصل للجهاز الصح. مثلاً الرسالة
+            اللي ترسلها لأخوك ما تروح لشخص ثاني.</li>
+          <li><strong>الدقة <span class="en">(Accuracy)</span>:</strong> البيانات لازم توصل كما أُرسلت بالضبط. أي تعديل
+            يجعلها غير صالحة. مثال: لو أرسلت ملف PDF وبعض بتاته تغيرت، الملف ما يفتح.</li>
+          <li><strong>التوقيت <span class="en">(Timeliness)</span>:</strong> البيانات لازم توصل في وقتها. خاصة في الصوت
+            والفيديو، التأخر يخرب جودة البث. هذا يسمى <strong>Real-Time Transmission</strong>.</li>
+          <li><strong>الـ Jitter:</strong> ليس التأخر نفسه، بل <u>التفاوت</u> في مقدار التأخر. لو الحزمة الأولى وصلت بعد
+            5ms والثانية بعد 50ms، هذا jitter عالي ويدمر جودة الصوت والفيديو.</li>
+        </ul>
+        <br><strong>&#x26A0; ملاحظة مهمة:</strong> الـ Jitter ليس نفس Delay (التأخر). Delay هو مجرد وقت الوصول. Jitter
+        هو التغيّر في هذا الوقت من حزمة لأخرى.
+      </div>
+      <div class="note">
+        <div class="note-label">&#x26A0; Jitter vs Delay &mdash; الفرق المهم</div>
+        <strong>Delay:</strong> Time for data to travel from source to destination (constant or varying).<br>
+        <strong>Jitter:</strong> The <em>variation</em> in that delay across different packets. Jitter = problem for
+        real-time streams.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">What Is a Protocol? <span class="ar">ما هو البروتوكول؟</span></div>
+      <p>A <strong>protocol</strong> is a set of rules that governs data communications. It defines what is
+        communicated, how it is communicated, and when it is communicated.</p>
+      <div class="highlight">&#128073; Without a protocol, two devices may be physically connected but remain unable to
+        communicate meaningfully &mdash; like two people speaking different languages face to face.</div>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; البروتوكول &mdash; اتفاقية التواصل</h4>
+        البروتوكول <span class="en">(Protocol)</span> هو مجموعة قواعد متفق عليها بين الأجهزة حتى تتمكن من التواصل. يشبه
+        اللغة: لو أنت تتكلم عربي وصاحبك يتكلم ياباني، حتى لو واجفين جنب بعض ما تقدرون تتفاهمون. البروتوكول هو اللغة
+        المشتركة للأجهزة.<br><br>
+        أمثلة على بروتوكولات: <span class="en">HTTP</span> (لتصفح الإنترنت)، <span class="en">TCP/IP</span> (للاتصال عبر
+        الشبكة)، <span class="en">FTP</span> (لنقل الملفات).
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <!-- ═══════════════════════════════════════════════ SECTION 2 ═══ -->
+    <div class="section-header" id="sec2">
+      <div class="sec-num">2</div>
+      <div class="sec-titles">
+        <h2>Five Components of a Data Communication System</h2>
+        <div class="ar">المكونات الخمسة لنظام الاتصال الرقمي</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">The Five Components <span class="ar">المكونات الخمسة</span></div>
+      <p>Every data communication system, regardless of its size, consists of exactly <strong>five components</strong>:
+      </p>
+      <div class="flow">
+        <div class="fbox p">1. Message<br><span class="small">Text/Image/Audio/Video</span></div>
+        <div class="arrow">&rarr;</div>
+        <div class="fbox a">2. Sender<br><span class="small">Computer / Phone</span></div>
+        <div class="arrow">&rarr;</div>
+        <div class="fbox o">3. Transmission Medium<br><span class="small">Cable / Wireless</span></div>
+        <div class="arrow">&rarr;</div>
+        <div class="fbox g">4. Receiver<br><span class="small">Computer / Printer</span></div>
+        <div class="arrow">&rarr;</div>
+        <div class="fbox p">5. Protocol<br><span class="small">Rules</span></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Component</th>
+              <th>Description</th>
+              <th>Examples</th>
+              <th>بالعربي</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Message</td>
+              <td>The actual information to be communicated. Forms: text, numbers, images, audio, video.</td>
+              <td>An email, a photo, a voice call</td>
+              <td>الرسالة: البيانات المراد إرسالها</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Sender</td>
+              <td>The device that generates and transmits the data message</td>
+              <td>Computer, smartphone, workstation, telephone handset</td>
+              <td>المُرسِل: الجهاز الذي يرسل</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Receiver</td>
+              <td>The device that receives the data message</td>
+              <td>Computer, printer, smartphone, TV</td>
+              <td>المُستقبِل: الجهاز الذي يستقبل</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Transmission Medium</td>
+              <td>The physical path through which the message travels from sender to receiver</td>
+              <td>Twisted-pair wire, coaxial cable, fiber optic, radio waves</td>
+              <td>وسط النقل: المسار الفيزيائي للبيانات</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Protocol</td>
+              <td>A set of rules that governs data communication between devices</td>
+              <td>TCP/IP, HTTP, FTP</td>
+              <td>البروتوكول: القواعد التي تحكم الاتصال</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; شرح بالعربي &mdash; المكونات الخمسة</h4>
+        تخيل أنك ترسل رسالة صوتية لصديقك عبر الواتساب:
+        <ul>
+          <li><strong>الرسالة <span class="en">(Message)</span>:</strong> الصوت اللي سجلته. البيانات تتحول لأرقام ثنائية
+            (0 و1) قبل الإرسال.</li>
+          <li><strong>المُرسِل <span class="en">(Sender)</span>:</strong> هاتفك الذي التقط الصوت وبعث البيانات.</li>
+          <li><strong>وسط النقل <span class="en">(Medium)</span>:</strong> شبكة الإنترنت (الواي فاي أو الشبكة الخلوية).
+            الوسط ممكن يكون كيبل مادي أو موجات لاسلكية.</li>
+          <li><strong>المُستقبِل <span class="en">(Receiver)</span>:</strong> هاتف صديقك الذي استقبل البيانات وحوّلها
+            لصوت.</li>
+          <li><strong>البروتوكول <span class="en">(Protocol)</span>:</strong> القواعد التي يتبعها الواتساب لإرسال
+            واستقبال الصوت بشكل صحيح (مثل بروتوكول تشفير الصوت وتجزئته).</li>
+        </ul>
+        <br>&#x26A0; <strong>تنبيه:</strong> الجهاز الواحد يمكن أن يكون مُرسِلاً ومُستقبِلاً في نفس الوقت (كالهاتف في
+        مكالمة). ووسط النقل يمكن أن يكون مادياً (كيبل) أو غير مادي (موجات راديو).
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">DTE and DCE <span class="ar">نموذج الاتصال &mdash; DTE وDCE</span></div>
+      <p>In a communications model, we distinguish between two types of equipment:</p>
+      <div class="grid2">
+        <div class="highlight"><strong>DTE (Data Terminal Equipment)</strong><br>The end device that generates or
+          receives data. Examples: your computer, phone, printer. It is the source or destination of communication.
+        </div>
+        <div class="highlight"><strong>DCE (Data Communication Equipment)</strong><br>The intermediate device that
+          handles the actual transmission of data over the medium. Examples: modems, hubs, routers between DTEs.</div>
+      </div>
+      <div class="flow">
+        <div class="fbox g">DTE<br><span class="small">Your PC</span></div>
+        <div class="arrow">&harr;</div>
+        <div class="fbox o">DCE<br><span class="small">Modem</span></div>
+        <div class="arrow">&harr;</div>
+        <div class="fbox a">Transmission Network</div>
+        <div class="arrow">&harr;</div>
+        <div class="fbox o">DCE<br><span class="small">Modem</span></div>
+        <div class="arrow">&harr;</div>
+        <div class="fbox g">DTE<br><span class="small">Server</span></div>
+      </div>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; DTE و DCE</h4>
+        <span class="en">DTE (Data Terminal Equipment)</span>: جهاز الطرف النهائي — الجهاز الذي ينشئ أو يستقبل البيانات.
+        مثل: حاسوبك، هاتفك، طابعتك.<br><br>
+        <span class="en">DCE (Data Communication Equipment)</span>: جهاز الاتصال الوسيط — الجهاز الذي يتولى نقل البيانات
+        عبر الشبكة. مثل: الموديم، المحول <span class="en">(Switch)</span>، الراوتر.<br><br>
+        في الشبكة الكاملة: <strong>DTE &harr; DCE &harr; شبكة النقل &harr; DCE &harr; DTE</strong>. الـ DTE يرسل/يستقبل،
+        والـ DCE ينقل.
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <!-- ═══════════════════════════════════════════════ SECTION 3 ═══ -->
+    <div class="section-header" id="sec3">
+      <div class="sec-num">3</div>
+      <div class="sec-titles">
+        <h2>Data Representation</h2>
+        <div class="ar">تمثيل البيانات</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">How Different Data Types Are Represented <span class="ar">كيف تُمثَّل البيانات؟</span>
+      </div>
+      <p>All information transmitted over a network must be converted into a form that can travel through the medium.
+        Everything becomes <strong>bit patterns (0s and 1s)</strong>.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Data Type</th>
+              <th>Representation Method</th>
+              <th>Encoding Standards</th>
+              <th>بالعربي</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Text</td>
+              <td>Bit patterns where each character maps to a unique code</td>
+              <td>ASCII (7-bit), Extended ASCII (8-bit), Unicode (16-bit), ISO</td>
+              <td>النص &rarr; نمط بتات لكل حرف</td>
+            </tr>
+            <tr>
+              <td>Numbers</td>
+              <td>Binary equivalent directly (not converted to character codes)</td>
+              <td>Binary, BCD, Two's complement</td>
+              <td>الأرقام &rarr; مكافئ ثنائي مباشر</td>
+            </tr>
+            <tr>
+              <td>Images</td>
+              <td>Matrix of pixels; each pixel represented as a bit pattern for color/intensity</td>
+              <td>RGB (3 bytes/pixel), grayscale (1 byte), JPEG, PNG</td>
+              <td>الصور &rarr; مصفوفة بكسلات</td>
+            </tr>
+            <tr>
+              <td>Audio</td>
+              <td>Recording/broadcasting of sound waves digitized as bit patterns</td>
+              <td>MP3, WAV, PCM sampling</td>
+              <td>الصوت &rarr; موجات صوتية رقمية</td>
+            </tr>
+            <tr>
+              <td>Video</td>
+              <td>A sequence of images (frames) combined with audio</td>
+              <td>MP4, AVI, frame rate (fps)</td>
+              <td>الفيديو &rarr; تسلسل صور + صوت</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; شرح بالعربي &mdash; تمثيل البيانات</h4>
+        كل شيء في الحاسوب والشبكة يتحول إلى أرقام ثنائية (0 و1) قبل الإرسال:
+        <ul>
+          <li><strong>النص <span class="en">(Text)</span>:</strong> كل حرف له رقم ثنائي محدد. مثلاً الحرف 'A' في ASCII =
+            65 = 01000001 ثنائي. Unicode يدعم لغات أكثر بما فيها العربية.</li>
+          <li><strong>الأرقام <span class="en">(Numbers)</span>:</strong> تتحول مباشرة لثنائي. الرقم 5 = 101 ثنائي. لا
+            تمر بمرحلة ASCII.</li>
+          <li><strong>الصور <span class="en">(Images)</span>:</strong> الصورة مصفوفة من البكسلات. كل بكسل له قيمة لونية
+            محفوظة كأرقام ثنائية. كلما زاد عدد البتات لكل بكسل، كانت الصورة أوضح وأثقل.</li>
+          <li><strong>الصوت <span class="en">(Audio)</span>:</strong> الصوت موجة تناظرية (Analog) تتحول لأرقام رقمية عبر
+            عملية أخذ العينات <span class="en">(Sampling)</span>.</li>
+          <li><strong>الفيديو <span class="en">(Video)</span>:</strong> تسلسل من الصور بمعدل معين (مثلاً 30 إطار في
+            الثانية) مع صوت مدمج.</li>
+        </ul>
+      </div>
+      <div class="note">
+        <div class="note-label">Key Difference &mdash; Text vs Numbers</div>
+        When you type the number <strong>5</strong> as text, it is stored as ASCII code 53 = 00110101. But when the
+        computer stores the <em>value</em> 5, it stores it as binary 101. These are <strong>different
+          representations</strong>.
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <!-- ═══════════════════════════════════════════════ SECTION 4 ═══ -->
+    <div class="section-header" id="sec4">
+      <div class="sec-num">4</div>
+      <div class="sec-titles">
+        <h2>Direction of Data Flow</h2>
+        <div class="ar">اتجاه تدفق البيانات</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Three Modes of Communication <span class="ar">أنماط الاتصال الثلاثة</span></div>
+      <p>Data can flow between devices in three different directional modes. The mode chosen depends on the application
+        requirements.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Mode</th>
+              <th>Direction</th>
+              <th>Both Can Transmit Simultaneously?</th>
+              <th>Examples</th>
+              <th>بالعربي</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="cmp-bad">
+              <td><strong>Simplex</strong></td>
+              <td>One-way only<br>(A&rarr;B always; B cannot send)</td>
+              <td class="r">No &mdash; only one side transmits ever</td>
+              <td>Keyboard &rarr; CPU, TV broadcast, alarm sensor</td>
+              <td>اتجاه واحد فقط &mdash; المستقبل لا يرسل</td>
+            </tr>
+            <tr>
+              <td><strong>Half-Duplex</strong></td>
+              <td>Both directions<br>but alternate (one at a time)</td>
+              <td class="y">No &mdash; must take turns</td>
+              <td>Walkie-talkie, fax machine, CB radio</td>
+              <td>اتجاهان بالتناوب &mdash; واحد يرسل والثاني ينتظر</td>
+            </tr>
+            <tr class="cmp-good">
+              <td><strong>Full-Duplex</strong></td>
+              <td>Both directions simultaneously</td>
+              <td class="g">Yes &mdash; at the same time</td>
+              <td>Telephone call, video call, most LAN links</td>
+              <td>اتجاهان في نفس الوقت &mdash; الأكثر شيوعاً</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; شرح مفصل بالعربي &mdash; اتجاه التدفق</h4>
+        <ul>
+          <li><strong>Simplex (مبسط أحادي الاتجاه):</strong> مثل التلفزيون — المحطة ترسل وأنت تستقبل فقط. لوحة المفاتيح
+            ترسل للحاسوب فقط. لا يوجد رد. <span class="en">One device = Sender only, other = Receiver only.</span></li>
+          <li><strong>Half-Duplex (نصف مزدوج):</strong> مثل جهاز الواكي-توكي. لما تتكلم تقول "انتهيت" (over) حتى يعرف
+            الطرف الثاني إنه دوره الآن. كلاهما يستطيع الإرسال لكن ليس في نفس الوقت — يجب بالتناوب.</li>
+          <li><strong>Full-Duplex (مزدوج كامل):</strong> مثل المكالمة الهاتفية. كلاكما تتحدثون وتسمعون في نفس الوقت. هذا
+            الوضع يحتاج إما قناتين منفصلتين أو تقنية للفصل بين الإرسال والاستقبال.</li>
+        </ul>
+        <br>&#x26A0; <strong>ملاحظة:</strong> معظم شبكات الحاسوب الحديثة تعمل بـ Full-Duplex لأنها توفر أعلى أداء وأقل
+        تأخر.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Visual Comparison &mdash; Data Flow Modes <span class="ar">مقارنة مرئية</span></div>
+      <div class="flow">
+        <div style="text-align:center;padding:0 20px">
+          <div style="color:var(--muted);font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">SIMPLEX
+          </div>
+          <div class="flow" style="margin:0">
+            <div class="fbox a">A</div>
+            <div class="arrow" style="font-size:22px">&rarr;</div>
+            <div class="fbox g">B</div>
+          </div>
+          <div style="color:var(--red);font-size:11px;margin-top:6px">B cannot send</div>
+        </div>
+        <div style="color:var(--border);font-size:32px;padding:0 16px">|</div>
+        <div style="text-align:center;padding:0 20px">
+          <div style="color:var(--muted);font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">
+            HALF-DUPLEX</div>
+          <div class="flow" style="margin:0">
+            <div class="fbox a">A</div>
+            <div class="arrow" style="font-size:22px">&harr;</div>
+            <div class="fbox g">B</div>
+          </div>
+          <div style="color:var(--gold);font-size:11px;margin-top:6px">Alternately, never simultaneous</div>
+        </div>
+        <div style="color:var(--border);font-size:32px;padding:0 16px">|</div>
+        <div style="text-align:center;padding:0 20px">
+          <div style="color:var(--muted);font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px">
+            FULL-DUPLEX</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div class="flow" style="margin:0">
+              <div class="fbox a">A</div>
+              <div class="arrow">&rarr;</div>
+              <div class="fbox g">B</div>
+            </div>
+            <div class="flow" style="margin:0">
+              <div class="fbox a">A</div>
+              <div class="arrow">&larr;</div>
+              <div class="fbox g">B</div>
+            </div>
+          </div>
+          <div style="color:var(--green);font-size:11px;margin-top:6px">Simultaneously both ways</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <!-- ═══════════════════════════════════════════════ SECTION 5 ═══ -->
+    <div class="section-header" id="sec5">
+      <div class="sec-num">5</div>
+      <div class="sec-titles">
+        <h2>Networks: Definition, Criteria &amp; Types of Connections</h2>
+        <div class="ar">الشبكات: التعريف والمعايير وأنواع الاتصالات</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">What Is a Network? <span class="ar">ما هي الشبكة؟</span></div>
+      <p>A <strong>network</strong> is a set of devices (called <strong>nodes</strong>) connected by communication links
+        (called <strong>channels</strong>). A node can be a computer, printer, smartphone, or any device capable of
+        sending and/or receiving data.</p>
+      <ul>
+        <li>The links connecting devices are called <strong>communication channels</strong></li>
+        <li>Most networks use <strong>distributed processing</strong>: work is divided among multiple computers rather
+          than done by a single large machine</li>
+        <li>Advantages of distributed processing: reliability, speed, security, resource sharing</li>
+      </ul>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; شرح بالعربي &mdash; الشبكة</h4>
+        الشبكة <span class="en">(Network)</span> هي مجموعة من الأجهزة <span class="en">(Nodes)</span> المتصلة ببعضها عبر
+        وسائل اتصال <span class="en">(Links/Channels)</span>. الجهاز في الشبكة يسمى "عقدة" <span
+          class="en">(Node)</span> وقد يكون حاسوب، طابعة، هاتف، سيرفر، أو أي جهاز قادر على الإرسال أو الاستقبال.<br><br>
+        <strong>المعالجة الموزعة <span class="en">(Distributed Processing)</span>:</strong> بدل ما يكون في جهاز واحد ضخم
+        يقوم بكل العمل، يتوزع العمل على عدة أجهزة. هذا يجعل الشبكة أسرع وأكثر أماناً وأقل تأثراً بأعطال الأجهزة.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Network Criteria (Standards) <span class="ar">معايير الشبكة الجيدة</span></div>
+      <p>A good network must satisfy three fundamental criteria:</p>
+      <div class="grid3">
+        <div class="highlight">
+          <strong style="color:var(--accent)">&#9889; Performance</strong><br>
+          Measured by <strong>throughput</strong> (actual data rate) and <strong>delay</strong> (time for delivery).
+          Depends on: number of users, type of medium, hardware capabilities, and software efficiency.
+        </div>
+        <div class="highlight">
+          <strong style="color:var(--gold)">&#128274; Reliability</strong><br>
+          Measured by: <strong>frequency of failure</strong> (how often does it break?), <strong>recovery time</strong>
+          (how fast does it recover?), and <strong>robustness in disasters</strong>.
+        </div>
+        <div class="highlight">
+          <strong style="color:var(--green)">&#128737; Security</strong><br>
+          Protecting data from <strong>unauthorized access</strong>, protecting hardware and software from damage, and
+          preventing <strong>viruses and worms</strong>.
+        </div>
+      </div>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; معايير الشبكة</h4>
+        <ul>
+          <li><strong>الأداء <span class="en">(Performance)</span>:</strong> يُقاس بمقدار البيانات التي تنتقل في الثانية
+            <span class="en">(Throughput)</span> وبالتأخر <span class="en">(Delay)</span>. كلما زاد المستخدمون أو ضعف
+            الوسط، كلما انخفض الأداء.</li>
+          <li><strong>الموثوقية <span class="en">(Reliability)</span>:</strong> كم مرة تعطل الشبكة؟ وكم يستغرق إصلاحها؟
+            الشبكة الجيدة تتعافى بسرعة وتحمل الأعطال.</li>
+          <li><strong>الأمان <span class="en">(Security)</span>:</strong> حماية البيانات من السرقة والتلاعب والوصول غير
+            المصرح به. يشمل الحماية من الفيروسات والاختراق.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Types of Connections <span class="ar">أنواع الاتصالات</span></div>
+      <div class="grid2">
+        <div>
+          <div class="highlight">
+            <strong>Point-to-Point Connection</strong><br>
+            A dedicated link between exactly two devices. The entire capacity of the link is reserved for those two
+            devices only. Fast and private.<br>
+            <span style="color:var(--muted);font-size:12px">Example: A direct cable from your laptop to a
+              printer.</span>
+          </div>
+        </div>
+        <div>
+          <div class="highlight">
+            <strong>Multipoint (Multidrop) Connection</strong><br>
+            A single link shared among more than two devices. All devices share the same channel capacity. Cheaper but
+            slower when many use it simultaneously.<br>
+            <span style="color:var(--muted);font-size:12px">Example: A bus topology where all PCs share one
+              cable.</span>
+          </div>
+        </div>
+      </div>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; أنواع الاتصالات</h4>
+        <strong>Point-to-Point (نقطة لنقطة):</strong> كيبل أو قناة مخصصة بين جهازين فقط. كل السعة مخصصة لهما. مثل: السلك
+        الرابط بين حاسوبك والطابعة مباشرةً.<br><br>
+        <strong>Multipoint / Multidrop (متعدد النقاط):</strong> عدة أجهزة تشترك في نفس القناة. تُستخدم في الـ Bus
+        Topology. أرخص لكن تحدث مشكلات عند استخدام الجميع لها في نفس الوقت.
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <!-- ═══════════════════════════════════════════════ SECTION 6 ═══ -->
+    <div class="section-header" id="sec6">
+      <div class="sec-num">6</div>
+      <div class="sec-titles">
+        <h2>Physical Topology &mdash; The Four Types</h2>
+        <div class="ar">الطوبولوجيا الفيزيائية &mdash; الأنواع الأربعة</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">What Is Topology? <span class="ar">ما هي الطوبولوجيا؟</span></div>
+      <p><strong>Physical topology</strong> refers to the way in which a network is physically laid out &mdash; how the
+        devices are connected to each other. There are 4 basic types: <strong>Mesh, Star, Bus, Ring</strong>.
+        Combinations form <strong>Hybrid topologies</strong>.</p>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; الطوبولوجيا</h4>
+        الطوبولوجيا <span class="en">(Topology)</span> هي الشكل الجغرافي أو المنطقي الذي تتصل فيه الأجهزة ببعضها. تحديد
+        الطوبولوجيا يؤثر على: تكلفة الشبكة، أداؤها، سهولة إدارتها، وطريقة تعاملها مع الأعطال.
+      </div>
+    </div>
+
+    <!-- MESH -->
+    <div class="card">
+      <div class="card-title">1. Mesh Topology <span class="ar">الطوبولوجيا الشبكية</span></div>
+      <p>Every device has a <strong>dedicated point-to-point link to every other device</strong>. This is the most
+        connected topology possible.</p>
+      <div class="formula">
+        <div class="flabel">Mesh Topology Formulas &mdash; EXAM CRITICAL</div>Number of Physical Links = n(n-1) / 2
+        Number of I/O Ports/device = n - 1
+
+        Example: n = 5 devices
+        Links = 5(5-1)/2 = 5 x 4 / 2 = 10 links
+        Ports = 5 - 1 = 4 ports per device
+
+        Example: n = 4 devices
+        Links = 4(3)/2 = 6 links
+        Ports = 3 ports per device
+      </div>
+      <div class="grid2">
+        <div class="highlight">
+          <strong class="g">&#10003; Advantages of Mesh</strong>
+          <ul style="margin-top:6px">
+            <li>Can handle <strong>high traffic</strong> — dedicated links mean no sharing</li>
+            <li><strong>Fault tolerant</strong> — if one link fails, data takes another route</li>
+            <li>Easy to <strong>identify and isolate faults</strong></li>
+            <li><strong>Privacy</strong> — each connection is point-to-point</li>
+            <li>Expansion does not disrupt other nodes</li>
+          </ul>
+        </div>
+        <div class="note">
+          <div class="note-label">&#10007; Disadvantages of Mesh</div>
+          <ul>
+            <li>Requires <strong>huge amount of cabling</strong> &mdash; expensive</li>
+            <li><strong>High redundancy</strong> — many connections rarely used</li>
+            <li>Complex <strong>installation and maintenance</strong></li>
+            <li>Administration is very difficult</li>
+          </ul>
+        </div>
+      </div>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; Mesh &mdash; الطوبولوجيا الشبكية الكاملة</h4>
+        في Mesh كل جهاز متصل بكل الأجهزة الأخرى بكيبل خاص به. هذا يعني أن لو عندي 6 أجهزة، عدد الكيبلات = 6(5)/2 = 15
+        كيبل، وكل جهاز يحتاج 5 منافذ!<br><br>
+        <strong>المميزات:</strong> لو انقطع كيبل واحد، البيانات تسلك طريقاً آخر — الشبكة لا تنقطع. كل اتصال خاص، فلا
+        يوجد "ازدحام" مرور.<br>
+        <strong>العيوب:</strong> مكلف جداً بسبب كمية الكيبلات الضخمة. تقريباً لا يُستخدم في الشبكات الكبيرة بسبب
+        التكلفة. يُستخدم في الشبكات الصغيرة الحساسة جداً مثل شبكات الجيش.
+      </div>
+    </div>
+
+    <!-- STAR -->
+    <div class="card">
+      <div class="card-title">2. Star Topology <span class="ar">الطوبولوجيا النجمية</span></div>
+      <p>Each device has a <strong>dedicated point-to-point link only to a central controller (hub or switch)</strong>.
+        There is no direct link between devices &mdash; all communication passes through the central hub.</p>
+      <div class="grid2">
+        <div class="highlight">
+          <strong class="g">&#10003; Advantages of Star</strong>
+          <ul style="margin-top:6px">
+            <li><strong>Easy to set up and expand</strong> — just plug a new device into the hub</li>
+            <li><strong>Good performance</strong> — each device has its own link to hub</li>
+            <li><strong>Failure isolation</strong> — if one device's link fails, others continue unaffected</li>
+            <li>Easy to <strong>detect and troubleshoot faults</strong></li>
+          </ul>
+        </div>
+        <div class="note">
+          <div class="note-label">&#10007; Disadvantages of Star</div>
+          <ul>
+            <li><strong>Hub is a single point of failure</strong> — if hub fails, entire network fails</li>
+            <li>More expensive to install (each device needs its own cable to hub)</li>
+            <li><strong>Extra hardware required</strong> (the hub/switch)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; Star &mdash; الطوبولوجيا النجمية</h4>
+        كل الأجهزة متصلة بجهاز مركزي يسمى Hub أو Switch. الأجهزة لا تتحدث مع بعضها مباشرة — كل شيء يمر عبر
+        المركز.<br><br>
+        <strong>المميزات:</strong> سهل التوسع (فقط ربط جهاز جديد بالـ Hub). لو تعطل جهاز واحد أو كيبله، باقي الشبكة تعمل
+        بشكل طبيعي.<br>
+        <strong>العيوب:</strong> نقطة ضعف واحدة وكبيرة: إذا انهار الـ Hub، كل الشبكة تنهار معه. هذا يعني أن الـ Star
+        Topology تعتمد كلياً على سلامة الـ Hub.<br><br>
+        &#x2139; <strong>ملاحظة:</strong> هذه هي الطوبولوجيا الأكثر استخداماً في الشبكات المنزلية والمكتبية الحديثة.
+        الراوتر في بيتك هو الـ Hub، وكل أجهزتك تتصل به.
+      </div>
+    </div>
+
+    <!-- BUS -->
+    <div class="card">
+      <div class="card-title">3. Bus Topology <span class="ar">طوبولوجيا الحافلة</span></div>
+      <p>One cable (<strong>backbone</strong>) acts as a shared medium to which all devices connect using drop lines and
+        taps. All devices share this single cable. This is a <strong>multipoint configuration</strong>.</p>
+      <div class="grid2">
+        <div class="highlight">
+          <strong class="g">&#10003; Advantages of Bus</strong>
+          <ul style="margin-top:6px">
+            <li><strong>Low cost</strong> — requires the least amount of cable</li>
+            <li>Easy to set up and extend</li>
+            <li>Good for <strong>small LAN networks</strong></li>
+            <li>Simple layout; easy to understand</li>
+          </ul>
+        </div>
+        <div class="note">
+          <div class="note-label">&#10007; Disadvantages of Bus</div>
+          <ul>
+            <li><strong>Backbone failure = entire network failure</strong></li>
+            <li>Low security: all devices receive every signal from every sender</li>
+            <li>Limited cable length and number of nodes</li>
+            <li>Not suitable for heavy traffic</li>
+            <li>Difficult to isolate individual faults</li>
+            <li>Efficiency degrades as more devices join</li>
+            <li>Requires terminators at both ends to prevent signal reflection</li>
+          </ul>
+        </div>
+      </div>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; Bus &mdash; طوبولوجيا الحافلة</h4>
+        تخيل طريقاً رئيسياً (الـ Backbone) وكل الأجهزة متصلة به بفروع صغيرة (Drop Lines). كل البيانات تسير على هذا
+        الطريق ويستقبلها الجميع، لكن الجهاز المستهدف فقط هو من يقبلها.<br><br>
+        <strong>المميزات:</strong> الأرخص من حيث كمية الكيبل. مناسب للشبكات الصغيرة.<br>
+        <strong>العيوب:</strong> أكبر عيب هو الأمان الضعيف &mdash; كل جهاز يسمع كل ما يُرسَل! وإذا تلف الكيبل الرئيسي،
+        كل الشبكة تنهار. أيضاً كلما زاد عدد الأجهزة، زاد الازدحام وتدهور الأداء.<br><br>
+        &#x2139; <strong>ملاحظة:</strong> تحتاج Bus Topology إلى مُنهيات (Terminators) في طرفي الكيبل لمنع الإشارة من
+        الارتداد.
+      </div>
+    </div>
+
+    <!-- RING -->
+    <div class="card">
+      <div class="card-title">4. Ring Topology <span class="ar">الطوبولوجيا الحلقية</span></div>
+      <p>Each device has a <strong>dedicated point-to-point link to its two immediate neighbors only</strong>. Signal
+        travels in <strong>one direction</strong> around the ring, and each device acts as a <strong>repeater</strong>
+        to strengthen the signal.</p>
+      <div class="grid2">
+        <div class="highlight">
+          <strong class="g">&#10003; Advantages of Ring</strong>
+          <ul style="margin-top:6px">
+            <li><strong>Fast data transfer</strong> with no bottleneck &mdash; all traffic goes one direction</li>
+            <li>No collisions due to the access method used (token-based)</li>
+            <li>Adding nodes has <strong>little impact on bandwidth</strong></li>
+            <li>Simple data transmission (packets travel in one direction)</li>
+          </ul>
+        </div>
+        <div class="note">
+          <div class="note-label">&#10007; Disadvantages of Ring</div>
+          <ul>
+            <li><strong>One node failure = ring failure</strong> (unless dual-ring is used)</li>
+            <li>Data must pass through every device between sender and receiver &mdash; adds latency</li>
+            <li>Difficult to troubleshoot</li>
+            <li>Adding a station requires briefly shutting down the network</li>
+            <li>All computers must be on for communication</li>
+            <li>Total dependence on the one cable</li>
+          </ul>
+        </div>
+      </div>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; Ring &mdash; الطوبولوجيا الحلقية</h4>
+        كل جهاز متصل بجارين فقط (واحد على اليمين وواحد على اليسار) لتشكيل حلقة مغلقة. البيانات تسير في اتجاه واحد حول
+        الحلقة حتى تصل لوجهتها. كل جهاز يعمل كـ Repeater يُعيد إرسال الإشارة حتى لا تضعف.<br><br>
+        <strong>المميزات:</strong> لا يوجد تصادم (Collision) لأن البيانات تسير باتجاه واحد. سرعة نقل جيدة.<br>
+        <strong>العيوب:</strong> إذا تعطل أي جهاز في الحلقة، الحلقة تنكسر وتنقطع كل الشبكة. هذا هو أكبر عيب. لإضافة جهاز
+        جديد، يجب إيقاف الشبكة مؤقتاً.<br><br>
+        &#x2139; <strong>الـ Dual Ring:</strong> بعض الأنظمة تستخدم حلقة مزدوجة كحل احتياطي &mdash; إذا انكسرت الحلقة
+        الأساسية، تعمل الاحتياطية.
+      </div>
+    </div>
+
+    <!-- HYBRID -->
+    <div class="card">
+      <div class="card-title">5. Hybrid Topology <span class="ar">الطوبولوجيا الهجينة</span></div>
+      <p>A <strong>hybrid topology</strong> combines two or more basic topologies. A common example is a <strong>star
+          backbone with bus networks</strong> &mdash; multiple bus networks, each with its own hub, connected together
+        through a central star backbone.</p>
+      <div class="highlight">&#128161; <strong>Example:</strong> A university campus might use a star backbone
+        connecting buildings, with each building using a bus or star topology internally.</div>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; الطوبولوجيا الهجينة</h4>
+        في الواقع، معظم الشبكات الكبيرة هجينة. مثلاً: جامعة تستخدم Star لربط المباني ببعض عبر Hub مركزي، لكن داخل كل
+        مبنى تستخدم Bus لتوفير التكلفة. هذا يعطي أفضل ما في النوعين.
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <!-- ═══════════════════════════════════════════════ SECTION 7 ═══ -->
+    <div class="section-header" id="sec7">
+      <div class="sec-num">7</div>
+      <div class="sec-titles">
+        <h2>Complete Comparison &amp; Review Tables</h2>
+        <div class="ar">جداول المقارنة الشاملة والمراجعة</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Full Topology Comparison Table <span class="ar">مقارنة شاملة بين الطوبولوجيات</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Mesh</th>
+              <th>Star</th>
+              <th>Bus</th>
+              <th>Ring</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Connection Type</td>
+              <td>Point-to-point (all devices)</td>
+              <td>Point-to-point (to hub)</td>
+              <td>Multipoint (shared)</td>
+              <td>Point-to-point (neighbors only)</td>
+            </tr>
+            <tr>
+              <td>Cables Required</td>
+              <td class="r">n(n-1)/2 &mdash; Most</td>
+              <td class="y">One per device (to hub)</td>
+              <td class="g">One backbone &mdash; Least</td>
+              <td class="y">One per device (in ring)</td>
+            </tr>
+            <tr>
+              <td>Cost</td>
+              <td class="r">Very High</td>
+              <td class="y">Moderate</td>
+              <td class="g">Low</td>
+              <td class="y">Moderate</td>
+            </tr>
+            <tr>
+              <td>Single Point of Failure</td>
+              <td class="g">No &mdash; multiple paths</td>
+              <td class="r">Yes &mdash; the Hub</td>
+              <td class="r">Yes &mdash; the Backbone</td>
+              <td class="r">Yes &mdash; any node</td>
+            </tr>
+            <tr>
+              <td>Scalability (adding nodes)</td>
+              <td class="r">Hard &mdash; new links needed</td>
+              <td class="g">Easy &mdash; plug into hub</td>
+              <td class="y">Moderate</td>
+              <td class="r">Network must pause</td>
+            </tr>
+            <tr>
+              <td>Security / Privacy</td>
+              <td class="g">High &mdash; dedicated links</td>
+              <td class="y">Moderate</td>
+              <td class="r">Low &mdash; all see all</td>
+              <td class="y">Moderate</td>
+            </tr>
+            <tr>
+              <td>Fault Tolerance</td>
+              <td class="g">Very High</td>
+              <td class="y">Moderate</td>
+              <td class="r">Low</td>
+              <td class="r">Low</td>
+            </tr>
+            <tr>
+              <td>Best Used For</td>
+              <td>Military / critical systems</td>
+              <td>Home &amp; office LANs</td>
+              <td>Small cheap LANs</td>
+              <td>Token ring, old networks</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="deep-ar">
+        <h4>&#x1F4DA; ملخص سريع للمقارنة</h4>
+        <ul>
+          <li><strong>Mesh:</strong> الأغلى والأقوى. يُستخدم حيث لا يمكن السماح بأي انقطاع.</li>
+          <li><strong>Star:</strong> الأكثر شيوعاً اليوم. عملي وسهل لكن ضعيف عند تعطل الـ Hub.</li>
+          <li><strong>Bus:</strong> الأرخص لكن الأضعف أماناً والأقل موثوقية.</li>
+          <li><strong>Ring:</strong> سريع ومنظم لكن إذا تعطل أي جهاز توقفت كل الشبكة.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Data Flow Modes Comparison <span class="ar">مقارنة أنماط تدفق البيانات</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Simplex</th>
+              <th>Half-Duplex</th>
+              <th>Full-Duplex</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Direction</td>
+              <td>One way only</td>
+              <td>Both ways (alternate)</td>
+              <td>Both ways (simultaneous)</td>
+            </tr>
+            <tr>
+              <td>Can both sides send at same time?</td>
+              <td class="r">No &mdash; only one side sends</td>
+              <td class="y">No &mdash; must take turns</td>
+              <td class="g">Yes &mdash; simultaneously</td>
+            </tr>
+            <tr>
+              <td>Channel(s) needed</td>
+              <td>1 channel</td>
+              <td>1 channel (shared by turns)</td>
+              <td>2 channels (or frequency split)</td>
+            </tr>
+            <tr>
+              <td>Examples</td>
+              <td>Keyboard &rarr; CPU, TV broadcast, fire alarm</td>
+              <td>Walkie-talkie, fax, CB radio</td>
+              <td>Telephone, video call, Ethernet LAN</td>
+            </tr>
+            <tr>
+              <td>Efficiency</td>
+              <td class="r">Low (one-directional waste)</td>
+              <td class="y">Medium</td>
+              <td class="g">High</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Data Representation Quick Reference <span class="ar">تمثيل البيانات &mdash; مرجع
+          سريع</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Data Type</th>
+              <th>Converted to</th>
+              <th>Special Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Text</td>
+              <td>Bit patterns via character encoding</td>
+              <td>ASCII = 7-bit; Unicode = 16-bit (supports Arabic, Chinese, etc.)</td>
+            </tr>
+            <tr>
+              <td>Numbers</td>
+              <td>Binary directly</td>
+              <td>NOT converted via character codes &mdash; direct binary equivalent</td>
+            </tr>
+            <tr>
+              <td>Images</td>
+              <td>Pixel matrix (bit patterns)</td>
+              <td>More bits/pixel = higher quality = larger file</td>
+            </tr>
+            <tr>
+              <td>Audio</td>
+              <td>Digitized sound waves</td>
+              <td>Sampling + quantization converts analog to digital</td>
+            </tr>
+            <tr>
+              <td>Video</td>
+              <td>Sequence of image frames + audio</td>
+              <td>Frame rate (fps) + audio track combined</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">5 Components Summary <span class="ar">ملخص المكونات الخمسة</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Component</th>
+              <th>Role</th>
+              <th>Can be missing?</th>
+              <th>بالعربي</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Message</td>
+              <td>The data being sent</td>
+              <td class="r">No &mdash; nothing to communicate</td>
+              <td>الرسالة &mdash; البيانات</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Sender</td>
+              <td>Generates and transmits message</td>
+              <td class="r">No &mdash; no source</td>
+              <td>المُرسِل &mdash; مصدر البيانات</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Receiver</td>
+              <td>Receives and interprets message</td>
+              <td class="r">No &mdash; no destination</td>
+              <td>المُستقبِل &mdash; الوجهة</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Transmission Medium</td>
+              <td>Physical path for data travel</td>
+              <td class="r">No &mdash; no path to travel</td>
+              <td>وسط النقل &mdash; المسار</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Protocol</td>
+              <td>Rules that govern communication</td>
+              <td class="r">No &mdash; devices cannot understand each other</td>
+              <td>البروتوكول &mdash; قواعد الاتصال</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="highlight">&#128073; All five components are <strong>mandatory</strong>. Remove any one and the
+        communication system fails completely.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Network Criteria Summary <span class="ar">ملخص معايير الشبكة</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Criterion</th>
+              <th>What It Measures</th>
+              <th>Factors Affecting It</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Performance</strong></td>
+              <td>Throughput and delay</td>
+              <td>Number of users, medium type, hardware capability, software efficiency</td>
+            </tr>
+            <tr>
+              <td><strong>Reliability</strong></td>
+              <td>Network uptime and recovery</td>
+              <td>Frequency of failure, time to repair, redundancy in design</td>
+            </tr>
+            <tr>
+              <td><strong>Security</strong></td>
+              <td>Data and system protection</td>
+              <td>Access controls, encryption, firewall, anti-virus software</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <!-- ═══════════════════════════════════════════════ SECTION 8 ═══ -->
+    <div class="section-header" id="sec8">
+      <div class="sec-num">8</div>
+      <div class="sec-titles">
+        <h2>Exam Questions &amp; Model Answers</h2>
+        <div class="ar">أسئلة الامتحان والإجابات النموذجية</div>
+      </div>
+    </div>
+
+    <div class="final">
+      <h2>&#127891; Exam Q&amp;A &mdash; Chapter 1: Introduction to Data Communications
+        <span class="ar">أسئلة وإجابات نموذجية &mdash; الشابتر الأول</span>
+      </h2>
+
+      <div class="exam-q">
+        <div class="q-label">Q1 &mdash; Definition</div>
+        What is data communication? What makes it effective?<br>
+        <span class="answer">&#10003; Answer:</span> Data communication is the exchange of data between two devices via
+        a transmission medium. To be effective it must satisfy four characteristics: <strong>Delivery</strong> (to the
+        correct destination), <strong>Accuracy</strong> (without errors), <strong>Timeliness</strong> (on time,
+        real-time for audio/video), and <strong>Jitter</strong> (minimal variation in packet arrival time).
+        <div class="ar-box" style="margin-top:10px">
+          <div class="ar-label">Arabic Answer</div>الاتصال الرقمي هو تبادل البيانات بين جهازين عبر وسط نقل. حتى يكون
+          فعالاً يجب أن يحقق: التسليم للجهة الصحيحة، الدقة (لا أخطاء)، التوقيت (خاصة للصوت والفيديو)، وأقل تفاوت ممكن في
+          وقت وصول الحزم (Jitter).
+        </div>
+      </div>
+
+      <div class="exam-q">
+        <div class="q-label">Q2 &mdash; Jitter</div>
+        What is Jitter? How is it different from Delay?<br>
+        <span class="answer">&#10003; Answer:</span> <strong>Delay</strong> is the time it takes for data to travel from
+        source to destination. <strong>Jitter</strong> is the <em>variation</em> in that delay across different packets.
+        High jitter causes choppy audio/video. For example, if packet 1 arrives after 5ms and packet 2 arrives after
+        50ms, the jitter is 45ms &mdash; severely impacting real-time applications.
+        <div class="ar-box" style="margin-top:10px">
+          <div class="ar-label">Arabic Answer</div>Delay هو وقت وصول البيانات. Jitter هو التفاوت في هذا الوقت بين الحزم.
+          مثلاً: الحزمة الأولى وصلت بعد 5ms والثانية بعد 50ms = Jitter = 45ms. هذا يضر بجودة المكالمات والفيديو.
+        </div>
+      </div>
+
+      <div class="exam-q">
+        <div class="q-label">Q3 &mdash; Components</div>
+        List and explain the five components of a data communication system.<br>
+        <span class="answer">&#10003; Answer:</span> (1) <strong>Message</strong>: the data being sent (text, image,
+        audio, video). (2) <strong>Sender</strong>: the device that sends the data (computer, phone). (3)
+        <strong>Receiver</strong>: the device that receives the data (computer, printer). (4) <strong>Transmission
+          Medium</strong>: the physical path for data travel (cable, wireless). (5) <strong>Protocol</strong>: the rules
+        governing the communication (TCP/IP, HTTP). Without a protocol, two connected devices cannot communicate.
+        <div class="ar-box" style="margin-top:10px">
+          <div class="ar-label">Arabic Answer</div>الخمسة: (1) الرسالة = البيانات (2) المرسل = جهاز الإرسال (3) المستقبل
+          = جهاز الاستقبال (4) وسط النقل = الكيبل أو الهواء (5) البروتوكول = القواعد. بدون البروتوكول يستحيل التواصل حتى
+          لو الأجهزة متصلة.
+        </div>
+      </div>
+
+      <div class="exam-q">
+        <div class="q-label">Q4 &mdash; Mesh Formula</div>
+        A mesh network has 8 devices. How many physical links and I/O ports per device are needed?<br>
+        <span class="answer">&#10003; Answer:</span><br>
+        Number of Links = n(n-1)/2 = 8(8-1)/2 = 8&times;7/2 = <strong class="g">28 links</strong><br>
+        Ports per device = n-1 = 8-1 = <strong class="g">7 ports</strong>
+        <div class="ar-box" style="margin-top:10px">
+          <div class="ar-label">Arabic Answer</div>عدد الكيبلات = n(n-1)/2 = 8&times;7/2 = 28 كيبل. كل جهاز يحتاج n-1 =
+          7 منافذ.
+        </div>
+      </div>
+
+      <div class="exam-q">
+        <div class="q-label">Q5 &mdash; Topology Comparison</div>
+        Compare Star and Bus topology. Which has a single point of failure and why?<br>
+        <span class="answer">&#10003; Answer:</span> <strong>Both</strong> have a single point of failure. In Star, it
+        is the <strong>hub/switch</strong> &mdash; if it fails, all devices lose connectivity even though their
+        individual links are fine. In Bus, it is the <strong>backbone cable</strong> &mdash; if it breaks, all devices
+        are disconnected. Star is preferred because: easier fault isolation, better performance, and easier expansion.
+        <div class="ar-box" style="margin-top:10px">
+          <div class="ar-label">Arabic Answer</div>كلاهما لديه نقطة فشل واحدة. في Star هي الـ Hub: تعطله = انهيار
+          الشبكة. في Bus هو الكيبل الرئيسي: انقطاعه = انهيار الشبكة. يُفضّل Star لأنه أسهل في إدارة الأعطال والتوسع.
+        </div>
+      </div>
+
+      <div class="exam-q">
+        <div class="q-label">Q6 &mdash; Data Flow</div>
+        Explain the three modes of data flow with one example each.<br>
+        <span class="answer">&#10003; Answer:</span> (1) <strong>Simplex</strong>: One-way only. Example: keyboard
+        sending input to the CPU &mdash; the CPU never sends data back through the keyboard. (2)
+        <strong>Half-Duplex</strong>: Both directions but alternate. Example: walkie-talkie where you press a button to
+        talk, release to listen. (3) <strong>Full-Duplex</strong>: Both directions simultaneously. Example: telephone
+        call where both parties can speak and listen at the same time.
+        <div class="ar-box" style="margin-top:10px">
+          <div class="ar-label">Arabic Answer</div>Simplex: اتجاه واحد — لوحة المفاتيح للحاسوب. Half-Duplex: اتجاهان
+          بالتناوب — الواكي-توكي. Full-Duplex: اتجاهان في نفس الوقت — المكالمة الهاتفية.
+        </div>
+      </div>
+
+      <div class="exam-q">
+        <div class="q-label">Q7 &mdash; Ring Topology</div>
+        What happens if a node fails in a Ring topology? Why is each device called a "repeater"?<br>
+        <span class="answer">&#10003; Answer:</span> If any single node fails in a Ring topology, the entire ring is
+        broken and <strong>no communication can occur</strong> anywhere on the network &mdash; this is the biggest
+        weakness of Ring. Each device is called a repeater because it <strong>regenerates and retransmits</strong> the
+        signal it receives before passing it to the next device, preventing signal degradation over long distances.
+        <div class="ar-box" style="margin-top:10px">
+          <div class="ar-label">Arabic Answer</div>في Ring، إذا تعطل أي جهاز، تنكسر الحلقة وتتوقف كل الاتصالات. كل جهاز
+          يسمى Repeater لأنه يُجدد الإشارة ويُعيد إرسالها للجهاز التالي حتى لا تضعف.
+        </div>
+      </div>
+
+      <div class="exam-q">
+        <div class="q-label">Q8 &mdash; Data Representation</div>
+        How is the number 5 stored differently from the text character "5"?<br>
+        <span class="answer">&#10003; Answer:</span> The <strong>numeric value 5</strong> is stored as its binary
+        equivalent: <code>101</code> (3 bits). The <strong>text character "5"</strong> is stored as its ASCII code:
+        ASCII for '5' = 53 decimal = <code>00110101</code> (8 bits). They are completely different bit patterns even
+        though they look the same to a human.
+        <div class="ar-box" style="margin-top:10px">
+          <div class="ar-label">Arabic Answer</div>الرقم 5 كقيمة رقمية = ثنائي مباشر: 101. الحرف "5" كنص = رقمه في
+          ASCII: 53 = 00110101. نفس الشيء للإنسان، لكن تمثيل مختلف تماماً في الحاسوب.
+        </div>
+      </div>
+
+      <div class="exam-q">
+        <div class="q-label">Q9 &mdash; Protocol</div>
+        Why is a protocol necessary? Give an analogy.<br>
+        <span class="answer">&#10003; Answer:</span> A protocol is necessary because without agreed-upon rules, two
+        connected devices cannot understand each other's data. Analogy: two people physically next to each other cannot
+        communicate if one speaks only Arabic and the other speaks only Japanese &mdash; they are "connected" but cannot
+        understand each other. A protocol is like a shared language that both sides agree to use.
+        <div class="ar-box" style="margin-top:10px">
+          <div class="ar-label">Arabic Answer</div>البروتوكول ضروري لأن الأجهزة بدون قواعد مشتركة لا تفهم بعضها. مثل
+          شخصين يتكلمان لغات مختلفة: هم موجودون ومتصلون ماديًا لكن التواصل مستحيل. البروتوكول هو "اللغة المشتركة"
+          للأجهزة.
+        </div>
+      </div>
+
+      <div class="exam-q">
+        <div class="q-label">Q10 &mdash; Network Criteria</div>
+        What are the three criteria of a good network? Explain each briefly.<br>
+        <span class="answer">&#10003; Answer:</span> (1) <strong>Performance</strong>: Measured by throughput (data
+        delivered per second) and delay. Affected by number of users, medium type, hardware, and software. (2)
+        <strong>Reliability</strong>: Measured by frequency of failure, recovery time, and ability to survive disasters.
+        (3) <strong>Security</strong>: Protection from unauthorized access, viruses, worms, and data tampering.
+        <div class="ar-box" style="margin-top:10px">
+          <div class="ar-label">Arabic Answer</div>(1) الأداء: سرعة النقل والتأخر — يتأثر بعدد المستخدمين ونوع الوسط.
+          (2) الموثوقية: عدد الأعطال وسرعة الإصلاح. (3) الأمان: حماية البيانات والأجهزة من الاختراق والفيروسات.
+        </div>
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <!-- ════ FINAL QUICK REFERENCE ════ -->
+    <div class="final">
+      <h2>&#128203; Complete Chapter 1 Quick Reference &mdash; All Key Points
+        <span class="ar">المرجع السريع الشامل للشابتر الأول</span>
+      </h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Topic</th>
+              <th>Key Point</th>
+              <th>بالعربي</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Data Communication</td>
+              <td>Exchange of data between 2 devices via a transmission medium</td>
+              <td>تبادل البيانات عبر وسط نقل</td>
+            </tr>
+            <tr>
+              <td>Delivery</td>
+              <td>Data must reach the correct destination</td>
+              <td>التسليم للجهة الصحيحة</td>
+            </tr>
+            <tr>
+              <td>Accuracy</td>
+              <td>Data must arrive without errors; corrupted data is useless</td>
+              <td>البيانات لا تُغيَّر أثناء النقل</td>
+            </tr>
+            <tr>
+              <td>Timeliness</td>
+              <td>Data must arrive on time; real-time for audio/video</td>
+              <td>الوصول في الوقت المناسب</td>
+            </tr>
+            <tr>
+              <td>Jitter</td>
+              <td>Variation in packet arrival time (NOT the same as delay)</td>
+              <td>التفاوت في وقت وصول الحزم</td>
+            </tr>
+            <tr>
+              <td>Protocol</td>
+              <td>Rules governing communication; without it devices cannot understand each other</td>
+              <td>قواعد الاتصال &mdash; ضرورية دائماً</td>
+            </tr>
+            <tr>
+              <td>5 Components</td>
+              <td>Message, Sender, Receiver, Medium, Protocol &mdash; all mandatory</td>
+              <td>الخمسة كلهم ضروريون</td>
+            </tr>
+            <tr>
+              <td>DTE</td>
+              <td>Data Terminal Equipment &mdash; end devices (PC, phone)</td>
+              <td>الجهاز الطرفي النهائي</td>
+            </tr>
+            <tr>
+              <td>DCE</td>
+              <td>Data Communication Equipment &mdash; intermediate devices (modem, router)</td>
+              <td>جهاز الاتصال الوسيط</td>
+            </tr>
+            <tr>
+              <td>Text Representation</td>
+              <td>Bit patterns via ASCII or Unicode</td>
+              <td>النص &rarr; ASCII أو Unicode</td>
+            </tr>
+            <tr>
+              <td>Numbers Representation</td>
+              <td>Direct binary (NOT ASCII)</td>
+              <td>الأرقام &rarr; ثنائي مباشر</td>
+            </tr>
+            <tr>
+              <td>Simplex</td>
+              <td>One-way only; only one device can transmit</td>
+              <td>اتجاه واحد فقط</td>
+            </tr>
+            <tr>
+              <td>Half-Duplex</td>
+              <td>Both directions but must alternate (not simultaneous)</td>
+              <td>اتجاهان بالتناوب</td>
+            </tr>
+            <tr>
+              <td>Full-Duplex</td>
+              <td>Both directions simultaneously</td>
+              <td>اتجاهان في نفس الوقت</td>
+            </tr>
+            <tr>
+              <td>Network</td>
+              <td>Set of nodes connected by communication links</td>
+              <td>مجموعة أجهزة متصلة بوسائل اتصال</td>
+            </tr>
+            <tr>
+              <td>Point-to-Point</td>
+              <td>Dedicated link between exactly 2 devices</td>
+              <td>رابط خاص بين جهازين</td>
+            </tr>
+            <tr>
+              <td>Multipoint</td>
+              <td>Shared link among multiple devices</td>
+              <td>رابط مشترك بين عدة أجهزة</td>
+            </tr>
+            <tr>
+              <td>Mesh Formula</td>
+              <td>Links = n(n-1)/2 &nbsp;&nbsp; Ports = n-1</td>
+              <td>صيغة حساب الكيبلات والمنافذ</td>
+            </tr>
+            <tr>
+              <td>Mesh</td>
+              <td>Most reliable, most expensive; fault tolerant; no single point of failure</td>
+              <td>الأقوى والأغلى</td>
+            </tr>
+            <tr>
+              <td>Star</td>
+              <td>Most common; hub = single point of failure; easy to expand</td>
+              <td>الأكثر شيوعاً &mdash; Hub = نقطة ضعف</td>
+            </tr>
+            <tr>
+              <td>Bus</td>
+              <td>Cheapest; backbone = single point of failure; low security</td>
+              <td>الأرخص &mdash; الكيبل = نقطة ضعف</td>
+            </tr>
+            <tr>
+              <td>Ring</td>
+              <td>Fast, no collisions; one node failure = entire ring failure</td>
+              <td>سريع &mdash; أي عطل ينهار الحلقة</td>
+            </tr>
+            <tr>
+              <td>Hybrid</td>
+              <td>Combination of two or more topologies</td>
+              <td>مزيج من طوبولوجيتين أو أكثر</td>
+            </tr>
+            <tr>
+              <td>Performance</td>
+              <td>Throughput + Delay; affected by users, medium, hardware, software</td>
+              <td>الأداء = إنتاجية + تأخر</td>
+            </tr>
+            <tr>
+              <td>Reliability</td>
+              <td>Failure frequency, recovery time, disaster robustness</td>
+              <td>الموثوقية = تحمل الأعطال</td>
+            </tr>
+            <tr>
+              <td>Security</td>
+              <td>Protect from unauthorized access, viruses, worms</td>
+              <td>الأمان = الحماية من الاختراق</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:36px">Data Communications System 4123702
+      &mdash; Chapter 1 Complete Study Guide &middot; Good Luck on Your Final! &#127919;</p>
+  </div>
+</body>
+
+</html>

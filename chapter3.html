@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 3 — Application Layer &amp; DNS | Study Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#07111f;--deep:#0b1a2e;--mid-blue:#102340;--card-bg:rgba(16,35,64,.6);--border:rgba(0,200,255,.18);--accent:#00c8ff;--accent2:#ff6b35;--gold:#ffc940;--green:#3effa0;--red:#ff5f6d;--purple:#b48aff;--text:#dce8f5;--muted:#7d93ad;--highlight:rgba(0,200,255,.07);--ar-bg:rgba(255,201,64,.05);--ar-border:rgba(255,201,64,.25)}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:Inter,sans-serif;background:var(--navy);color:var(--text);line-height:1.75;font-size:14.5px}
+  b,strong{color:#fff}
+  .hero{background:linear-gradient(160deg,#07111f 0%,#0b1a2e 45%,#130c30 100%);padding:64px 40px 52px;text-align:center;position:relative;overflow:hidden;border-bottom:1px solid var(--accent)}
+  .hero:before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 55% at 50% -5%,rgba(0,200,255,.13),transparent 70%);pointer-events:none}
+  .badge{display:inline-block;border:1px solid var(--accent);color:var(--accent);font-size:11px;font-weight:700;letter-spacing:3px;padding:5px 20px;border-radius:20px;margin-bottom:20px;text-transform:uppercase}
+  .hero h1{font-size:3rem;font-weight:900;color:#fff;letter-spacing:-1px;margin-bottom:6px}
+  .hero h1 span{color:var(--accent)}
+  .hero .ar-title{font-family:Cairo,sans-serif;font-size:1.1rem;color:var(--gold);margin-bottom:18px;direction:rtl}
+  .hero p{color:var(--muted);font-size:13px;max-width:620px;margin:0 auto}
+  .lang-bar{background:var(--deep);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)}
+  .lang-bar strong{color:var(--accent)}
+  .top-nav{position:sticky;top:0;z-index:999;background:rgba(7,17,31,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .top-nav a{text-decoration:none;color:var(--text);border:1px solid var(--border);background:rgba(16,35,64,.75);padding:8px 12px;border-radius:9px;font-size:12px;font-weight:700;transition:.2s}
+  .top-nav a:hover,.top-nav a.active{color:var(--navy);background:var(--accent);border-color:var(--accent)}
+  .container{max-width:980px;margin:0 auto;padding:36px 24px 90px}
+  .chapter-banner{background:linear-gradient(135deg,rgba(0,200,255,.08),rgba(7,17,31,.6));border:1px solid var(--accent);border-radius:16px;padding:20px 28px;margin:32px 0 28px;display:flex;align-items:center;gap:18px}
+  .ch-num{width:56px;height:56px;background:var(--accent);color:var(--navy);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;flex-shrink:0}
+  .ch-titles h2{font-size:1.45rem;font-weight:800;color:#fff;letter-spacing:-.3px}
+  .ch-titles .ar{font-family:Cairo,sans-serif;font-size:.9rem;color:var(--gold);direction:rtl;text-align:right;margin-top:2px}
+  .ch-titles .desc{font-size:12.5px;color:var(--muted);margin-top:4px}
+  .section-header{display:flex;align-items:flex-start;gap:16px;margin:42px 0 16px}
+  .sec-num{width:42px;height:42px;background:rgba(0,200,255,.15);border:1px solid var(--accent);color:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;flex-shrink:0;margin-top:2px}
+  .sec-num.o{background:rgba(255,107,53,.15);border-color:var(--accent2);color:var(--accent2)}
+  .sec-num.g{background:rgba(62,255,160,.1);border-color:var(--green);color:var(--green)}
+  .sec-num.p{background:rgba(180,138,255,.12);border-color:var(--purple);color:var(--purple)}
+  .sec-num.y{background:rgba(255,201,64,.1);border-color:var(--gold);color:var(--gold)}
+  .sec-titles h3{font-size:1.2rem;font-weight:700;color:#fff;letter-spacing:-.2px}
+  .sec-titles .ar{font-family:Cairo,sans-serif;font-size:.85rem;color:var(--gold);direction:rtl;text-align:right;margin-top:1px}
+  .card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:22px 26px;margin-bottom:14px;backdrop-filter:blur(4px)}
+  .card-title{font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .card-title:before{content:'▸';color:var(--accent2);font-size:11px;flex-shrink:0}
+  .card-title .ar{font-family:Cairo,sans-serif;font-size:.8rem;color:var(--gold);font-weight:600;direction:rtl}
+  .card p,.card li{margin-bottom:6px}
+  .card ul,.card ol{padding-left:22px}
+  .card ul li{list-style:disc}
+  .ar-box{background:var(--ar-bg);border:1px solid var(--ar-border);border-right:4px solid var(--gold);border-radius:0 10px 10px 0;padding:13px 16px;margin-top:12px;direction:rtl;text-align:right;font-family:Cairo,sans-serif;font-size:13.5px;color:#ccd6e8;line-height:1.9}
+  .ar-label{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;direction:ltr;text-align:left}
+  .highlight{background:var(--highlight);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:13px 16px;margin:10px 0;font-size:13.5px}
+  .highlight strong{color:var(--accent)}
+  .note{background:rgba(255,107,53,.07);border:1px solid rgba(255,107,53,.28);border-radius:10px;padding:13px 16px;margin:10px 0;font-size:13.5px}
+  .note-label{font-size:10px;font-weight:700;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+  .green-note{background:rgba(62,255,160,.06);border:1px solid rgba(62,255,160,.25);border-radius:10px;padding:13px 16px;margin:10px 0;font-size:13.5px}
+  .green-label{font-size:10px;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+  .formula{background:rgba(0,0,0,.45);border:1px solid rgba(255,201,64,.25);border-radius:8px;padding:12px 18px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--gold);direction:ltr;overflow-x:auto;white-space:pre}
+  .formula .flabel{font-family:Inter,sans-serif;font-size:10px;color:var(--muted);margin-bottom:5px;letter-spacing:.5px;text-transform:uppercase;white-space:normal}
+  .table-wrap{overflow-x:auto;margin:14px 0}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead th{background:var(--mid-blue);color:var(--accent);padding:11px 14px;text-align:left;font-weight:700;font-size:12px;letter-spacing:.4px;white-space:nowrap}
+  tbody tr{border-bottom:1px solid rgba(0,200,255,.07)}
+  tbody tr:hover{background:var(--highlight)}
+  tbody td{padding:10px 14px;vertical-align:top}
+  tbody td:first-child{font-weight:600;color:var(--gold);white-space:nowrap}
+  .g{color:var(--green)}.r{color:var(--red)}.y{color:var(--gold)}.p{color:var(--purple)}
+  .tag{display:inline-block;border:1px solid var(--accent);color:var(--accent);background:rgba(0,200,255,.1);border-radius:5px;padding:1px 9px;font-size:11px;font-weight:700;margin:2px}
+  .tag.o{border-color:var(--accent2);color:var(--accent2);background:rgba(255,107,53,.1)}
+  .tag.g{border-color:var(--green);color:var(--green);background:rgba(62,255,160,.08)}
+  .tag.y{border-color:var(--gold);color:var(--gold);background:rgba(255,201,64,.08)}
+  .tag.r{border-color:var(--red);color:var(--red);background:rgba(255,95,109,.08)}
+  .tag.p{border-color:var(--purple);color:var(--purple);background:rgba(180,138,255,.1)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  @media(max-width:640px){.grid2,.grid3{grid-template-columns:1fr}.hero h1{font-size:2.15rem}.container{padding:28px 14px 70px}.card{padding:18px 16px}}
+  .flow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0;margin:14px 0;overflow-x:auto}
+  .fbox{background:var(--mid-blue);border:1px solid var(--border);border-radius:9px;padding:9px 14px;font-size:12.5px;font-weight:600;text-align:center;white-space:nowrap}
+  .fbox.a{border-color:var(--accent);color:var(--accent);background:rgba(0,200,255,.1)}
+  .fbox.o{border-color:var(--accent2);color:var(--accent2);background:rgba(255,107,53,.1)}
+  .fbox.p{border-color:var(--purple);color:var(--purple);background:rgba(180,138,255,.1)}
+  .fbox.g{border-color:var(--green);color:var(--green);background:rgba(62,255,160,.08)}
+  .fbox.y{border-color:var(--gold);color:var(--gold);background:rgba(255,201,64,.08)}
+  .arrow{color:var(--muted);font-size:18px;padding:0 8px}
+  hr.div{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.2;margin:44px 0}
+  .final{background:linear-gradient(135deg,rgba(0,200,255,.06),rgba(7,17,31,.8));border:1px solid var(--accent);border-radius:16px;padding:30px;margin-top:52px}
+  .final h2{font-size:1.2rem;font-weight:800;color:var(--accent);margin-bottom:18px}
+  .final h2 .ar{font-family:Cairo,sans-serif;font-size:.85rem;color:var(--gold);font-weight:600;direction:rtl;display:block;margin-top:2px}
+  .answer{color:var(--green);font-weight:700}
+  .small{font-size:12px;color:var(--muted)}
+  .exam-q{border-left:3px solid var(--purple);background:rgba(180,138,255,.05);border-radius:0 8px 8px 0;padding:13px 16px;margin:10px 0;font-size:13.5px}
+  .exam-q .q-label{font-size:10px;font-weight:700;color:var(--purple);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+  /* VS comparison grid */
+  .vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin:14px 0}
+  .vs-header{padding:12px 18px;font-weight:800;font-size:13px;text-align:center;letter-spacing:.5px}
+  .vs-header.left{background:rgba(0,200,255,.12);color:var(--accent);border-bottom:1px solid rgba(0,200,255,.2)}
+  .vs-header.right{background:rgba(255,107,53,.1);color:var(--accent2);border-bottom:1px solid rgba(255,107,53,.2);border-left:1px solid var(--border)}
+  .vs-cell{padding:10px 18px;font-size:13px}
+  .vs-cell.left{background:rgba(0,200,255,.04);border-bottom:1px solid rgba(0,200,255,.08)}
+  .vs-cell.right{background:rgba(255,107,53,.03);border-left:1px solid var(--border);border-bottom:1px solid rgba(255,107,53,.08)}
+  /* Protocol card */
+  .proto-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:12px}
+  .proto-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .proto-badge{background:var(--accent);color:var(--navy);font-weight:900;font-size:13px;padding:5px 14px;border-radius:7px;letter-spacing:.5px}
+  .proto-badge.o{background:var(--accent2)}
+  .proto-badge.g{background:var(--green)}
+  .proto-badge.p{background:var(--purple)}
+  .proto-badge.y{background:var(--gold)}
+  .proto-badge.r{background:var(--red)}
+  .proto-name{font-size:1rem;font-weight:700;color:#fff}
+  .proto-port{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);background:rgba(255,201,64,.08);border:1px solid rgba(255,201,64,.2);padding:2px 8px;border-radius:4px}
+  /* Memory trick box */
+  .memory-box{background:rgba(180,138,255,.07);border:1px solid rgba(180,138,255,.3);border-radius:12px;padding:16px 20px;margin:12px 0}
+  .memory-label{font-size:10px;font-weight:700;color:var(--purple);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+  /* DNS hierarchy tree */
+  .dns-tree{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:10px;padding:16px;margin:12px 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text);direction:ltr;line-height:2}
+  .dns-tree .root{color:var(--accent);font-weight:700}
+  .dns-tree .tld{color:var(--gold);font-weight:700}
+  .dns-tree .sld{color:var(--green)}
+  .dns-tree .sub{color:var(--purple)}
+
+.quick-nav{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:25px 0 35px}
+.quick-nav a{text-decoration:none;color:#dce8f5;border:1px solid rgba(0,200,255,.18);background:rgba(16,35,64,.75);padding:10px 14px;border-radius:10px;font-size:12px;font-weight:700;transition:.25s}
+.quick-nav a:hover{background:#00c8ff;color:#07111f;border-color:#00c8ff;transform:translateY(-2px)}
+
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="badge">Chapter 3 &amp; Chapter 25 · Networks and Data Transmissions</div>
+  <h1>Application Layer <span>&amp; DNS</span></h1>
+  <div class="ar-title">طبقة التطبيقات ونظام أسماء النطاقات — دليل الدراسة الشامل</div>
+  <p>Complete bilingual study guide · English primary with Arabic explanation · All protocols, DNS hierarchy, name resolution, zone transfer, DDNS, and exam questions</p>
+</div>
+
+<div class="lang-bar">📘 <strong>English</strong> — Main content &nbsp;|&nbsp; 🌙 <strong style="color:var(--gold)">العربي</strong> — Translation &amp; explanation boxes</div>
+
+<div class="quick-nav">
+  <a href="index.html" class="active">🏠 Home</a>
+<a href="#s1">Application Layer</a>
+<a href="#s2">FTP</a>
+<a href="#s3">DHCP</a>
+<a href="#s4">Telnet</a>
+<a href="#s5">DNS Basics</a>
+<a href="#s6">Domain Space</a>
+<a href="#s7">DNS Servers</a>
+<a href="#s8">Zone Transfer</a>
+<a href="#s9">Resolution</a>
+<a href="#s10">DDNS</a>
+<a href="#s11">Encapsulation</a>
+<a href="#s12">Comparison</a>
+</div>
+
+
+<div class="container">
+
+<!-- CHAPTER BANNER -->
+<div class="chapter-banner">
+  <div class="ch-num">3</div>
+  <div class="ch-titles">
+    <h2>Application Layer &amp; DNS</h2>
+    <div class="ar">طبقة التطبيقات ونظام أسماء النطاقات</div>
+    <div class="desc">Application Layer Role · Key Protocols · FTP · DHCP · Telnet · DNS Name Space · DNS Servers · Zone Transfer · DDNS · DNS Encapsulation</div>
+  </div>
+</div>
+
+
+
+<!-- ══════════════════════════════════════ -->
+<!-- §1  APPLICATION LAYER OVERVIEW        -->
+<!-- ══════════════════════════════════════ -->
+<div class="section-header" id="s1">
+  <div class="sec-num">1</div>
+  <div class="sec-titles">
+    <h3>Application Layer — Overview</h3>
+    <div class="ar">نظرة عامة على طبقة التطبيقات</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">What is the Application Layer? <span class="ar">ما هي طبقة التطبيقات؟</span></div>
+  <p>The <strong>Application Layer</strong> is the topmost layer of the TCP/IP model. It provides the <strong>interface between the applications on either end of the network</strong> — the programs that users interact with daily (browsers, email clients, file managers) talk to the network through this layer.</p>
+  <ul>
+    <li>It defines the <strong>rules and formats</strong> (protocols) that applications use to communicate.</li>
+    <li>It does NOT handle how data travels across the network — that is the job of lower layers.</li>
+    <li>Every application protocol operates at this layer: DNS, HTTP, FTP, SMTP, POP3, Telnet, DHCP.</li>
+  </ul>
+  <div class="ar-box">
+    <div class="ar-label">Arabic Explanation</div>
+    طبقة التطبيقات هي أعلى طبقة في نموذج TCP/IP.<br>
+    مهمتها: <strong>توفير الواجهة بين التطبيقات</strong> الموجودة على طرفَي الشبكة — يعني هي البوابة التي تتحدث من خلالها البرامج (المتصفح، البريد الإلكتروني، نقل الملفات) مع الشبكة.<br>
+    هي لا تهتم بكيفية نقل البيانات — هذا شغل الطبقات الأدنى.<br>
+    كل بروتوكول استخدمناه مشهور يشتغل على هذه الطبقة: DNS، HTTP، FTP، SMTP، Telnet، DHCP.
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Application Layer Protocols — Quick Summary <span class="ar">البروتوكولات الرئيسية</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Protocol</th><th>Full Name</th><th>Function</th><th>Port(s)</th><th>Transport</th><th>بالعربي</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>DNS</td><td>Domain Name System</td><td>Resolves domain names → IP addresses</td><td class="y">53</td><td>UDP / TCP</td><td>يحول اسم الموقع لـ IP</td></tr>
+        <tr><td>HTTP</td><td>HyperText Transfer Protocol</td><td>Transfers web pages between client &amp; server</td><td class="y">80</td><td>TCP</td><td>تصفح المواقع</td></tr>
+        <tr><td>HTTPS</td><td>HTTP Secure</td><td>Encrypted web transfer</td><td class="y">443</td><td>TCP</td><td>تصفح آمن مشفّر</td></tr>
+        <tr><td>SMTP</td><td>Simple Mail Transfer Protocol</td><td>Sends email from client to mail server</td><td class="y">25</td><td>TCP</td><td>إرسال البريد الإلكتروني</td></tr>
+        <tr><td>POP3</td><td>Post Office Protocol v3</td><td>Downloads email from server to client</td><td class="y">110</td><td>TCP</td><td>استلام البريد من السيرفر</td></tr>
+        <tr><td>FTP</td><td>File Transfer Protocol</td><td>Upload / download files; needs 2 connections</td><td class="y">21 (cmd)<br>20 (data)</td><td>TCP</td><td>نقل الملفات</td></tr>
+        <tr><td>Telnet</td><td>—</td><td>Remote login — virtual terminal session</td><td class="y">23</td><td>TCP</td><td>التحكم عن بُعد</td></tr>
+        <tr><td>DHCP</td><td>Dynamic Host Configuration Protocol</td><td>Auto-assigns IPs, masks, gateways, DNS</td><td class="y">67 (server)<br>68 (client)</td><td>UDP</td><td>إسناد IP تلقائي</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="memory-box">
+    <div class="memory-label">Memory Trick — حيلة الحفظ</div>
+    <strong style="color:var(--purple)">D</strong>o <strong style="color:var(--purple)">H</strong>omework <strong style="color:var(--purple)">S</strong>tudying <strong style="color:var(--purple)">P</strong>rotocols <strong style="color:var(--purple)">F</strong>or <strong style="color:var(--purple)">T</strong>omorrows <strong style="color:var(--purple)">D</strong>rills<br>
+    <span style="color:var(--muted);font-size:12px">DNS · HTTP · SMTP · POP3 · FTP · Telnet · DHCP</span>
+    <div class="ar-box" style="margin-top:10px">
+      <div class="ar-label">Arabic</div>
+      لحفظ المنافذ: DNS=53، HTTP=80، SMTP=25، POP3=110، FTP=21+20، Telnet=23، DHCP=67/68<br>
+      تذكّر: FTP له منفذان! 21 للأوامر، 20 للبيانات.
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════ -->
+<!-- §2  FTP                               -->
+<!-- ══════════════════════════════════════ -->
+<div class="section-header" id="s2">
+  <div class="sec-num o">2</div>
+  <div class="sec-titles">
+    <h3>FTP — File Transfer Protocol</h3>
+    <div class="ar">بروتوكول نقل الملفات</div>
+  </div>
+</div>
+
+<div class="proto-card">
+  <div class="proto-header">
+    <span class="proto-badge o">FTP</span>
+    <span class="proto-name">File Transfer Protocol</span>
+    <span class="proto-port">Port 21 (Control) + Port 20 (Data)</span>
+  </div>
+  <p>FTP is one of the most commonly used application layer protocols. It allows for the <strong>transfer of files between clients and servers</strong> — both uploading (client → server) and downloading (server → client).</p>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    FTP هو بروتوكول نقل الملفات — يُستخدم لرفع الملفات (Upload) وتنزيلها (Download) بين الكمبيوتر والسيرفر.
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">The Two Connections of FTP <span class="ar">الاتصالان في FTP</span></div>
+  <p>FTP is <strong>unique</strong> among protocols because it requires <strong>TWO separate TCP connections</strong> simultaneously to function:</p>
+  <div class="grid2">
+    <div class="highlight">
+      <strong style="color:var(--accent)">Connection 1 — Control</strong><br>
+      <span class="tag">Port 21</span><br><br>
+      Carries all <strong>commands and replies</strong> between client and server.<br>
+      Examples: login, change directory, list files, quit.<br>
+      <span class="small">This connection stays open the entire session.</span>
+    </div>
+    <div class="highlight">
+      <strong style="color:var(--accent2)">Connection 2 — Data</strong><br>
+      <span class="tag o">Port 20</span><br><br>
+      Carries the <strong>actual file content</strong> being transferred.<br>
+      Opened for each file transfer, then closed.<br>
+      <span class="small">Opened when a transfer is needed, then closed.</span>
+    </div>
+  </div>
+  <div class="flow" style="margin-top:14px">
+    <div class="fbox a">Client</div>
+    <div class="arrow">←→</div>
+    <div class="fbox o">Port 21<br><small class="small">Commands</small></div>
+    <div class="arrow">←→</div>
+    <div class="fbox g">FTP Server</div>
+    <div class="arrow">←→</div>
+    <div class="fbox y">Port 20<br><small class="small">Data</small></div>
+    <div class="arrow">←→</div>
+    <div class="fbox a">Client</div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic — لماذا اتصالان؟</div>
+    FTP يحتاج اتصالين منفصلين لأن الأوامر والبيانات لهما طبيعة مختلفة جداً:<br>
+    <strong>اتصال الأوامر (Port 21):</strong> يبقى مفتوحاً طوال الجلسة — يحمل الأوامر مثل تسجيل الدخول، تغيير المجلد، قائمة الملفات.<br>
+    <strong>اتصال البيانات (Port 20):</strong> يُفتح فقط عند الحاجة لنقل ملف، ثم يُغلق بعد الانتهاء.<br>
+    هذا الفصل يجعل التحكم أسرع واستخدام الموارد أكفأ.
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">FTP Exam Points <span class="ar">نقاط الامتحان</span></div>
+  <ul>
+    <li>FTP uses <strong>TCP</strong> (reliable, connection-oriented) for both connections.</li>
+    <li>Port <strong>21</strong> = commands/control. Port <strong>20</strong> = data transfer.</li>
+    <li>Supports both <strong>upload</strong> (client → server) and <strong>download</strong> (server → client).</li>
+    <li>FTP sends credentials (username/password) in <strong>plain text</strong> — NOT encrypted. (SFTP / FTPS are secure alternatives.)</li>
+    <li>FTP is considered a <strong>stateful</strong> protocol — the server remembers the client's state (current directory, etc.).</li>
+  </ul>
+  <div class="note">
+    <div class="note-label">Common Exam Question</div>
+    <strong>Q: Why does FTP need two connections?</strong><br>
+    <span class="answer">A:</span> Because commands/control (Port 21) and actual data (Port 20) serve different purposes and have different lifecycles. The control connection stays open throughout; the data connection opens and closes per transfer.
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════ -->
+<!-- §3  DHCP                              -->
+<!-- ══════════════════════════════════════ -->
+<div class="section-header" id="s3">
+  <div class="sec-num g">3</div>
+  <div class="sec-titles">
+    <h3>DHCP — Dynamic Host Configuration Protocol</h3>
+    <div class="ar">بروتوكول الإعداد الديناميكي للمضيف</div>
+  </div>
+</div>
+
+<div class="proto-card">
+  <div class="proto-header">
+    <span class="proto-badge g">DHCP</span>
+    <span class="proto-name">Dynamic Host Configuration Protocol</span>
+    <span class="proto-port">Port 67 (Server) / Port 68 (Client)</span>
+  </div>
+  <p>DHCP enables devices to <strong>automatically obtain</strong> network configuration information from a DHCP server — eliminating the need to manually configure each device.</p>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    DHCP يسمح للأجهزة بالحصول تلقائياً على معلومات الشبكة من السيرفر — بدل ما تضبط كل جهاز يدوياً.
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">What DHCP Assigns <span class="ar">ماذا يُسنِد DHCP؟</span></div>
+  <div class="grid2">
+    <div>
+      <p>When a device connects to a network, DHCP automatically provides:</p>
+      <ul>
+        <li>✅ <strong>IP Address</strong> — unique network identifier</li>
+        <li>✅ <strong>Subnet Mask</strong> — defines the network boundary</li>
+        <li>✅ <strong>Default Gateway</strong> — the router to reach other networks</li>
+        <li>✅ <strong>DNS Server address</strong> — for name resolution</li>
+        <li>✅ Other parameters: lease time, domain name, etc.</li>
+      </ul>
+    </div>
+    <div class="highlight">
+      <strong>Real-World Example</strong><br><br>
+      When you connect to a café's Wi-Fi, DHCP automatically gives your phone an IP address, subnet mask, gateway, and DNS server — all within milliseconds. <strong>This is why you can use Wi-Fi at various places around the world!</strong>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    DHCP يُسنِد تلقائياً:
+    عنوان IP + قناع الشبكة (Subnet Mask) + البوابة الافتراضية (Default Gateway) + عنوان سيرفر DNS<br>
+    مثال: لما تتصل بـ Wi-Fi في المقهى، DHCP هو اللي يعطي جهازك IP تلقائياً خلال ثوانٍ.
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">IP Leasing — How DHCP Works <span class="ar">استئجار IP — كيف يعمل DHCP</span></div>
+  <div class="flow">
+    <div class="fbox a">Device<br><small class="small">Connects</small></div>
+    <div class="arrow">→</div>
+    <div class="fbox o">DHCP<br>DISCOVER<br><small class="small">Broadcasts</small></div>
+    <div class="arrow">→</div>
+    <div class="fbox g">DHCP Server<br>OFFER<br><small class="small">Offers IP</small></div>
+    <div class="arrow">→</div>
+    <div class="fbox y">REQUEST<br><small class="small">Accepts offer</small></div>
+    <div class="arrow">→</div>
+    <div class="fbox p">ACK<br><small class="small">Confirmed!</small></div>
+  </div>
+  <ul style="margin-top:12px">
+    <li><strong>IP addresses are LEASED</strong> — not permanently assigned.</li>
+    <li>Lease duration: typically <strong>24 hours to 7 days</strong>.</li>
+    <li>When a host disconnects or the lease expires, the <strong>IP returns to the pool</strong> for reassignment.</li>
+    <li>If a host stays connected, it will <strong>renew</strong> its lease before it expires.</li>
+  </ul>
+  <div class="ar-box">
+    <div class="ar-label">Arabic — مبدأ الاستئجار</div>
+    DHCP لا يعطي IP بشكل دائم — بل يُؤجّره لفترة معينة (عادة 24 ساعة إلى 7 أيام).<br>
+    لما الجهاز يقطع الاتصال أو تنتهي مدة الاستئجار، الـ IP يرجع للـ "Pool" (مجموعة العناوين المتاحة) وممكن يُسند لجهاز آخر.<br>
+    الجهاز المتصل يطلب تجديد الاستئجار قبل انتهائه تلقائياً.
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">⚠️ When NOT to Use DHCP <span class="ar">متى لا تستخدم DHCP؟</span></div>
+  <p>DHCP is great for regular users but <strong>MUST NOT be used for fixed infrastructure</strong>:</p>
+  <div class="note">
+    <div class="note-label">Do NOT use DHCP for:</div>
+    <div class="grid2">
+      <ul>
+        <li>🖥️ <strong>Servers</strong> (web, email, file servers)</li>
+        <li>🖨️ <strong>Printers</strong></li>
+        <li>🌐 <strong>Routers</strong></li>
+        <li>🔌 <strong>Switches</strong></li>
+      </ul>
+      <div>
+        <strong>Why?</strong><br>
+        These devices need <strong>Static (permanent) IPs</strong> because clients must always find them at the same address. If a printer's IP changes overnight, no one can print in the morning!
+      </div>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    لا تستخدم DHCP للأجهزة الثابتة مثل السيرفرات والطابعات والراوترات.<br>
+    السبب: هذه الأجهزة تحتاج عناوين IP ثابتة (Static) حتى يقدر المستخدمون والأجهزة الأخرى دائماً إيجادها على نفس العنوان.<br>
+    مثال: لو IP الطابعة تغيّر بين ليلة وضحاها، ما أحد يقدر يطبع في الصبح!
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════ -->
+<!-- §4  TELNET                            -->
+<!-- ══════════════════════════════════════ -->
+<div class="section-header" id="s4">
+  <div class="sec-num p">4</div>
+  <div class="sec-titles">
+    <h3>Telnet — Remote Terminal Protocol</h3>
+    <div class="ar">بروتوكول الطرفية عن بُعد</div>
+  </div>
+</div>
+
+<div class="proto-card">
+  <div class="proto-header">
+    <span class="proto-badge p">Telnet</span>
+    <span class="proto-name">Remote Login Protocol</span>
+    <span class="proto-port">Port 23</span>
+  </div>
+  <p>Telnet allows users to <strong>remotely log in to and control another computer</strong> over a network as if they were physically sitting at that machine.</p>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    Telnet يتيح لك تسجيل الدخول والتحكم بجهاز آخر عن بُعد عبر الشبكة — كأنك جالس أمامه مباشرةً.
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Telnet Key Facts <span class="ar">معلومات مهمة عن Telnet</span></div>
+  <ul>
+    <li>Developed in the <strong>early 1970s</strong> — one of the oldest application layer protocols in TCP/IP.</li>
+    <li>Allows users to <strong>emulate text-based terminal devices</strong> over the network using software.</li>
+    <li>A connection is called a <strong>virtual terminal (vty) session</strong>.</li>
+    <li>Can be run from the <strong>command prompt</strong> on a PC.</li>
+    <li>You get <strong>all the rights and priorities</strong> your username allows on the remote machine.</li>
+    <li>⚠️ <strong>Security issue:</strong> Telnet sends all data (including passwords) in <strong>plain text</strong> — completely unencrypted. <strong>SSH (Port 22)</strong> is the modern secure replacement.</li>
+  </ul>
+  <div class="grid2">
+    <div class="highlight">
+      <strong>Telnet Use Case</strong><br>
+      Network engineers use it to remotely configure routers and switches. Type commands on your local computer, they execute on the remote device.
+    </div>
+    <div class="note">
+      <div class="note-label">Security Warning ⚠️</div>
+      Telnet transmits everything in <strong>plain text</strong> including usernames and passwords. Anyone on the network can intercept it. Use <strong>SSH (Port 22)</strong> instead in real environments.
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    Telnet طُوِّر في السبعينيات وهو من أقدم بروتوكولات TCP/IP.<br>
+    يُنشئ ما يُسمى بـ "جلسة طرفية افتراضية" (vty session) — تتحكم بالجهاز البعيد نصياً.<br>
+    <strong>المشكلة الكبرى:</strong> كل شيء يُرسل بنص صريح (Plain Text) — بما في ذلك كلمة المرور! أي شخص على الشبكة يقدر يراها.<br>
+    لهذا، في الأنظمة الحديثة نستخدم <strong>SSH (Port 22)</strong> بدل Telnet لأنه مشفَّر.
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════ -->
+<!-- §5  DNS NAME SPACE                   -->
+<!-- ══════════════════════════════════════ -->
+<div class="section-header" id="s5">
+  <div class="sec-num y">5</div>
+  <div class="sec-titles">
+    <h3>DNS — Name Space (Chapter 25.1 &amp; 25.2)</h3>
+    <div class="ar">نظام أسماء النطاقات — فضاء الأسماء</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Why Do We Need DNS? <span class="ar">لماذا نحتاج DNS؟</span></div>
+  <p>Computers communicate using <strong>IP addresses</strong> (e.g., 142.250.80.100). Humans communicate using <strong>names</strong> (e.g., google.com). DNS is the system that <strong>translates names to IP addresses</strong> automatically.</p>
+  <div class="highlight">
+    <strong>DNS = The Internet's Phone Book</strong><br>
+    Just as a phone book maps a person's name to their number, DNS maps a domain name to an IP address.
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    الحواسيب تتواصل بعناوين IP (أرقام)، لكن البشر يتذكرون الأسماء بسهولة أكثر.<br>
+    DNS هو النظام الذي يُترجم الاسم (مثل google.com) إلى عنوان IP تلقائياً كي تتصل بالسيرفر الصحيح.<br>
+    بدون DNS سيضطر كل مستخدم لحفظ أرقام IP لكل موقع يزوره!
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Name Space: Flat vs Hierarchical <span class="ar">فضاء الأسماء: المسطّح مقابل الهرمي</span></div>
+  <div class="vs-grid">
+    <div class="vs-header left">Flat Name Space</div>
+    <div class="vs-header right">Hierarchical Name Space ✓ DNS uses this</div>
+    <div class="vs-cell left">Each machine name is <strong>unique</strong> with no structure or categorization.</div>
+    <div class="vs-cell right">Names organized in an <strong>inverted tree</strong> structure with the root at the top.</div>
+    <div class="vs-cell left">Works for small networks but <strong>NOT scalable</strong> for the Internet.</div>
+    <div class="vs-cell right">Highly scalable — <strong>up to 128 levels</strong> (Level 0 = root → Level 127).</div>
+    <div class="vs-cell left">Difficult to manage — any name conflict is a global problem.</div>
+    <div class="vs-cell right">Each organization manages its own portion — distributed administration.</div>
+    <div class="vs-cell left r">Example: "fileserver1" — no context</div>
+    <div class="vs-cell right g">Example: mail.google.com — structured, clear</div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    <strong>فضاء الأسماء المسطّح (Flat):</strong> كل اسم فريد لكن لا يوجد تنظيم — مثل دليل هاتف واحد لكل العالم. غير قابل للتوسع.<br>
+    <strong>فضاء الأسماء الهرمي (Hierarchical):</strong> تنظيم على شكل شجرة مقلوبة — الجذر (Root) في القمة، ثم النطاقات تتفرع للأسفل.<br>
+    الإنترنت يستخدم الهرمي لأنه يتيح إدارة موزعة: كل منظمة تدير جزءها فقط.
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════ -->
+<!-- §6  DNS DOMAIN NAME SPACE (Ch. 25.2)  -->
+<!-- ══════════════════════════════════════ -->
+<div class="section-header" id="s6">
+  <div class="sec-num">6</div>
+  <div class="sec-titles">
+    <h3>Domain Name Space — Structure &amp; Labels</h3>
+    <div class="ar">هيكل فضاء أسماء النطاقات</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">The Inverted Tree Structure <span class="ar">هيكل الشجرة المقلوبة</span></div>
+  <p>DNS organizes all domain names in an <strong>inverted tree</strong>. The root (unnamed) is at the top; branches split into domains and subdomains below.</p>
+  <div class="dns-tree">
+<span class="root">                    . (Root — unnamed)
+                   / | \
+          </span>
+<span class="tld">      .com     .org    .edu    .net    .gov    .uk    .jo
+       /  \
+  </span>
+<span class="sld">   google  amazon   facebook    microsoft
+     |
+</span>
+<span class="sub">   mail.google.com      www.google.com
+</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Level</th><th>Name</th><th>Example</th><th>Description</th><th>بالعربي</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td><strong>Root</strong></td><td>. (dot)</td><td>Top of the tree; unnamed; managed by ICANN</td><td>جذر الشجرة — غير مسمى</td></tr>
+        <tr><td>1</td><td><strong>Top-Level Domain (TLD)</strong></td><td>.com .org .edu .jo .uk</td><td>Generic or country-code TLDs</td><td>نطاق المستوى الأعلى</td></tr>
+        <tr><td>2</td><td><strong>Second-Level Domain (SLD)</strong></td><td>google (.com)</td><td>Organization's registered name</td><td>اسم المنظمة المسجَّل</td></tr>
+        <tr><td>3+</td><td><strong>Subdomain</strong></td><td>mail (mail.google.com)</td><td>Further subdivision; managed by the organization</td><td>النطاق الفرعي — تديره المنظمة</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="highlight">
+    <strong>Labels:</strong> Each segment separated by a dot is called a <strong>label</strong>. Labels can be up to 63 characters. A full domain name can be up to <strong>255 characters</strong> total.<br>
+    <strong>FQDN (Fully Qualified Domain Name):</strong> the complete domain name ending with a dot — e.g., <span style="color:var(--gold);font-family:'JetBrains Mono',monospace">www.google.com.</span>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    الشجرة الهرمية لـ DNS مبنية من الجذر (Root) في القمة وتتفرع للأسفل:<br>
+    <strong>الجذر (Root . ):</strong> قمة الشجرة، يُدار بواسطة ICANN.<br>
+    <strong>TLD:</strong> النطاق الأعلى: .com، .org، .edu، .jo، .uk إلخ.<br>
+    <strong>SLD:</strong> اسم المنظمة المسجَّل مثل "google" في google.com.<br>
+    <strong>Subdomain:</strong> فروع فرعية تديرها المنظمة نفسها مثل mail.google.com.<br>
+    كل جزء بين نقطتين يُسمى "Label" وطوله يصل إلى 63 حرف. الاسم الكامل لا يتجاوز 255 حرف.
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════ -->
+<!-- §7  DNS DISTRIBUTION OF NAME SPACE   -->
+<!-- ══════════════════════════════════════ -->
+<div class="section-header" id="s7">
+  <div class="sec-num o">7</div>
+  <div class="sec-titles">
+    <h3>Distribution of Name Space — DNS Servers</h3>
+    <div class="ar">توزيع فضاء الأسماء — سيرفرات DNS</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Why Distribute DNS? <span class="ar">لماذا نوزّع DNS؟</span></div>
+  <p>It would be <strong>very inefficient and unreliable</strong> to have just one computer store all DNS information for the entire Internet. Instead, DNS is <strong>distributed</strong> across a hierarchy of servers worldwide.</p>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    وضع كل بيانات DNS في حاسوب واحد سيكون غير فعّال وغير موثوق — الحاسوب الواحد سيُصاب بضغط هائل وإذا تعطّل توقف الإنترنت كله.<br>
+    الحل: توزيع DNS على آلاف السيرفرات حول العالم في هرمية منظَّمة.
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Types of DNS Servers <span class="ar">أنواع سيرفرات DNS</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Server Type</th><th>Role</th><th>Data Source</th><th>بالعربي</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="tag g">Root Server</span></td>
+          <td>Top of the DNS hierarchy; knows the address of all TLD servers</td>
+          <td>Maintained by 13 root server clusters (A–M) worldwide</td>
+          <td>قمة الهرم — يعرف عناوين جميع سيرفرات TLD</td>
+        </tr>
+        <tr>
+          <td><span class="tag">Primary Server</span></td>
+          <td>Authoritative source for a zone; loads data from local disk files</td>
+          <td>Disk file (zone file) — administrator edits manually</td>
+          <td>المصدر الرسمي للمنطقة — يحمّل البيانات من ملف محلي</td>
+        </tr>
+        <tr>
+          <td><span class="tag y">Secondary Server</span></td>
+          <td>Backup and load-sharing; downloads data from Primary</td>
+          <td>Zone transfer from Primary server</td>
+          <td>نسخة احتياطية — يحمّل البيانات من الـ Primary</td>
+        </tr>
+        <tr>
+          <td><span class="tag p">Resolver / Cache</span></td>
+          <td>Handles name resolution requests on behalf of clients</td>
+          <td>Queries other DNS servers; caches results</td>
+          <td>يحل أسماء النطاقات للعملاء ويخزن النتائج مؤقتاً</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    <strong>Root Server:</strong> قمة الهرم، يعرف أين توجد سيرفرات TLD لكل نطاق.<br>
+    <strong>Primary Server:</strong> المصدر الرسمي الأساسي للمنطقة (Zone) — يحمّل بياناته من ملف قرص محلي يُعدّه المسؤول.<br>
+    <strong>Secondary Server:</strong> نسخة احتياطية — يحمّل بياناته من الـ Primary عبر ما يُسمى "Zone Transfer".<br>
+    <strong>Resolver:</strong> يستقبل طلبات الحل من الأجهزة ويتواصل مع سيرفرات DNS الأخرى ليجد الإجابة.
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Zones vs Domains <span class="ar">المناطق مقابل النطاقات</span></div>
+  <div class="grid2">
+    <div class="highlight">
+      <strong>Domain</strong><br>
+      A subtree of the domain name space. A domain can be divided into smaller zones.
+    </div>
+    <div class="highlight">
+      <strong>Zone</strong><br>
+      A contiguous portion of the domain name space that a particular DNS server is authoritative for. A zone may be part of a domain, or the full domain.
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    <strong>Domain (نطاق):</strong> شجرة فرعية من فضاء الأسماء — مثل كل شيء تحت ".com".<br>
+    <strong>Zone (منطقة):</strong> الجزء الذي يكون سيرفر DNS مسؤولاً عنه رسمياً. المنطقة قد تكون نطاقاً كاملاً أو جزءاً منه فقط.<br>
+    مثال: سيرفر google.com مسؤول عن منطقة google.com كاملة بما فيها mail.google.com وwww.google.com.
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════ -->
+<!-- §8  ZONE TRANSFER                    -->
+<!-- ══════════════════════════════════════ -->
+<div class="section-header" id="s8">
+  <div class="sec-num p">8</div>
+  <div class="sec-titles">
+    <h3>Zone Transfer</h3>
+    <div class="ar">نقل المنطقة</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">What is Zone Transfer? <span class="ar">ما هو Zone Transfer؟</span></div>
+  <div class="highlight">
+    <strong>Zone Transfer</strong> is the process by which a Secondary DNS server downloads and synchronizes its DNS database from the Primary DNS server.
+  </div>
+  <p style="margin-top:12px">Key facts about zone transfer:</p>
+  <ul>
+    <li><strong>Primary server</strong> loads all information from a <strong>local disk file</strong> (zone file).</li>
+    <li><strong>Secondary server</strong> loads all information from the <strong>Primary server</strong> via zone transfer.</li>
+    <li>Zone transfer ensures Secondary servers have <strong>up-to-date, consistent data</strong>.</li>
+    <li>Secondary servers can be notified of changes either <strong>actively</strong> (Primary pushes notification) or <strong>passively</strong> (Secondary periodically checks for updates).</li>
+  </ul>
+  <div class="flow" style="margin-top:14px">
+    <div class="fbox o">Zone File<br><small class="small">on disk</small></div>
+    <div class="arrow">→</div>
+    <div class="fbox a">Primary DNS<br><small class="small">Authoritative</small></div>
+    <div class="arrow">→ Zone Transfer →</div>
+    <div class="fbox g">Secondary DNS<br><small class="small">Backup</small></div>
+    <div class="arrow">→</div>
+    <div class="fbox p">Secondary DNS<br><small class="small">Backup 2</small></div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic — Zone Transfer</div>
+    Zone Transfer = عملية تنزيل وتزامن قاعدة بيانات DNS من الـ Primary إلى الـ Secondary.<br>
+    <strong>Primary:</strong> يحمّل بياناته من ملف محلي على القرص (Zone File) يُعدّه المسؤول.<br>
+    <strong>Secondary:</strong> يحمّل بياناته من الـ Primary عبر Zone Transfer — لا يحمل بيانات من ملف محلي خاص به.<br>
+    التزامن يتم بطريقتين:<br>
+    — <strong>نشط (Active):</strong> الـ Primary يُخطر الـ Secondary فوراً عند أي تغيير.<br>
+    — <strong>سلبي (Passive):</strong> الـ Secondary يفحص دورياً هل في تحديثات.
+  </div>
+</div>
+
+<div class="note">
+  <div class="note-label">Critical Exam Statement</div>
+  <strong>"A primary server loads all information from the disk file; the secondary server loads all information from the primary server. When the secondary downloads information from the primary, it is called zone transfer."</strong><br>
+  <span class="small">— This exact statement is frequently quoted in exams.</span>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════ -->
+<!-- §9  DNS RESOLUTION PROCESS           -->
+<!-- ══════════════════════════════════════ -->
+<div class="section-header" id="s9">
+  <div class="sec-num">9</div>
+  <div class="sec-titles">
+    <h3>DNS Name Resolution Process</h3>
+    <div class="ar">عملية حل اسم النطاق</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Step-by-Step: How DNS Resolves a Name <span class="ar">خطوة بخطوة: كيف يحل DNS الاسم</span></div>
+  <p>When you type <span style="font-family:'JetBrains Mono',monospace;color:var(--gold)">www.google.com</span> in your browser:</p>
+  <div class="flow" style="flex-direction:column;align-items:flex-start;gap:4px;padding:10px">
+    <div style="display:flex;align-items:center;gap:10px;width:100%">
+      <span class="tag">1</span>
+      <span>Browser checks its <strong>local cache</strong> — if found, done!</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;width:100%">
+      <span class="tag o">2</span>
+      <span>Checks the <strong>hosts file</strong> on the local machine.</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;width:100%">
+      <span class="tag g">3</span>
+      <span>Sends query to the <strong>DNS Resolver</strong> (your ISP's or configured DNS server).</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;width:100%">
+      <span class="tag y">4</span>
+      <span>Resolver asks a <strong>Root Server</strong>: "Who handles .com?"</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;width:100%">
+      <span class="tag p">5</span>
+      <span>Root server replies with the address of the <strong>.com TLD server</strong>.</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;width:100%">
+      <span class="tag">6</span>
+      <span>Resolver asks TLD server: "Who handles google.com?"</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;width:100%">
+      <span class="tag o">7</span>
+      <span>TLD server refers to <strong>Google's authoritative DNS server</strong>.</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;width:100%">
+      <span class="tag g">8</span>
+      <span>Google's DNS server returns the <strong>IP address</strong> for www.google.com.</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;width:100%">
+      <span class="tag g">9</span>
+      <span>Resolver returns IP to browser. Browser connects. <strong>Done!</strong></span>
+    </div>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic — عملية الحل</div>
+    لما تكتب www.google.com في المتصفح:<br>
+    1- المتصفح يفحص Cache المحلي. 2- يفحص ملف hosts. 3- يسأل DNS Resolver (سيرفر DNS المُعيَّن لك).<br>
+    4- الـ Resolver يسأل Root Server: "مَن يدير .com؟"<br>
+    5- الـ Root يرد بعنوان سيرفر .com التابع لـ TLD.<br>
+    6- الـ Resolver يسأل TLD: "مَن يدير google.com؟"<br>
+    7- TLD يُحيله لسيرفر DNS الرسمي لـ Google.<br>
+    8- سيرفر Google يرد بعنوان IP الخاص بـ www.google.com.<br>
+    9- الـ Resolver يُرسل IP للمتصفح الذي يتصل بالسيرفر.
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">DNS Resource Records <span class="ar">سجلات موارد DNS</span></div>
+  <p>DNS servers store information in <strong>Resource Records (RR)</strong>. Common types:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Record Type</th><th>Name</th><th>Purpose</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag g">A</span></td><td>Address</td><td>Maps domain name → IPv4 address</td><td>google.com → 142.250.80.100</td></tr>
+        <tr><td><span class="tag">AAAA</span></td><td>IPv6 Address</td><td>Maps domain name → IPv6 address</td><td>google.com → 2607:f8b0::100</td></tr>
+        <tr><td><span class="tag o">MX</span></td><td>Mail Exchange</td><td>Specifies mail server for a domain</td><td>→ smtp.google.com</td></tr>
+        <tr><td><span class="tag y">CNAME</span></td><td>Canonical Name</td><td>Alias — one name points to another</td><td>www → webserver.google.com</td></tr>
+        <tr><td><span class="tag p">NS</span></td><td>Name Server</td><td>Identifies DNS server for a zone</td><td>google.com NS ns1.google.com</td></tr>
+        <tr><td><span class="tag r">PTR</span></td><td>Pointer</td><td>Reverse DNS: IP → domain name</td><td>142.250.80.100 → google.com</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    سيرفرات DNS تخزّن المعلومات في سجلات تُسمى Resource Records:<br>
+    <strong>A Record:</strong> يحوّل اسم النطاق لعنوان IPv4.<br>
+    <strong>AAAA Record:</strong> يحوّل اسم النطاق لعنوان IPv6.<br>
+    <strong>MX Record:</strong> يحدد سيرفر البريد الإلكتروني للنطاق.<br>
+    <strong>CNAME:</strong> اسم بديل يُشير لاسم آخر (Alias).<br>
+    <strong>NS:</strong> يُحدد سيرفر DNS المسؤول عن المنطقة.<br>
+    <strong>PTR:</strong> عكس A — يحوّل IP لاسم نطاق (Reverse DNS).
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════ -->
+<!-- §10  DDNS                            -->
+<!-- ══════════════════════════════════════ -->
+<div class="section-header" id="s10">
+  <div class="sec-num g">10</div>
+  <div class="sec-titles">
+    <h3>DDNS — Dynamic Domain Name System (Chapter 25.9)</h3>
+    <div class="ar">نظام أسماء النطاقات الديناميكي</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">What is DDNS? <span class="ar">ما هو DDNS؟</span></div>
+  <p>Traditional DNS uses <strong>static</strong> mappings stored in zone files — a human administrator must manually update them. But in modern networks (especially with DHCP), IP addresses change frequently. <strong>DDNS</strong> was devised to handle this automatically.</p>
+  <div class="highlight">
+    <strong>DDNS = DNS that updates itself dynamically when IP address bindings change.</strong>
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    DNS التقليدي يستخدم mappings ثابتة في ملفات Zone يُعدّها المسؤول يدوياً.<br>
+    لكن في شبكات DHCP، عناوين IP تتغيّر باستمرار — فكيف يعرف DNS الاسم الجديد للجهاز؟<br>
+    DDNS حلّ هذه المشكلة بجعل DNS يُحدّث نفسه تلقائياً عند تغيُّر عناوين IP.
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">How DDNS Works <span class="ar">كيف يعمل DDNS؟</span></div>
+  <div class="flow">
+    <div class="fbox a">Device gets<br>new IP from DHCP</div>
+    <div class="arrow">→</div>
+    <div class="fbox o">DHCP sends<br>name→IP binding<br>to Primary DNS</div>
+    <div class="arrow">→</div>
+    <div class="fbox g">Primary DNS<br>updates the Zone</div>
+    <div class="arrow">→</div>
+    <div class="fbox p">Secondary servers<br>notified actively<br>or passively</div>
+  </div>
+  <ul style="margin-top:12px">
+    <li>When a <strong>binding</strong> (name ↔ IP) changes, DHCP sends the new info to the <strong>Primary DNS server</strong>.</li>
+    <li>The Primary DNS <strong>updates the zone file dynamically</strong>.</li>
+    <li>Secondary servers are notified <strong>actively</strong> (Primary pushes notification) or <strong>passively</strong> (Secondary polls for changes).</li>
+  </ul>
+  <div class="ar-box">
+    <div class="ar-label">Arabic — آلية عمل DDNS</div>
+    1- الجهاز يحصل على IP جديد من DHCP.<br>
+    2- DHCP يُرسل الرابط الجديد (اسم ↔ IP) للـ Primary DNS Server.<br>
+    3- الـ Primary يُحدّث ملف الـ Zone تلقائياً.<br>
+    4- السيرفرات الثانوية تُخطَر بالتحديث إما بشكل نشط (Primary يُرسل إشعاراً) أو سلبي (Secondary تفحص دورياً).
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════ -->
+<!-- §11  DNS ENCAPSULATION (Ch. 25.10)   -->
+<!-- ══════════════════════════════════════ -->
+<div class="section-header" id="s11">
+  <div class="sec-num o">11</div>
+  <div class="sec-titles">
+    <h3>DNS Encapsulation — UDP vs TCP (Chapter 25.10)</h3>
+    <div class="ar">تغليف DNS — متى UDP؟ متى TCP؟</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">DNS Transport: UDP or TCP? <span class="ar">هل يستخدم DNS نقل UDP أم TCP؟</span></div>
+  <p>DNS can use <strong>either UDP or TCP</strong>. Both use the well-known port <strong>53</strong>. The choice depends on the response size:</p>
+  <div class="grid2">
+    <div class="highlight">
+      <strong style="color:var(--green)">UDP — when response &lt; 512 bytes</strong><br><br>
+      Most DNS queries are small and simple — a single domain name to IP mapping. UDP is faster because there is no connection setup overhead.<br>
+      <span class="small">Most DNS queries use this path.</span>
+    </div>
+    <div class="highlight">
+      <strong style="color:var(--accent2)">TCP — when response &gt; 512 bytes</strong><br><br>
+      Zone transfers and large responses exceed the 512-byte UDP packet limit. TCP is used for reliability and to handle larger payloads.<br>
+      <span class="small">Zone transfers always use TCP.</span>
+    </div>
+  </div>
+  <div class="formula">
+    <div class="flabel">DNS Transport Decision Rule</div>
+Response size &lt; 512 bytes  →  Use UDP (Port 53) — faster, no connection
+Response size &gt; 512 bytes  →  Use TCP (Port 53) — reliable, handles large data
+Zone Transfer              →  Always TCP (Port 53)
+  </div>
+  <div class="ar-box">
+    <div class="ar-label">Arabic</div>
+    DNS يعمل على Port 53 ويستخدم إما UDP أو TCP حسب حجم الرد:<br>
+    <strong>UDP (أقل من 512 بايت):</strong> معظم استفسارات DNS صغيرة الحجم — UDP أسرع لأنه لا يحتاج إنشاء اتصال.<br>
+    <strong>TCP (أكثر من 512 بايت):</strong> الردود الكبيرة وعمليات Zone Transfer تستخدم TCP لأنه أكثر موثوقية ويتعامل مع البيانات الكبيرة.<br>
+    <strong>قاعدة مهمة للامتحان:</strong> Zone Transfer = TCP دائماً.
+  </div>
+</div>
+
+<div class="green-note">
+  <div class="green-label">Key Exam Fact</div>
+  DNS uses port <strong>53</strong> for BOTH UDP and TCP.<br>
+  UDP for small queries (&lt;512 bytes) | TCP for large responses (&gt;512 bytes) and zone transfers.
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════ -->
+<!-- §12  FULL COMPARISON TABLE           -->
+<!-- ══════════════════════════════════════ -->
+<div class="section-header" id="s12">
+  <div class="sec-num y">12</div>
+  <div class="sec-titles">
+    <h3>Protocol Comparisons &amp; Full Reference</h3>
+    <div class="ar">مقارنات البروتوكولات والمرجع الكامل</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">FTP vs Telnet vs DHCP — Quick Comparison <span class="ar">مقارنة سريعة</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Feature</th><th>FTP</th><th>Telnet</th><th>DHCP</th></tr></thead>
+      <tbody>
+        <tr><td>Purpose</td><td>File transfer</td><td>Remote login / control</td><td>Auto IP assignment</td></tr>
+        <tr><td>Port(s)</td><td class="y">21 (cmd) + 20 (data)</td><td class="y">23</td><td class="y">67 (server) / 68 (client)</td></tr>
+        <tr><td>Transport</td><td>TCP only</td><td>TCP only</td><td>UDP</td></tr>
+        <tr><td>Connections</td><td class="r">2 simultaneous TCP</td><td>1 TCP</td><td>Broadcast-based</td></tr>
+        <tr><td>Encryption</td><td class="r">None (plain text)</td><td class="r">None (plain text)</td><td class="y">None needed</td></tr>
+        <tr><td>Secure Alternative</td><td>SFTP / FTPS</td><td>SSH (Port 22)</td><td>N/A</td></tr>
+        <tr><td>Server devices?</td><td>Yes</td><td>Yes</td><td class="r">No — use static IPs</td></tr>
+        <tr><td>IP assignment</td><td>N/A</td><td>N/A</td><td class="g">Yes — dynamic leased</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">DNS Server Types — Full Comparison <span class="ar">مقارنة سيرفرات DNS</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Server Type</th><th>Data Source</th><th>Is Authoritative?</th><th>Role</th><th>بالعربي</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag g">Root</span></td><td>Maintained globally (ICANN)</td><td class="g">Yes</td><td>Directs to TLD servers</td><td>يُوجّه لسيرفرات TLD</td></tr>
+        <tr><td><span class="tag">Primary</span></td><td>Local disk (zone file)</td><td class="g">Yes</td><td>Authoritative source for zone</td><td>المصدر الرسمي</td></tr>
+        <tr><td><span class="tag y">Secondary</span></td><td>Primary (via Zone Transfer)</td><td class="g">Yes (copy)</td><td>Backup + load balancing</td><td>نسخة احتياطية</td></tr>
+        <tr><td><span class="tag p">Resolver</span></td><td>Queries other servers; caches</td><td class="r">No</td><td>Acts on behalf of clients</td><td>يخدم الأجهزة</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Flat vs Hierarchical Name Space <span class="ar">المسطح مقابل الهرمي</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Property</th><th>Flat Name Space</th><th>Hierarchical Name Space</th></tr></thead>
+      <tbody>
+        <tr><td>Structure</td><td class="r">None — all names at same level</td><td class="g">Inverted tree — levels of hierarchy</td></tr>
+        <tr><td>Scalability</td><td class="r">Poor — does not scale</td><td class="g">Excellent — up to 128 levels</td></tr>
+        <tr><td>Name uniqueness</td><td class="r">Global — every name must be globally unique</td><td class="g">Local uniqueness — same name OK in different subtrees</td></tr>
+        <tr><td>Administration</td><td class="r">Centralized — one authority for all</td><td class="g">Distributed — each org manages its own portion</td></tr>
+        <tr><td>Internet use</td><td class="r">No</td><td class="g">Yes — DNS uses hierarchical</td></tr>
+        <tr><td>Example</td><td>"fileserver1"</td><td>"fileserver1.sales.company.com"</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">DNS: UDP vs TCP <span class="ar">DNS: متى UDP ومتى TCP؟</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Criterion</th><th>UDP</th><th>TCP</th></tr></thead>
+      <tbody>
+        <tr><td>Port</td><td class="y">53</td><td class="y">53</td></tr>
+        <tr><td>When used</td><td class="g">Response &lt; 512 bytes (most queries)</td><td class="g">Response &gt; 512 bytes / Zone Transfer</td></tr>
+        <tr><td>Speed</td><td class="g">Faster (no handshake)</td><td class="y">Slower (connection setup)</td></tr>
+        <tr><td>Reliability</td><td class="r">Best-effort</td><td class="g">Guaranteed delivery</td></tr>
+        <tr><td>Zone Transfer</td><td class="r">Never used</td><td class="g">Always used</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ══════════════════════════════════════ -->
+<!-- §13  EXAM Q&A                        -->
+<!-- ══════════════════════════════════════ -->
+<div class="section-header">
+  <div class="sec-num p">13</div>
+  <div class="sec-titles">
+    <h3>Exam Questions &amp; Answers</h3>
+    <div class="ar">أسئلة الامتحان مع الإجابات</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Concept Questions <span class="ar">أسئلة مفاهيم</span></div>
+
+  <div class="exam-q">
+    <div class="q-label">Q1</div>
+    What is the role of the Application Layer in the TCP/IP model?<br>
+    <span class="answer">Answer:</span> It provides the interface between the applications on either end of the network — defining the rules and formats (protocols) that user applications use to communicate over the network.
+  </div>
+
+  <div class="exam-q">
+    <div class="q-label">Q2</div>
+    Why does FTP require two TCP connections? What does each carry?<br>
+    <span class="answer">Answer:</span> FTP uses Port 21 for commands/control (login, directory commands, etc.) and Port 20 for actual data transfer (file content). They serve different purposes — the control connection stays open the entire session, while the data connection opens and closes per file transfer.
+  </div>
+
+  <div class="exam-q">
+    <div class="q-label">Q3</div>
+    Why should servers, printers, and routers use static IPs instead of DHCP?<br>
+    <span class="answer">Answer:</span> DHCP assigns temporary (leased) IP addresses that can change when the lease expires or the device reconnects. Servers and printers need permanent IPs so that clients can always reach them at the same address. A changing IP would break all connections to these devices.
+  </div>
+
+  <div class="exam-q">
+    <div class="q-label">Q4</div>
+    What is a Zone Transfer? When does it occur?<br>
+    <span class="answer">Answer:</span> Zone Transfer is when a Secondary DNS server downloads/synchronizes its DNS database from the Primary DNS server. It occurs when the secondary needs to update its data to match the primary's current zone file. It always uses TCP on Port 53.
+  </div>
+
+  <div class="exam-q">
+    <div class="q-label">Q5</div>
+    What port does DNS use? When does it use UDP and when TCP?<br>
+    <span class="answer">Answer:</span> DNS uses Port 53 for both protocols. UDP is used when the response is less than 512 bytes (most normal queries). TCP is used when the response exceeds 512 bytes or for Zone Transfers.
+  </div>
+
+  <div class="exam-q">
+    <div class="q-label">Q6</div>
+    What is the difference between Flat and Hierarchical name spaces?<br>
+    <span class="answer">Answer:</span> Flat: all names at the same level, each must be globally unique, not scalable. Hierarchical: inverted-tree structure with up to 128 levels, locally unique names within subtrees, distributed administration — DNS uses hierarchical.
+  </div>
+
+  <div class="exam-q">
+    <div class="q-label">Q7</div>
+    What is DDNS and why was it created?<br>
+    <span class="answer">Answer:</span> Dynamic DNS (DDNS) was created because IP addresses in DHCP networks change frequently. DDNS allows the DNS master file to be updated dynamically — when a DHCP server assigns a new IP, it notifies the Primary DNS server to update the zone, which then propagates to secondary servers.
+  </div>
+
+  <div class="exam-q">
+    <div class="q-label">Q8</div>
+    What is a virtual terminal (vty) session and which protocol creates it?<br>
+    <span class="answer">Answer:</span> A vty session is a virtual terminal session created by Telnet (Port 23). It allows a user to remotely log in to and control another computer as if physically present at that machine.
+  </div>
+
+  <div class="exam-q">
+    <div class="q-label">Q9</div>
+    Name and describe 3 types of DNS servers.<br>
+    <span class="answer">Answer:</span> (1) Root Server — top of hierarchy, knows addresses of all TLD servers. (2) Primary Server — authoritative source, loads data from local disk zone file. (3) Secondary Server — backup copy, downloads data from Primary via Zone Transfer.
+  </div>
+
+  <div class="exam-q">
+    <div class="q-label">Q10</div>
+    List 5 application layer protocols with their port numbers.<br>
+    <span class="answer">Answer:</span> DNS=53, HTTP=80, FTP=21/20, SMTP=25, Telnet=23, POP3=110, DHCP=67/68, HTTPS=443.
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- FINAL QUICK REFERENCE -->
+<div class="final">
+  <h2>Quick Reference — Everything You Need to Know
+    <span class="ar">مراجعة سريعة — كل ما تحتاجه</span>
+  </h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Concept</th><th>Core Idea</th><th>Arabic — الجوهر</th></tr></thead>
+      <tbody>
+        <tr><td>Application Layer</td><td>Interface between apps on either end of the network</td><td>الواجهة بين التطبيقات على طرفَي الشبكة</td></tr>
+        <tr><td>DNS Port</td><td>Port 53 (UDP for &lt;512b, TCP for &gt;512b &amp; zone transfer)</td><td>منفذ 53 — UDP للردود الصغيرة، TCP للكبيرة وZone Transfer</td></tr>
+        <tr><td>FTP Ports</td><td>Port 21 = commands, Port 20 = data (2 TCP connections)</td><td>21 للأوامر، 20 للبيانات — اتصالان TCP</td></tr>
+        <tr><td>DHCP</td><td>Auto-assigns IP, mask, gateway, DNS — leased, not permanent</td><td>يُسنِد IP تلقائياً مؤقتاً — يُعاد للـ Pool عند قطع الاتصال</td></tr>
+        <tr><td>DHCP — Do NOT use for</td><td>Servers, printers, routers, switches — use static IPs</td><td>لا تستخدمه للأجهزة الثابتة — استخدم IP ثابت</td></tr>
+        <tr><td>Telnet</td><td>Port 23, virtual terminal (vty), plain text — not secure</td><td>تحكم عن بُعد بنص صريح — استخدم SSH بدلاً</td></tr>
+        <tr><td>Flat Name Space</td><td>No structure, globally unique, not scalable</td><td>مسطّح، لا هيكل، غير قابل للتوسع</td></tr>
+        <tr><td>Hierarchical Name Space</td><td>Inverted tree, up to 128 levels, DNS uses this</td><td>شجرة مقلوبة، 128 مستوى — يستخدمه DNS</td></tr>
+        <tr><td>Root Server</td><td>Top of DNS hierarchy; knows all TLD server addresses</td><td>قمة الهرم — يعرف عناوين سيرفرات TLD</td></tr>
+        <tr><td>Primary DNS</td><td>Loads from local disk file — authoritative source</td><td>المصدر الرسمي — يحمّل من ملف محلي</td></tr>
+        <tr><td>Secondary DNS</td><td>Downloads from Primary via Zone Transfer — backup</td><td>نسخة احتياطية — يحمّل من Primary عبر Zone Transfer</td></tr>
+        <tr><td>Zone Transfer</td><td>Secondary downloads from Primary; always uses TCP</td><td>Secondary يزامن بياناته من Primary — دائماً TCP</td></tr>
+        <tr><td>DDNS</td><td>DNS updates dynamically via DHCP — solves changing IPs</td><td>DNS ديناميكي — يتحدث تلقائياً مع تغيّر IPs</td></tr>
+        <tr><td>SMTP</td><td>Port 25 — sends email to mail server</td><td>منفذ 25 — يُرسل البريد للسيرفر</td></tr>
+        <tr><td>POP3</td><td>Port 110 — downloads email from server to client</td><td>منفذ 110 — يُنزّل البريد من السيرفر للعميل</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:24px">
+    <div class="memory-box">
+      <div class="memory-label">Port Numbers — Master List للحفظ</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px">
+        <div style="text-align:center"><span class="tag g" style="font-size:13px;padding:4px 12px">53</span><br><span style="font-size:11px;color:var(--muted)">DNS</span></div>
+        <div style="text-align:center"><span class="tag" style="font-size:13px;padding:4px 12px">80</span><br><span style="font-size:11px;color:var(--muted)">HTTP</span></div>
+        <div style="text-align:center"><span class="tag" style="font-size:13px;padding:4px 12px">443</span><br><span style="font-size:11px;color:var(--muted)">HTTPS</span></div>
+        <div style="text-align:center"><span class="tag y" style="font-size:13px;padding:4px 12px">25</span><br><span style="font-size:11px;color:var(--muted)">SMTP</span></div>
+        <div style="text-align:center"><span class="tag y" style="font-size:13px;padding:4px 12px">110</span><br><span style="font-size:11px;color:var(--muted)">POP3</span></div>
+        <div style="text-align:center"><span class="tag o" style="font-size:13px;padding:4px 12px">21+20</span><br><span style="font-size:11px;color:var(--muted)">FTP</span></div>
+        <div style="text-align:center"><span class="tag p" style="font-size:13px;padding:4px 12px">23</span><br><span style="font-size:11px;color:var(--muted)">Telnet</span></div>
+        <div style="text-align:center"><span class="tag r" style="font-size:13px;padding:4px 12px">67/68</span><br><span style="font-size:11px;color:var(--muted)">DHCP</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p style="text-align:center;color:var(--muted);font-size:12px;margin-top:36px">Networks and Data Transmissions System 4123702 — Chapter 3 &amp; 25: Application Layer &amp; DNS · Study Guide</p>
+
+</div>
+</body>
+</html>
