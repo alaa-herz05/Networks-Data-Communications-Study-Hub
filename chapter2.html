@@ -2287,50 +2287,196 @@
 
     <div class="card">
       <div class="card-title">🔄 Encapsulation vs Decapsulation Visual <span class="ar">التغليف وفك التغليف</span></div>
-      <div class="grid2">
-        <div>
-          <div style="font-weight:700;color:var(--accent2);font-size:13px;margin-bottom:8px">📤 SENDER — Adding Headers
-            (Encapsulation)</div>
-          <div style="font-family:monospace;font-size:12.5px;line-height:2.2">
-            <div
-              style="background:rgba(107,33,168,0.1);border:1px solid var(--purple);border-radius:4px;padding:4px 10px;margin-bottom:4px">
-              <span style="color:var(--purple)">App Layer:</span> [DATA]</div>
-            <div
-              style="background:rgba(26,111,212,0.1);border:1px solid var(--accent);border-radius:4px;padding:4px 10px;margin-bottom:4px">
-              <span style="color:var(--accent)">Transport:</span> [TCP Header | DATA]</div>
-            <div
-              style="background:rgba(217,79,0,0.1);border:1px solid var(--accent2);border-radius:4px;padding:4px 10px;margin-bottom:4px">
-              <span style="color:var(--accent2)">Network:</span> [IP Header | TCP | DATA]</div>
-            <div
-              style="background:rgba(30,122,66,0.1);border:1px solid var(--green);border-radius:4px;padding:4px 10px;margin-bottom:4px">
-              <span style="color:var(--green)">Data Link:</span> [MAC Hdr | IP | TCP | DATA | Trailer]</div>
-            <div
-              style="background:rgba(14,116,144,0.1);border:1px solid var(--teal);border-radius:4px;padding:4px 10px">
-              <span style="color:var(--teal)">Physical:</span> 010110101001... (bits)</div>
+
+      <!-- ══ ANIMATED FLOW DIAGRAM ══ -->
+      <style>
+        .enc-diagram {
+          display: grid;
+          grid-template-columns: 1fr 72px 1fr;
+          gap: 0;
+          align-items: end;
+          margin-top: 12px;
+          font-family: 'JetBrains Mono', monospace;
+        }
+        .enc-col { display: flex; flex-direction: column; align-items: stretch; }
+        .enc-col-label {
+          font-size: 12px; font-weight: 700; text-align: center;
+          margin-bottom: 10px; padding: 6px 10px; border-radius: 8px;
+        }
+        .enc-layer {
+          position: relative;
+          border-radius: 6px; padding: 7px 11px;
+          font-size: 11.5px; line-height: 1.4;
+          margin-bottom: 0;
+          opacity: 0;
+          animation: fadeSlideIn 0.45s ease forwards;
+        }
+        /* staggered delays — sender top→down */
+        .s1{animation-delay:0.1s} .s2{animation-delay:0.55s}
+        .s3{animation-delay:1.0s} .s4{animation-delay:1.45s} .s5{animation-delay:1.9s}
+        /* staggered delays — receiver bottom→up (mirror) */
+        .r1{animation-delay:2.5s} .r2{animation-delay:2.95s}
+        .r3{animation-delay:3.4s} .r4{animation-delay:3.85s} .r5{animation-delay:4.3s}
+
+        @keyframes fadeSlideIn {
+          from { opacity:0; transform: translateY(10px); }
+          to   { opacity:1; transform: translateY(0); }
+        }
+
+        /* arrows between layers */
+        .enc-arrow {
+          text-align: center; font-size: 18px; line-height: 1;
+          padding: 3px 0; color: #ffffff88;
+          opacity: 0; animation: fadeSlideIn 0.3s ease forwards;
+        }
+        /* sender arrows */
+        .sa1{animation-delay:0.35s} .sa2{animation-delay:0.8s}
+        .sa3{animation-delay:1.25s} .sa4{animation-delay:1.7s}
+        /* receiver arrows (upward ↑) */
+        .ra1{animation-delay:2.7s} .ra2{animation-delay:3.15s}
+        .ra3{animation-delay:3.6s} .ra4{animation-delay:4.05s}
+
+        /* middle column: medium + big curved arrows */
+        .enc-middle {
+          display: flex; flex-direction: column;
+          align-items: center; justify-content: flex-end;
+          padding-bottom: 0;
+        }
+        .medium-box {
+          background: rgba(255,201,64,.12); border: 1px solid var(--gold);
+          border-radius: 8px; padding: 8px 6px; text-align: center;
+          font-size: 10.5px; color: var(--gold); margin-bottom: 0;
+          opacity: 0; animation: fadeSlideIn 0.4s ease 2.1s forwards;
+          width: 68px;
+        }
+        .medium-box .med-icon { font-size: 20px; margin-bottom: 3px; }
+
+        /* big curved arrows SVG */
+        .enc-curve-wrap {
+          width: 100%; display: flex; flex-direction: column; align-items: center;
+        }
+        .enc-svg {
+          width: 100%; overflow: visible;
+          opacity: 0; animation: fadeSlideIn 0.5s ease 2.2s forwards;
+        }
+
+        /* layer colour palette */
+        .l-app  { background:rgba(107,33,168,.15);  border:1px solid var(--purple); color:var(--purple); }
+        .l-trans { background:rgba(26,111,212,.15); border:1px solid var(--accent);  color:var(--accent); }
+        .l-net  { background:rgba(217,79,0,.15);    border:1px solid var(--accent2); color:var(--accent2); }
+        .l-dl   { background:rgba(30,122,66,.15);   border:1px solid var(--green);   color:var(--green); }
+        .l-phy  { background:rgba(14,116,144,.15);  border:1px solid var(--teal);    color:var(--teal); }
+
+        .layer-label { font-weight:700; }
+
+        /* device icons */
+        .enc-device {
+          text-align:center; font-size:28px; margin-bottom:6px;
+          opacity:0; animation: fadeSlideIn 0.3s ease 0s forwards;
+        }
+        .enc-device.recv { animation-delay: 2.4s; }
+
+        @media(max-width:600px){
+          .enc-diagram { grid-template-columns: 1fr 48px 1fr; }
+          .enc-layer { font-size: 10px; padding: 5px 7px; }
+          .medium-box { width: 46px; font-size: 9px; }
+        }
+      </style>
+
+      <div class="enc-diagram">
+
+        <!-- ── SENDER (left) ── -->
+        <div class="enc-col">
+          <div class="enc-device">🖥️</div>
+          <div class="enc-col-label" style="background:rgba(255,107,53,.1);color:var(--accent2);border:1px solid var(--accent2)">
+            📤 SENDER — Encapsulation
+          </div>
+
+          <div class="enc-layer l-app s1">
+            <span class="layer-label">App Layer (5):</span><br>[DATA]
+          </div>
+          <div class="enc-arrow sa1">↓</div>
+
+          <div class="enc-layer l-trans s2">
+            <span class="layer-label">Transport (4):</span><br>[TCP Hdr | DATA]
+          </div>
+          <div class="enc-arrow sa2">↓</div>
+
+          <div class="enc-layer l-net s3">
+            <span class="layer-label">Network (3):</span><br>[IP Hdr | TCP | DATA]
+          </div>
+          <div class="enc-arrow sa3">↓</div>
+
+          <div class="enc-layer l-dl s4">
+            <span class="layer-label">Data Link (2):</span><br>[MAC | IP | TCP | DATA | Trailer]
+          </div>
+          <div class="enc-arrow sa4">↓</div>
+
+          <div class="enc-layer l-phy s5">
+            <span class="layer-label">Physical (1):</span><br>010110101001… (bits)
           </div>
         </div>
-        <div>
-          <div style="font-weight:700;color:var(--green);font-size:13px;margin-bottom:8px">📥 RECEIVER — Removing
-            Headers (Decapsulation)</div>
-          <div style="font-family:monospace;font-size:12.5px;line-height:2.2">
-            <div
-              style="background:rgba(14,116,144,0.1);border:1px solid var(--teal);border-radius:4px;padding:4px 10px;margin-bottom:4px">
-              <span style="color:var(--teal)">Physical:</span> 010110101001... → bits</div>
-            <div
-              style="background:rgba(30,122,66,0.1);border:1px solid var(--green);border-radius:4px;padding:4px 10px;margin-bottom:4px">
-              <span style="color:var(--green)">Data Link:</span> removes MAC header/trailer</div>
-            <div
-              style="background:rgba(217,79,0,0.1);border:1px solid var(--accent2);border-radius:4px;padding:4px 10px;margin-bottom:4px">
-              <span style="color:var(--accent2)">Network:</span> removes IP header</div>
-            <div
-              style="background:rgba(26,111,212,0.1);border:1px solid var(--accent);border-radius:4px;padding:4px 10px;margin-bottom:4px">
-              <span style="color:var(--accent)">Transport:</span> removes TCP header</div>
-            <div
-              style="background:rgba(107,33,168,0.1);border:1px solid var(--purple);border-radius:4px;padding:4px 10px">
-              <span style="color:var(--purple)">App Layer:</span> [DATA] ← original!</div>
+
+        <!-- ── MIDDLE: medium + curved arrows ── -->
+        <div class="enc-middle">
+          <!-- SVG curved arrows -->
+          <div class="enc-curve-wrap">
+            <svg class="enc-svg" viewBox="0 0 72 110" xmlns="http://www.w3.org/2000/svg">
+              <!-- arrow going right-down (sender → medium) -->
+              <defs>
+                <marker id="ah1" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+                  <polygon points="0 0, 7 3.5, 0 7" fill="#ff6b35"/>
+                </marker>
+                <marker id="ah2" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+                  <polygon points="0 0, 7 3.5, 0 7" fill="#3effa0"/>
+                </marker>
+              </defs>
+              <!-- sender → medium curved path -->
+              <path d="M 0 10 Q 36 10 36 55" stroke="#ff6b35" stroke-width="2.5" fill="none" marker-end="url(#ah1)" stroke-dasharray="4 2"/>
+              <!-- medium → receiver curved path -->
+              <path d="M 36 55 Q 36 10 72 10" stroke="#3effa0" stroke-width="2.5" fill="none" marker-end="url(#ah2)" stroke-dasharray="4 2"/>
+            </svg>
+          </div>
+          <!-- Transmission medium box -->
+          <div class="medium-box">
+            <div class="med-icon">📡</div>
+            Transmission<br>Medium
           </div>
         </div>
-      </div>
+
+        <!-- ── RECEIVER (right) ── -->
+        <div class="enc-col">
+          <div class="enc-device recv">🖥️</div>
+          <div class="enc-col-label" style="background:rgba(62,255,160,.08);color:var(--green);border:1px solid var(--green)">
+            📥 RECEIVER — Decapsulation
+          </div>
+
+          <div class="enc-layer l-app r5">
+            <span class="layer-label">App Layer (5):</span><br>[DATA] ← original!
+          </div>
+          <div class="enc-arrow ra4" style="color:#3effa088">↑</div>
+
+          <div class="enc-layer l-trans r4">
+            <span class="layer-label">Transport (4):</span><br>removes TCP header
+          </div>
+          <div class="enc-arrow ra3" style="color:#3effa088">↑</div>
+
+          <div class="enc-layer l-net r3">
+            <span class="layer-label">Network (3):</span><br>removes IP header
+          </div>
+          <div class="enc-arrow ra2" style="color:#3effa088">↑</div>
+
+          <div class="enc-layer l-dl r2">
+            <span class="layer-label">Data Link (2):</span><br>removes MAC header/trailer
+          </div>
+          <div class="enc-arrow ra1" style="color:#3effa088">↑</div>
+
+          <div class="enc-layer l-phy r1">
+            <span class="layer-label">Physical (1):</span><br>010110101001… → bits
+          </div>
+        </div>
+
+      </div><!-- /enc-diagram -->
     </div>
 
     <!-- ══════════ §7 EXAM QUESTIONS ══════════ -->
