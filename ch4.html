@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chapter 4 — Transport Layer: UDP &amp; TCP</title>
+<link rel="stylesheet" href="responsive.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&amp;family=Inter:wght@300;400;500;600;700;900&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<style>
+    :root {
+      --navy: #07111f;
+      --deep: #0b1a2e;
+      --mid-blue: #102340;
+      --card-bg: rgba(16,35,64,.6);
+      --border: rgba(0,200,255,.18);
+      --accent: #00c8ff;
+      --accent2: #ff6b35;
+      --gold: #ffc940;
+      --green: #3effa0;
+      --red: #ff5f6d;
+      --purple: #b48aff;
+      --text: #dce8f5;
+      --muted: #7d93ad;
+      --highlight: rgba(0,200,255,.07);
+      --ar-bg: rgba(255,201,64,.05);
+      --ar-border: rgba(255,201,64,.25)
+    }
+    * { margin:0; padding:0; box-sizing:border-box }
+    body { font-family:Inter,sans-serif; background:var(--navy); color:var(--text); line-height:1.75; font-size:14.5px }
+    b, strong { color:#fff }
+    .hero {
+      background:linear-gradient(160deg,#07111f 0%,#0b1a2e 45%,#130c30 100%);
+      padding:64px 40px 52px; text-align:center; position:relative; overflow:hidden;
+      border-bottom:1px solid var(--accent)
+    }
+    .hero:before {
+      content:''; position:absolute; inset:0;
+      background:radial-gradient(ellipse 80% 55% at 50% -5%,rgba(0,200,255,.13),transparent 70%);
+      pointer-events:none
+    }
+    .badge {
+      display:inline-block; border:1px solid var(--accent); color:var(--accent);
+      font-size:11px; font-weight:700; letter-spacing:3px; padding:5px 20px;
+      border-radius:20px; margin-bottom:20px; text-transform:uppercase
+    }
+    .hero h1 { font-size:3rem; font-weight:900; color:#fff; letter-spacing:-1px; margin-bottom:6px }
+    .hero h1 span { color:var(--accent) }
+    .hero .ar-title { font-family:Cairo,sans-serif; font-size:1.1rem; color:var(--gold); margin-bottom:18px; direction:rtl }
+    .hero p { color:var(--muted); font-size:13px; max-width:620px; margin:0 auto }
+    .lang-bar {
+      background:var(--deep); border-bottom:1px solid var(--border);
+      padding:10px 24px; display:flex; align-items:center; gap:10px; font-size:12px; color:var(--muted)
+    }
+    .lang-bar strong { color:var(--accent) }
+    .toc { background:var(--card-bg); border:1px solid var(--border); border-radius:14px; padding:24px 28px; margin:32px 24px 0 }
+    .toc h3 { color:var(--accent); font-size:1rem; font-weight:700; margin-bottom:14px }
+    .toc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px }
+    .toc-item { background:var(--mid-blue); border:1px solid var(--border); border-radius:8px; padding:10px 14px; font-size:12.5px }
+    .toc-item .num { color:var(--accent); font-weight:700; font-size:11px; display:block; margin-bottom:2px }
+    .container { max-width:980px; margin:0 auto; padding:36px 24px 90px }
+    .chapter-banner {
+      background:linear-gradient(135deg,rgba(0,200,255,.08),rgba(7,17,31,.6));
+      border:1px solid var(--accent); border-radius:16px; padding:20px 28px;
+      margin:52px 0 28px; display:flex; align-items:center; gap:18px
+    }
+    .ch-num { width:56px; height:56px; background:var(--accent); color:var(--navy); border-radius:14px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:20px; flex-shrink:0 }
+    .ch-titles h2 { font-size:1.45rem; font-weight:800; color:#fff; letter-spacing:-.3px }
+    .ch-titles .ar { font-family:Cairo,sans-serif; font-size:.9rem; color:var(--gold); direction:rtl; text-align:right; margin-top:2px }
+    .ch-titles .desc { font-size:12.5px; color:var(--muted); margin-top:4px }
+    .section-header { display:flex; align-items:flex-start; gap:16px; margin:36px 0 16px }
+    .sec-num { width:40px; height:40px; background:rgba(0,200,255,.15); border:1px solid var(--accent); color:var(--accent); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:15px; flex-shrink:0; margin-top:2px }
+    .sec-titles h3 { font-size:1.15rem; font-weight:700; color:#fff; letter-spacing:-.2px }
+    .sec-titles .ar { font-family:Cairo,sans-serif; font-size:.85rem; color:var(--gold); direction:rtl; text-align:right; margin-top:1px }
+    .card { background:var(--card-bg); border:1px solid var(--border); border-radius:14px; padding:22px 26px; margin-bottom:14px; backdrop-filter:blur(4px) }
+    .card-title { font-size:1rem; font-weight:700; color:var(--accent); margin-bottom:8px; display:flex; align-items:center; gap:8px; flex-wrap:wrap }
+    .card-title .ar { font-family:Cairo,sans-serif; font-size:.8rem; color:var(--gold); font-weight:600; direction:rtl }
+    .card p, .card li { margin-bottom:6px }
+    .card ul, .card ol { padding-left:22px }
+    .ar-box {
+      background:var(--ar-bg); border:1px solid var(--ar-border); border-right:4px solid var(--gold);
+      border-radius:0 10px 10px 0; padding:13px 16px; margin-top:12px;
+      direction:rtl; text-align:right; font-family:Cairo,sans-serif; font-size:13.5px; color:#ccd6e8; line-height:1.9
+    }
+    .ar-label { font-size:10px; font-weight:700; color:var(--gold); letter-spacing:1px; text-transform:uppercase; margin-bottom:5px; direction:ltr; text-align:left }
+    .highlight { background:var(--highlight); border-left:3px solid var(--accent); border-radius:0 8px 8px 0; padding:13px 16px; margin:10px 0; font-size:13.5px }
+    .highlight.green { border-left-color:var(--green); background:rgba(62,255,160,.05) }
+    .highlight.red { border-left-color:var(--red); background:rgba(255,95,109,.05) }
+    .highlight.gold { border-left-color:var(--gold); background:rgba(255,201,64,.05) }
+    .note { background:rgba(255,107,53,.07); border:1px solid rgba(255,107,53,.28); border-radius:10px; padding:13px 16px; margin:10px 0; font-size:13.5px }
+    .note-label { font-size:10px; font-weight:700; color:var(--accent2); letter-spacing:1px; text-transform:uppercase; margin-bottom:5px }
+    .note.purple { background:rgba(180,138,255,.07); border-color:rgba(180,138,255,.28) }
+    .note.purple .note-label { color:var(--purple) }
+    .note.green { background:rgba(62,255,160,.05); border-color:rgba(62,255,160,.28) }
+    .note.green .note-label { color:var(--green) }
+    .formula { background:rgba(0,0,0,.45); border:1px solid rgba(255,201,64,.25); border-radius:8px; padding:12px 18px; margin:10px 0; font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--gold); direction:ltr; overflow-x:auto; white-space:pre }
+    .formula .flabel { font-family:Inter,sans-serif; font-size:10px; color:var(--muted); margin-bottom:5px; letter-spacing:.5px; text-transform:uppercase }
+    .table-wrap { overflow-x:auto; margin:14px 0 }
+    table { width:100%; border-collapse:collapse; font-size:13px }
+    thead th { background:var(--mid-blue); color:var(--accent); padding:11px 14px; text-align:left; font-weight:700; font-size:12px; letter-spacing:.4px; white-space:nowrap }
+    tbody tr { border-bottom:1px solid rgba(0,200,255,.07) }
+    tbody tr:hover { background:var(--highlight) }
+    tbody td { padding:10px 14px; vertical-align:top }
+    tbody td:first-child { font-weight:600; color:var(--gold) }
+    .g { color:var(--green) } .r { color:var(--red) } .y { color:var(--gold) } .p { color:var(--purple) }
+    .tag { display:inline-block; border:1px solid var(--accent); color:var(--accent); background:rgba(0,200,255,.1); border-radius:5px; padding:1px 9px; font-size:11px; font-weight:700; margin:2px }
+    .tag.red { border-color:var(--red); color:var(--red); background:rgba(255,95,109,.1) }
+    .tag.green { border-color:var(--green); color:var(--green); background:rgba(62,255,160,.08) }
+    .tag.gold { border-color:var(--gold); color:var(--gold); background:rgba(255,201,64,.08) }
+    .tag.purple { border-color:var(--purple); color:var(--purple); background:rgba(180,138,255,.1) }
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px }
+    .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px }
+    @media(max-width:640px) {
+      .grid2, .grid3, .toc-grid { grid-template-columns:1fr }
+      .hero h1 { font-size:2.15rem }
+      .container { padding:28px 14px 70px }
+      .card { padding:18px 16px }
+      .ch-num { width:44px; height:44px; font-size:16px }
+    }
+    .flow { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:0; margin:14px 0; overflow-x:auto }
+    .fbox { background:var(--mid-blue); border:1px solid var(--border); border-radius:9px; padding:9px 14px; font-size:12.5px; font-weight:600; text-align:center }
+    .fbox.a { border-color:var(--accent); color:var(--accent); background:rgba(0,200,255,.1) }
+    .fbox.o { border-color:var(--accent2); color:var(--accent2); background:rgba(255,107,53,.1) }
+    .fbox.p { border-color:var(--purple); color:var(--purple); background:rgba(180,138,255,.1) }
+    .fbox.g { border-color:var(--green); color:var(--green); background:rgba(62,255,160,.08) }
+    .fbox.r { border-color:var(--red); color:var(--red); background:rgba(255,95,109,.08) }
+    .arrow { color:var(--muted); font-size:18px; padding:0 8px }
+    hr.div { border:none; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:.2; margin:44px 0 }
+    .final { background:linear-gradient(135deg,rgba(0,200,255,.06),rgba(7,17,31,.8)); border:1px solid var(--accent); border-radius:16px; padding:30px; margin-top:52px }
+    .final h2 { font-size:1.2rem; font-weight:800; color:var(--accent); margin-bottom:18px }
+    .final h2 .ar { font-family:Cairo,sans-serif; font-size:.85rem; color:var(--gold); font-weight:600; direction:rtl; display:block; margin-top:2px }
+    .answer { color:var(--green); font-weight:700 }
+    .small { font-size:12px; color:var(--muted) }
+    .exam-q { border-left:3px solid var(--purple); background:rgba(180,138,255,.05); border-radius:0 8px 8px 0; padding:13px 16px; margin:10px 0; font-size:13.5px }
+    .exam-q .q-label { font-size:10px; font-weight:700; color:var(--purple); letter-spacing:1px; text-transform:uppercase; margin-bottom:5px }
+    .top-nav { position:sticky; top:0; z-index:999; background:rgba(7,17,31,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); padding:12px 20px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap }
+    .top-nav a { text-decoration:none; color:var(--text); border:1px solid var(--border); background:rgba(16,35,64,.75); padding:8px 12px; border-radius:9px; font-size:12px; font-weight:700; transition:.2s }
+    .top-nav a:hover, .top-nav a.active { color:var(--navy); background:var(--accent); border-color:var(--accent) }
+    .cmp-table tbody td { font-weight:normal; color:var(--text) }
+    .cmp-table tbody td:first-child { color:var(--gold); font-weight:600 }
+    .cmp-table .g-cell { color:var(--green) }
+    .cmp-table .r-cell { color:var(--red) }
+    .step-list { counter-reset:step; list-style:none; padding-left:0 }
+    .step-list li { counter-increment:step; display:flex; gap:14px; margin-bottom:14px; align-items:flex-start }
+    .step-list li::before { content:counter(step); background:var(--accent); color:var(--navy); width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:13px; flex-shrink:0; margin-top:2px }
+    .key-rule { background:linear-gradient(135deg,rgba(0,200,255,.1),rgba(7,17,31,.6)); border:1px solid var(--accent); border-radius:10px; padding:14px 18px; margin:10px 0; font-size:13.5px }
+    .key-rule .kr-label { font-size:10px; font-weight:700; color:var(--accent); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:6px }
+    .seg-box { display:grid; grid-template-columns:repeat(4,1fr); gap:0; border:1px solid var(--accent); border-radius:10px; overflow:hidden; margin:12px 0; font-size:12px }
+    .seg-field { background:rgba(0,200,255,.07); border-right:1px solid rgba(0,200,255,.2); padding:10px 8px; text-align:center }
+    .seg-field:last-child { border-right:none }
+    .seg-field .fname { color:var(--accent); font-weight:700; font-size:11px; display:block }
+    .seg-field .fbits { color:var(--muted); font-size:10px }
+    .seg-field .fdesc { color:var(--text); font-size:11px; margin-top:3px }
+    .seg-wide { grid-column:span 2 }
+    .seg-full { grid-column:span 4; background:rgba(62,255,160,.05) }
+    .timeline { position:relative; padding-left:28px; margin:14px 0 }
+    .timeline::before { content:''; position:absolute; left:10px; top:0; bottom:0; width:2px; background:linear-gradient(to bottom,var(--accent),var(--purple)) }
+    .tl-item { position:relative; margin-bottom:16px }
+    .tl-item::before { content:''; position:absolute; left:-22px; top:6px; width:10px; height:10px; border-radius:50%; border:2px solid var(--accent); background:var(--navy) }
+    .tl-item.purple::before { border-color:var(--purple) }
+    .tl-item.green::before { border-color:var(--green) }
+  </style>
+<style>
+/* ===== Themed TCP figures ===== */
+.tcp-figure-card{
+  background:linear-gradient(135deg,rgba(0,200,255,.07),rgba(16,35,64,.72));
+  border:1px solid rgba(0,200,255,.25);
+  border-radius:16px;
+  padding:18px 18px 20px;
+  margin:18px 0 22px;
+  box-shadow:0 10px 26px rgba(0,0,0,.22);
+}
+.tcp-figure-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+  flex-wrap:wrap;
+}
+.tcp-figure-title{
+  color:#00c8ff;
+  font-weight:800;
+  font-size:1rem;
+  letter-spacing:.2px;
+}
+.tcp-figure-title .ar{
+  font-family:Cairo,sans-serif;
+  color:#ffc940;
+  font-size:.82rem;
+  font-weight:700;
+  margin-left:8px;
+  direction:rtl;
+}
+.tcp-figure-badge{
+  border:1px solid rgba(255,201,64,.45);
+  color:#ffc940;
+  background:rgba(255,201,64,.08);
+  border-radius:999px;
+  padding:4px 12px;
+  font-size:11px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.tcp-figure-img-wrap{
+  background:#ffffff;
+  border:2px solid rgba(255,255,255,.16);
+  border-radius:12px;
+  padding:10px;
+  overflow:auto;
+}
+.tcp-figure-img{
+  display:block;
+  width:100%;
+  max-width:920px;
+  margin:0 auto;
+  border-radius:8px;
+  filter:contrast(1.05) saturate(.98);
+}
+.tcp-figure-caption{
+  margin-top:10px;
+  color:#91a5bd;
+  font-size:12.5px;
+  line-height:1.7;
+}
+.tcp-figure-caption strong{
+  color:#ffffff;
+}
+@media(max-width:640px){
+  .tcp-figure-card{padding:14px 12px}
+  .tcp-figure-title{font-size:.92rem}
+}
+</style>
+</head>
+<body>
+<!-- ════ HERO ════ -->
+<div class="hero">
+<div class="badge">Chapter 23 · Networks &amp; Data Transmissions</div>
+<h1>Transport Layer: <span>UDP &amp; TCP</span></h1>
+<div class="ar-title">طبقة النقل — UDP و TCP — دليل الدراسة الشامل</div>
+<p>Complete bilingual study guide · All concepts, formats, handshakes, flow control, examples &amp; exam questions</p>
+</div>
+<div class="lang-bar">📚 <strong>English</strong> — Main content  |  🌙 <strong style="color:var(--gold)">العربي</strong> — Translation &amp; explanation boxes</div>
+<!-- STICKY NAV -->
+<nav class="top-nav">
+  <a href="index.html" class="active">🏠 Home</a>
+<a href="#s0">Overview</a>
+<a href="#s1">Port Numbers</a>
+<a href="#s2">UDP</a>
+<a href="#s3">TCP Basics</a>
+<a href="#s4">TCP Header</a>
+<a href="#s5">Handshake</a>
+<a href="#s6">Flow Control</a>
+<a href="#s7">Error Control</a>
+<a href="#s8">Comparison</a>
+<a href="#s9">Exam Q&amp;A</a>
+</nav>
+<div class="container">
+<!-- ════════════════════════════════════════════
+     SECTION 0 — OVERVIEW
+════════════════════════════════════════════ -->
+<div class="chapter-banner" id="s0">
+<div class="ch-num">0</div>
+<div class="ch-titles">
+<h2>Process-to-Process Delivery — Overview</h2>
+<div class="ar">التوصيل من عملية إلى عملية — نظرة عامة</div>
+<div class="desc">Transport Layer responsibilities · Multiplexing · Service types</div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">What is the Transport Layer? <span class="ar">ما هي طبقة النقل؟</span></div>
+<p>The transport layer is responsible for <strong>process-to-process delivery</strong> — delivering a packet (or part of a message) from one <em>process</em> on one host to another <em>process</em> on another host. This is different from network-layer (host-to-host) delivery.</p>
+<div class="flow" style="margin:16px 0">
+<div class="fbox o" style="min-width:130px">Application A<br/><span class="small">Process on Host 1</span></div>
+<div class="arrow">→</div>
+<div class="fbox a" style="min-width:130px">Transport Layer<br/><span class="small">Process-to-Process</span></div>
+<div class="arrow">→</div>
+<div class="fbox g" style="min-width:130px">Application B<br/><span class="small">Process on Host 2</span></div>
+</div>
+<div class="grid2" style="margin-top:14px">
+<div class="highlight green"><strong>Connectionless (UDP)</strong><br/>Each packet treated independently. No setup. Fast but unreliable.</div>
+<div class="highlight"><strong>Connection-Oriented (TCP)</strong><br/>Virtual connection established first. Reliable, ordered, error-controlled.</div>
+</div>
+<div class="ar-box">
+<div class="ar-label">Arabic Explanation</div>
+    طبقة النقل مسؤولة عن التوصيل من عملية إلى عملية (Process-to-Process) — وليس فقط من جهاز لجهاز.<br/>
+    الفرق الجوهري: طبقة الشبكة (Network Layer) توصل بين الأجهزة (Host-to-Host). طبقة النقل توصل بين البرامج/العمليات داخل تلك الأجهزة.<br/>
+    مثال: جهازك يعمل Chrome (منفذ 80) وZoom (منفذ 3478) في نفس الوقت — طبقة النقل تُميّز بين البيانات الخاصة بكل برنامج.
+  </div>
+</div>
+<div class="card">
+<div class="card-title">Multiplexing &amp; Demultiplexing <span class="ar">الإرسال والاستقبال المتعدد</span></div>
+<div class="grid2">
+<div>
+<strong>Multiplexing (at sender):</strong>
+<p>Multiple processes send data through one transport layer. The transport layer combines them and sends over the network.</p>
+</div>
+<div>
+<strong>Demultiplexing (at receiver):</strong>
+<p>The transport layer receives data from the network and directs each packet to the correct process based on the port number.</p>
+</div>
+</div>
+<div class="ar-box">
+<div class="ar-label">Arabic</div>
+<strong>Multiplexing (جمع/دمج):</strong> في جهاز المرسل، عمليات متعددة ترسل بياناتها عبر طبقة نقل واحدة — يتم دمجها معاً للإرسال عبر الشبكة.<br/>
+<strong>Demultiplexing (توزيع):</strong> في جهاز المستقبل، طبقة النقل تستقبل الحزم وتوزّعها للعملية الصحيحة بناءً على رقم الـ Port.<br/>
+    تخيّلها: Mux = بريد يُجمع من عدة أشخاص. Demux = ساعي البريد يوزّع على الأشخاص الصحيحين.
+  </div>
+</div>
+<div class="card">
+<div class="card-title">Client / Server Paradigm <span class="ar">نموذج العميل/الخادم</span></div>
+<p>Processes communicate in a <strong>client/server relationship</strong>:</p>
+<div class="grid2" style="margin-top:10px">
+<div class="highlight red"><strong>Server</strong><br/>Runs continuously. Waits for requests on a <strong>well-known port</strong> (0–1023). Example: Web server on port 80.</div>
+<div class="highlight gold"><strong>Client</strong><br/>Initiates request. Assigned a <strong>temporary (ephemeral) port</strong> by the OS (49152–65535). Example: Your browser.</div>
+</div>
+<div class="ar-box">
+<div class="ar-label">Arabic</div>
+    السيرفر يعمل باستمرار وينتظر على منفذ معروف (well-known port). العميل يبدأ الاتصال ويستخدم منفذاً مؤقتاً تُعطيه إياه نظام التشغيل.<br/>
+    مثال: سيرفر HTTP يعمل على المنفذ 80 دائماً. متصفحك يختار منفذاً عشوائياً (مثلاً 51234) لكل اتصال.
+  </div>
+</div>
+<!-- ════════════════════════════════════════════
+     SECTION 1 — PORT NUMBERS
+════════════════════════════════════════════ -->
+<div class="section-header" id="s1">
+<div class="sec-num">1</div>
+<div class="sec-titles">
+<h3>Port Numbers &amp; Socket Addresses</h3>
+<div class="ar">أرقام المنافذ وعناوين Socket</div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">Port Numbers <span class="ar">أرقام المنافذ</span></div>
+<p>Port numbers are <strong>16-bit unsigned integers</strong> (range: 0 to 65,535) used by the transport layer to identify which process a packet belongs to on a host.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>Range</th><th>Name</th><th>Description</th><th>بالعربي</th></tr>
+</thead>
+<tbody>
+<tr><td>0 – 1023</td><td>Well-Known Ports</td><td>Assigned to common services by IANA. Cannot be used by regular processes without root access.</td><td>منافذ الخدمات المعروفة — HTTP=80, FTP=21, DNS=53, SMTP=25</td></tr>
+<tr><td>1024 – 49151</td><td>Registered Ports</td><td>Assigned by IANA to specific vendor applications. Can be used without special privilege.</td><td>منافذ مسجلة لتطبيقات محددة</td></tr>
+<tr><td>49152 – 65535</td><td>Dynamic / Private / Ephemeral</td><td>Used temporarily by clients; assigned by the OS for each connection, freed when done.</td><td>منافذ مؤقتة للعملاء — يعطيها نظام التشغيل تلقائياً</td></tr>
+</tbody>
+</table>
+</div>
+<div class="note">
+<div class="note-label">Common Well-Known Ports to Memorize</div>
+<div class="grid3" style="margin-top:8px">
+<div><span class="tag">20/21</span> FTP (data/control)</div>
+<div><span class="tag">22</span> SSH</div>
+<div><span class="tag">23</span> Telnet</div>
+<div><span class="tag">25</span> SMTP (email send)</div>
+<div><span class="tag">53</span> DNS</div>
+<div><span class="tag">67/68</span> DHCP</div>
+<div><span class="tag">80</span> HTTP</div>
+<div><span class="tag">110</span> POP3</div>
+<div><span class="tag">143</span> IMAP</div>
+<div><span class="tag">443</span> HTTPS</div>
+<div><span class="tag">13</span> Daytime</div>
+<div><span class="tag">7</span> Echo</div>
+</div>
+</div>
+<div class="ar-box">
+<div class="ar-label">Arabic Explanation</div>
+    رقم المنفذ (Port Number) = 16 بت → المدى: 0 إلى 65535.<br/>
+    يُستخدم لتحديد العملية (البرنامج) داخل الجهاز. عنوان IP يحدد الجهاز، ورقم الـ Port يحدد البرنامج داخل ذلك الجهاز.<br/>
+<strong>Well-Known (0-1023):</strong> محجوزة للخدمات الشائعة — لا يستطيع المستخدم العادي استخدامها.<br/>
+<strong>Ephemeral (49152-65535):</strong> مؤقتة للعملاء — نظام التشغيل يعطيها ويستعيدها تلقائياً.
+  </div>
+</div>
+<div class="card">
+<div class="card-title">Socket Address <span class="ar">عنوان الـ Socket</span></div>
+<p>A <strong>socket address</strong> uniquely identifies an endpoint of communication by combining the IP address and port number:</p>
+<div class="formula">
+<div class="flabel">Socket Address Format</div>Socket Address = IP Address  :  Port Number
+
+Examples:
+  192.168.1.5 : 80     → HTTP server on this host
+  10.0.0.1    : 52100  → Client process (ephemeral port)
+  
+To uniquely identify a connection (socket pair):
+  (Source IP : Source Port)  ↔  (Destination IP : Destination Port)</div>
+<div class="key-rule">
+<div class="kr-label">① Key Rule</div>
+    IP address alone identifies the <strong>host</strong>. Port number alone identifies the <strong>process</strong>. Together (socket address) they uniquely identify a <strong>communication endpoint</strong>.
+  </div>
+<div class="ar-box">
+<div class="ar-label">Arabic</div>
+    Socket Address = IP + Port معاً. يُعرّف نقطة اتصال واحدة بشكل فريد.<br/>
+    لتعريف اتصال كامل نحتاج: (IP المرسل + Port المرسل) + (IP المستقبل + Port المستقبل) = 4 أرقام.<br/>
+    هذا الرباعي يُسمى "Socket Pair" ويُعرّف أي اتصال TCP بشكل فريد تماماً.
+  </div>
+</div>
+<!-- ════════════════════════════════════════════
+     SECTION 2 — UDP
+════════════════════════════════════════════ -->
+<div class="section-header" id="s2">
+<div class="sec-num">2</div>
+<div class="sec-titles">
+<h3>UDP — User Datagram Protocol</h3>
+<div class="ar">بروتوكول UDP — بروتوكول مخطط البيانات</div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">UDP Overview &amp; Characteristics <span class="ar">نظرة عامة على UDP وخصائصه</span></div>
+<p>UDP is a <strong>connectionless, unreliable</strong> transport protocol. It adds <em>process-to-process</em> communication on top of IP, but does not add reliability, flow control, or error correction.</p>
+<div class="grid2" style="margin-top:14px">
+<div>
+<p><span class="tag red">Connectionless</span><br/>No handshaking before sending. Each datagram is independent.</p>
+<p style="margin-top:8px"><span class="tag red">Unreliable</span><br/>No delivery guarantee. No order guarantee. No duplicate detection.</p>
+<p style="margin-top:8px"><span class="tag green">Fast &amp; Lightweight</span><br/>Small 8-byte fixed header. Minimal overhead. Low latency.</p>
+</div>
+<div>
+<p><strong>Best uses for UDP:</strong></p>
+<ul>
+<li><strong>DNS</strong> — short queries, speed matters</li>
+<li><strong>VoIP / Video calls</strong> — real-time, tolerate loss</li>
+<li><strong>Online gaming</strong> — latency critical</li>
+<li><strong>Streaming (live)</strong> — old frames useless</li>
+<li><strong>DHCP, TFTP, SNMP</strong></li>
+<li><strong>Broadcast / Multicast</strong> — TCP can't do these</li>
+</ul>
+</div>
+</div>
+<div class="ar-box">
+<div class="ar-label">Arabic Explanation</div>
+    UDP = بروتوكول بسيط وسريع بدون ضمانات.<br/>
+<strong>Connectionless:</strong> لا يوجد تأسيس اتصال مسبق — يرسل مباشرة بدون مصافحة.<br/>
+<strong>Unreliable:</strong> لا يضمن الوصول، لا يضمن الترتيب، لا يكشف التكرار.<br/>
+<strong>متى نستخدم UDP؟</strong> عندما تكون السرعة أهم من الدقة — الصوت والفيديو المباشر، الألعاب الإلكترونية، DNS. خسارة حزمة واحدة في مكالمة صوتية أفضل من التأخير الذي يسببه TCP.
+  </div>
+</div>
+<div class="card">
+<div class="card-title">UDP Header Format <span class="ar">هيكل UDP Header</span></div>
+<div class="seg-box" style="grid-template-columns:repeat(4,1fr)">
+<div class="seg-field"><span class="fname">Source Port</span><span class="fbits">16 bits</span><span class="fdesc">Sender's port</span></div>
+<div class="seg-field"><span class="fname">Destination Port</span><span class="fbits">16 bits</span><span class="fdesc">Receiver's port</span></div>
+<div class="seg-field"><span class="fname">Length</span><span class="fbits">16 bits</span><span class="fdesc">Header + Data</span></div>
+<div class="seg-field"><span class="fname">Checksum</span><span class="fbits">16 bits</span><span class="fdesc">Error detection</span></div>
+<div class="seg-field seg-full" style="background:rgba(62,255,160,.05)"><span class="fname" style="color:var(--green)">Data (Variable length)</span></div>
+</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>Field</th><th>Size</th><th>Range</th><th>Description</th><th>بالعربي</th></tr>
+</thead>
+<tbody>
+<tr><td>Source Port</td><td>16 bits</td><td>0–65535</td><td>Port of the sending process. Can be a client (ephemeral) or server (well-known when sending a response)</td><td>منفذ العملية المُرسِلة</td></tr>
+<tr><td>Destination Port</td><td>16 bits</td><td>0–65535</td><td>Port of the receiving process</td><td>منفذ العملية المستقبِلة</td></tr>
+<tr><td>Length</td><td>16 bits</td><td>8–65535</td><td>Total length of UDP datagram (header + data). Minimum = 8 (header only, no data)</td><td>إجمالي طول الـ datagram بالبايت (header + data)</td></tr>
+<tr><td>Checksum</td><td>16 bits</td><td>—</td><td>Error detection over entire datagram (header + data + pseudo-header). Optional in IPv4, mandatory in IPv6.</td><td>اكتشاف الأخطاء — اختياري في IPv4</td></tr>
+</tbody>
+</table>
+</div>
+<div class="formula">
+<div class="flabel">Key UDP Formulas</div>UDP Header Size         = 8 bytes (fixed, always)
+UDP Total Length        = Header (8 bytes) + Data
+Data Length             = UDP Total Length − 8
+UDP Length (from IP)    = IP Total Length − IP Header Length
+
+Range of Length field: minimum = 8 (header only), maximum = 65535 bytes</div>
+<div class="ar-box">
+<div class="ar-label">Arabic</div>
+    هيكل UDP بسيط جداً: 4 حقول فقط، كل حقل 16 بت = 2 بايت → الـ Header الكلي = 8 بايت ثابتة.<br/>
+<strong>Length:</strong> يشمل الـ Header (8 بايت) + البيانات. الحد الأدنى = 8 (عندما لا توجد بيانات).<br/>
+<strong>Checksum:</strong> يكتشف الأخطاء في الـ Header + Data + Pseudo-Header (IP addresses + protocol + length). اختياري في IPv4 لكن إلزامي في IPv6.<br/>
+<strong>قاعدة مهمة:</strong> UDP Length = IP Total Length − IP Header Length.
+  </div>
+</div><div class="card">
+<div class="card-title">Solved Example — Reading a UDP Header in Hex <span class="ar">مثال محلول — قراءة UDP Header</span></div>
+<div class="note">
+<div class="note-label">Problem</div>
+    The following is a dump of a UDP header in hexadecimal: <strong>CB84 000D 001C XXXX</strong><br/>
+    Find: (a) Source port (b) Destination port (c) Total length (d) Data length (e) Client→Server or Server→Client? (f) What client process?
+  </div>
+<div class="note green" style="margin-top:12px">
+<div class="note-label" style="color:var(--green)">Solution</div>
+<strong>Reading hex, each group of 4 hex = 16 bits = one field:</strong>
+<div class="formula" style="margin-top:8px">
+<div class="flabel">Hex Breakdown</div>CB84  =  1100 1011 1000 0100  =  52100 decimal  → Source Port
+000D  =  0000 0000 0000 1101  =  13 decimal     → Destination Port  
+001C  =  0000 0000 0001 1100  =  28 decimal     → Total Length (bytes)
+XXXX  =  Checksum (given or computed)</div>
+<ol style="padding-left:20px;margin-top:8px">
+<li><strong>Source Port</strong> = (CB84)₁₆ = <span class="answer">52,100</span></li>
+<li><strong>Destination Port</strong> = (000D)₁₆ = <span class="answer">13</span></li>
+<li><strong>Total Length</strong> = (001C)₁₆ = <span class="answer">28 bytes</span></li>
+<li><strong>Data Length</strong> = 28 − 8 = <span class="answer">20 bytes</span></li>
+<li>Destination port = 13 (well-known) → packet is from <span class="answer">Client → Server</span></li>
+<li>Port 13 = <span class="answer">Daytime Protocol</span></li>
+</ol>
+</div>
+<div class="ar-box">
+<div class="ar-label">Arabic — طريقة الحل</div>
+    كيف تقرأ UDP Header من Hex:<br/>
+    — الـ 4 أرقام الأولى = Source Port. الـ 4 الثانية = Destination Port. الـ 4 الثالثة = Total Length. الـ 4 الرابعة = Checksum.<br/>
+    — حوّل كل مجموعة من Hex إلى Decimal.<br/>
+    — Data Length = Total Length − 8 (حجم الـ Header دائماً 8 بايت).<br/>
+    — إذا الـ Destination Port من 0-1023 (well-known) → الحزمة من Client لـ Server.<br/>
+    — إذا الـ Source Port من 0-1023 → الحزمة من Server للـ Client.<br/>
+<strong>سؤال شائع في الامتحانات: تحويل Hex لـ Decimal وتحديد اتجاه الحزمة ونوع الخدمة.</strong>
+</div>
+</div><div class="card">
+<div class="card-title">UDP Checksum Calculation <span class="ar">حساب Checksum في UDP</span></div>
+<p>The UDP checksum covers a <strong>pseudo-header</strong> + UDP header + data. The pseudo-header is NOT transmitted — it's used only for checksum calculation.</p>
+<div class="formula">
+<div class="flabel">Pseudo-Header Contents (used for checksum only)</div>| Source IP Address (32 bits)      |
+| Destination IP Address (32 bits)  |
+| Zeros (8) | Protocol=17 (8 bits) | UDP Length (16 bits) |
+| — UDP Header — | — UDP Data — |
+
+Steps:
+  1. Divide the above into 16-bit words
+  2. Add all words together (binary addition with wraparound carry)
+  3. Take 1's complement of the sum = Checksum
+  
+At receiver: add all words including checksum → result should be all 1s (FFFF)</div>
+<div class="ar-box">
+<div class="ar-label">Arabic</div>
+    الـ Checksum يغطي: Pseudo-Header (عناوين IP + بروتوكول + الطول) + UDP Header + البيانات.<br/>
+    الـ Pseudo-Header لا يُرسل — يُستخدم فقط في حساب الـ Checksum للتحقق من أن الحزمة وصلت للجهاز الصحيح.<br/>
+    طريقة الحساب: تقسيم كل شيء إلى كلمات 16 بت، جمعها، ثم أخذ مكمل الواحد (One's Complement).<br/>
+    في المستقبل: إذا جمع كل شيء بما فيه الـ Checksum وكانت النتيجة FFFF → لا يوجد خطأ.
+  </div>
+</div><div class="card">
+<div class="card-title">UDP Queues &amp; Operation <span class="ar">قوائم الانتظار وآلية عمل UDP</span></div>
+<div class="grid2">
+<div>
+<strong>At the Client:</strong>
+<p>When a process starts, it requests a port from the OS. Some implementations create both incoming and outgoing queues. If the incoming queue overflows — packets are silently dropped (no notification).</p>
+</div>
+<div>
+<strong>At the Server:</strong>
+<p>The server requests incoming and outgoing queues using its well-known port on startup. These queues remain open as long as the server runs. Multiple clients share the same server queue.</p>
+</div>
+</div>
+<div class="highlight gold" style="margin-top:12px">
+<strong>Queue Overflow:</strong> UDP has no flow control. If the receiving queue is full when a new datagram arrives, the datagram is <strong>silently discarded</strong> — no error message is sent to the sender.
+  </div>
+<div class="ar-box">
+<div class="ar-label">Arabic</div>
+    UDP يعمل بقوائم انتظار (Queues) لكل عملية. في جهة العميل: يطلب منفذاً من نظام التشغيل ويعمل قائمة للإرسال والاستقبال.<br/>
+    في جهة السيرفر: قائمة مفتوحة طالما السيرفر يعمل — عملاء متعددون يتشاركون نفس القائمة.<br/>
+<strong>الخطر:</strong> إذا امتلأت القائمة → الحزمة تُحذف بصمت تام بدون إشعار للمُرسل. لا يوجد Flow Control في UDP.
+  </div>
+</div>
+
+
+
+<!-- ════════════════════════════════════════════
+     SECTION 3 — TCP BASICS
+════════════════════════════════════════════ -->
+<div class="section-header" id="s3">
+<div class="sec-num">3</div>
+<div class="sec-titles">
+<h3>TCP — Basics &amp; Core Concepts</h3>
+<div class="ar">TCP — المفاهيم الأساسية</div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">TCP Overview <span class="ar">نظرة عامة على TCP</span></div>
+<p>TCP (Transmission Control Protocol) is a <strong>connection-oriented, reliable</strong> transport protocol. It creates a <em>virtual connection</em> between two TCPs before sending any data.</p>
+<div class="grid3" style="margin-top:14px">
+<div class="highlight"><span class="tag">Connection-Oriented</span><br/>Must establish a virtual connection (3-way handshake) before data transfer.</div>
+<div class="highlight green"><span class="tag green">Reliable</span><br/>Guaranteed delivery, no loss, no duplication, no corruption.</div>
+<div class="highlight gold"><span class="tag gold">Ordered</span><br/>Data arrives in the same order it was sent — TCP reassembles if needed.</div>
+</div>
+<div style="margin-top:14px">
+<p><strong>TCP provides:</strong></p>
+<ul>
+<li><strong>Stream delivery</strong> — data seen as continuous byte stream (not messages/packets)</li>
+<li><strong>Byte numbering</strong> — every byte is assigned a number</li>
+<li><strong>Sequence numbers</strong> — track position in the byte stream</li>
+<li><strong>Acknowledgment</strong> — receiver confirms received bytes</li>
+<li><strong>Flow control</strong> — receiver controls sender's rate (sliding window)</li>
+<li><strong>Error control</strong> — detect and retransmit lost/corrupted segments</li>
+<li><strong>Congestion control</strong> — avoid overloading the network</li>
+</ul>
+</div>
+<div class="ar-box">
+<div class="ar-label">Arabic Explanation</div>
+    TCP بروتوكول موثوق ومتصل. يُنشئ اتصالاً افتراضياً قبل إرسال أي بيانات.<br/>
+<strong>Stream Delivery:</strong> TCP يرى البيانات كتدفق مستمر من البايتات — مثل نهر مائي مستمر. لا يوجد حدود للرسائل في الـ TCP Layer.<br/>
+<strong>الميزات الرئيسية:</strong> ترقيم البايتات، أرقام التسلسل، التأكيدات، التحكم في التدفق، اكتشاف الأخطاء وإعادة الإرسال، التحكم في الازدحام.<br/>
+<strong>متى نستخدم TCP؟</strong> عندما يكون الموثوقية مطلوباً — نقل الملفات (FTP)، صفحات الويب (HTTP)، البريد الإلكتروني (SMTP).
+  </div>
+</div>
+<div class="card">
+<div class="card-title">Byte Numbering &amp; Sequence Numbers <span class="ar">ترقيم البايتات وأرقام التسلسل</span></div>
+<div class="highlight">
+<strong>Byte Numbering:</strong> TCP numbers every byte of data. The starting number is <strong>randomly generated</strong> (ISN — Initial Sequence Number) for security reasons.
+  </div>
+<div class="key-rule" style="margin-top:10px">
+<div class="kr-label">① Sequence Number Rule</div>
+    The value in the <strong>sequence number field</strong> of a segment defines the <strong>number of the first data byte</strong> contained in that segment.
+  </div>
+<div class="key-rule" style="margin-top:8px">
+<div class="kr-label">② Acknowledgment Number Rule</div>
+    The value in the <strong>acknowledgment field</strong> defines the number of the <strong>next byte the receiver expects to receive</strong>. The acknowledgment is <strong>cumulative</strong> — it confirms all bytes up to that point.
+  </div>
+<div class="note" style="margin-top:10px">
+<div class="note-label">Example — Sequence &amp; ACK Numbers</div>
+    Suppose host A starts with ISN = 1000 and sends 100 bytes:<br/>
+    → Segment 1: seq=1000, data bytes 1000–1099<br/>
+    → Segment 2: seq=1100, data bytes 1100–1199<br/>
+    Host B receives Segment 1 → sends ACK: ack=<strong>1100</strong> (next byte expected)<br/>
+    Host B receives Segment 2 → sends ACK: ack=<strong>1200</strong>
+</div>
+<div class="ar-box">
+<div class="ar-label">Arabic</div>
+<strong>ترقيم البايتات:</strong> TCP يرقّم كل بايت. الرقم الأولي (ISN) عشوائي للأمان.<br/>
+<strong>Sequence Number:</strong> يمثل رقم أول بايت في الـ Segment الحالي.<br/>
+<strong>Acknowledgment Number:</strong> يمثل رقم البايت التالي الذي يتوقع المستقبل استلامه — وهو تراكمي (Cumulative) أي يؤكد استلام كل البايتات حتى هذا الرقم.<br/>
+    مثال: المرسل عنده ISN=1000 وأرسل 100 بايت → Seq=1000. المستقبل يرد بـ ACK=1100 (يتوقع البايت التالي رقم 1100).
+  </div>
+</div>
+<!-- ════════════════════════════════════════════
+     SECTION 4 — TCP HEADER
+════════════════════════════════════════════ -->
+<div class="section-header" id="s4">
+<div class="sec-num">4</div>
+<div class="sec-titles">
+<h3>TCP Segment Format &amp; Header Fields</h3>
+<div class="ar">هيكل TCP Segment وحقول الـ Header</div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">TCP Header Format (20–60 bytes) <span class="ar">هيكل TCP Header</span></div>
+<div class="seg-box" style="grid-template-columns:repeat(4,1fr)">
+<div class="seg-field seg-wide"><span class="fname">Source Port</span><span class="fbits">16 bits</span></div>
+<div class="seg-field seg-wide"><span class="fname">Destination Port</span><span class="fbits">16 bits</span></div>
+<div class="seg-field seg-full"><span class="fname">Sequence Number</span><span class="fbits">32 bits</span></div>
+<div class="seg-field seg-full"><span class="fname">Acknowledgment Number</span><span class="fbits">32 bits</span></div>
+<div class="seg-field"><span class="fname">HLEN</span><span class="fbits">4 bits</span></div>
+<div class="seg-field"><span class="fname">Reserved</span><span class="fbits">6 bits</span></div>
+<div class="seg-field"><span class="fname">Control Flags</span><span class="fbits">6 bits (URG,ACK,PSH,RST,SYN,FIN)</span></div>
+<div class="seg-field"><span class="fname">Window Size</span><span class="fbits">16 bits</span></div>
+<div class="seg-field seg-wide"><span class="fname">Checksum</span><span class="fbits">16 bits</span></div>
+<div class="seg-field seg-wide"><span class="fname">Urgent Pointer</span><span class="fbits">16 bits</span></div>
+<div class="seg-field seg-full" style="background:rgba(180,138,255,.08)"><span class="fname" style="color:var(--purple)">Options (variable, 0–40 bytes) + Padding</span></div>
+<div class="seg-field seg-full" style="background:rgba(62,255,160,.05)"><span class="fname" style="color:var(--green)">Data (variable)</span></div>
+</div>
+<div class="table-wrap" style="margin-top:16px">
+<table>
+<thead>
+<tr><th>Field</th><th>Size</th><th>Description</th><th>بالعربي</th></tr>
+</thead>
+<tbody>
+<tr><td>Source Port</td><td>16 bits</td><td>Port of sending process</td><td>منفذ المُرسِل</td></tr>
+<tr><td>Destination Port</td><td>16 bits</td><td>Port of receiving process</td><td>منفذ المستقبِل</td></tr>
+<tr><td>Sequence Number</td><td>32 bits</td><td>Number of first data byte in this segment</td><td>رقم أول بايت في هذا الـ Segment</td></tr>
+<tr><td>Acknowledgment Number</td><td>32 bits</td><td>Next byte the sender of this ACK expects to receive (cumulative)</td><td>رقم البايت التالي المتوقع — تراكمي</td></tr>
+<tr><td>HLEN (Header Length)</td><td>4 bits</td><td>Length of TCP header in 32-bit words. Min=5 (20 bytes), Max=15 (60 bytes)</td><td>طول الـ Header بوحدات 4 بايت. الحد الأدنى 20 بايت</td></tr>
+<tr><td>Reserved</td><td>6 bits</td><td>Reserved for future use, set to 0</td><td>محجوز للمستقبل، يُضبط على صفر</td></tr>
+<tr><td>Control Flags</td><td>6 bits</td><td>URG, ACK, PSH, RST, SYN, FIN — each 1 bit</td><td>أعلام التحكم — 6 بتات، كل بت له وظيفة</td></tr>
+<tr><td>Window Size</td><td>16 bits</td><td>Number of bytes receiver can accept (flow control buffer size)</td><td>حجم نافذة الاستقبال — للتحكم في التدفق</td></tr>
+<tr><td>Checksum</td><td>16 bits</td><td>Error detection over pseudo-header + header + data</td><td>اكتشاف الأخطاء — إلزامي في TCP</td></tr>
+<tr><td>Urgent Pointer</td><td>16 bits</td><td>Valid only when URG flag is set. Points to last urgent byte.</td><td>يُشير لآخر بايت عاجل — فعّال فقط مع URG</td></tr>
+<tr><td>Options</td><td>0–40 bytes</td><td>Optional. MSS (Max Segment Size), timestamps, window scaling, etc.</td><td>خيارات اختيارية — حجم أقصى للـ Segment وغيرها</td></tr>
+</tbody>
+</table>
+</div>
+<div class="ar-box">
+<div class="ar-label">Arabic — نقاط مهمة</div>
+    الـ TCP Header أكبر بكثير من UDP (20-60 بايت مقابل 8 بايت ثابتة).<br/>
+<strong>HLEN:</strong> يُعبّر عن طول الـ Header بوحدات 32 بت (كلمة). HLEN=5 → 5×4=20 بايت (الحد الأدنى). HLEN=15 → 15×4=60 بايت (الحد الأقصى).<br/>
+<strong>Window Size:</strong> يحدد كم بايت يمكن للمستقبل استقبالها قبل أن يتوقف المُرسل ويرتجي تأكيداً. هذا هو جوهر Flow Control.<br/>
+<strong>Checksum في TCP:</strong> إلزامي دائماً (ليس اختيارياً مثل UDP في IPv4).
+  </div>
+</div>
+<div class="card">
+<div class="card-title">TCP Control Flags <span class="ar">أعلام التحكم في TCP</span></div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>Flag</th><th>Full Name</th><th>Purpose &amp; When Used</th><th>Consumes Seq#?</th><th>بالعربي</th></tr>
+</thead>
+<tbody>
+<tr><td>SYN</td><td>Synchronize</td><td>Connection establishment — sent in first two steps of handshake. Carries ISN.</td><td class="r">YES (1 seq#)</td><td>طلب بدء الاتصال — يحمل رقم التسلسل الأولي</td></tr>
+<tr><td>ACK</td><td>Acknowledgment</td><td>Acknowledges received data. ACK field is valid when this flag is set.</td><td class="g">NO (if no data)</td><td>تأكيد الاستلام — حقل ACK صالح فقط إذا كان هذا العلم مرفوعاً</td></tr>
+<tr><td>FIN</td><td>Finish</td><td>Connection termination — signals sender has no more data to send.</td><td class="r">YES (1 seq#)</td><td>طلب إنهاء الاتصال — يستهلك رقم تسلسل واحد</td></tr>
+<tr><td>RST</td><td>Reset</td><td>Abruptly terminates a connection due to error or unexpected segment.</td><td class="g">NO</td><td>إعادة ضبط الاتصال بشكل مفاجئ بسبب خطأ</td></tr>
+<tr><td>PSH</td><td>Push</td><td>Asks receiver to deliver data immediately to application without waiting to fill buffer.</td><td class="g">NO</td><td>إرسال البيانات للتطبيق فوراً بدون انتظار</td></tr>
+<tr><td>URG</td><td>Urgent</td><td>Segment contains urgent data. Receiver must process it before normal data.</td><td class="g">NO</td><td>البيانات عاجلة — تُعالج قبل البيانات العادية</td></tr>
+</tbody>
+</table>
+</div>
+<div class="ar-box">
+<div class="ar-label">Arabic — القاعدة الذهبية</div>
+<strong>SYN:</strong> يستهلك رقم تسلسل واحد حتى لو لم يحمل بيانات.<br/>
+<strong>SYN+ACK:</strong> يستهلك رقم تسلسل واحد حتى لو لم يحمل بيانات.<br/>
+<strong>FIN:</strong> يستهلك رقم تسلسل واحد إذا لم يحمل بيانات.<br/>
+<strong>FIN+ACK:</strong> يستهلك رقم تسلسل واحد إذا لم يحمل بيانات.<br/>
+<strong>ACK الفارغ:</strong> لا يستهلك أي رقم تسلسل.<br/>
+    السبب: SYN وFIN يُعامَلان كـ "بايت افتراضي" في الـ Stream لأغراض التأكيد.
+  </div>
+</div>
+<!-- ════════════════════════════════════════════
+     SECTION 5 — THREE-WAY HANDSHAKE
+════════════════════════════════════════════ -->
+<div class="section-header" id="s5">
+<div class="sec-num">5</div>
+<div class="sec-titles">
+<h3>TCP Connection: Establishment, Data Transfer &amp; Termination</h3>
+<div class="ar">تأسيس الاتصال وإنهاؤه في TCP</div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">Three-Way Handshake — Connection Establishment <span class="ar">المصافحة الثلاثية — تأسيس الاتصال</span></div>
+<div class="flow" style="flex-direction:column; align-items:stretch; gap:0">
+<div style="display:grid; grid-template-columns:1fr 60px 1fr; gap:10px; align-items:center; margin-bottom:12px">
+<div class="fbox a" style="text-align:right; padding:14px 18px">
+<strong>Client (Active Open)</strong><br/>
+<span class="small">Sends SYN</span><br/>
+<span style="color:var(--gold)">seq = x (ISN)</span><br/>
+<span class="small">SYN consumes 1 seq #</span>
+</div>
+<div style="text-align:center; color:var(--accent); font-size:22px">→</div>
+<div class="fbox" style="text-align:left; padding:14px 18px">
+<strong>Server (Passive Open)</strong><br/>
+<span class="small">Receives SYN, sends SYN+ACK</span>
+</div>
+</div>
+<div style="display:grid; grid-template-columns:1fr 60px 1fr; gap:10px; align-items:center; margin-bottom:12px">
+<div class="fbox" style="text-align:right; padding:14px 18px">
+<strong>Client</strong><br/>
+<span class="small">Receives SYN+ACK</span><br/>
+<span class="small">Sends ACK → Connection OPEN</span>
+</div>
+<div style="text-align:center; color:var(--accent2); font-size:22px">←</div>
+<div class="fbox o" style="text-align:left; padding:14px 18px">
+<strong>Server</strong><br/>
+<span class="small">Sends SYN+ACK</span><br/>
+<span style="color:var(--gold)">seq = y (ISN), ack = x+1</span><br/>
+<span class="small">SYN+ACK consumes 1 seq #</span>
+</div>
+</div>
+<div style="display:grid; grid-template-columns:1fr 60px 1fr; gap:10px; align-items:center">
+<div class="fbox g" style="text-align:right; padding:14px 18px">
+<strong>Client</strong><br/>
+<span class="small">Sends ACK</span><br/>
+<span style="color:var(--gold)">ack = y+1</span><br/>
+<span class="small">ACK (no data) = 0 seq # consumed</span>
+</div>
+<div style="text-align:center; color:var(--green); font-size:22px">→</div>
+<div class="fbox g" style="text-align:left; padding:14px 18px">
+<strong>Server</strong><br/>
+<span class="small">Connection ESTABLISHED</span><br/>
+<span class="small">Both sides ready to send data</span>
+</div>
+</div>
+</div>
+<div class="formula" style="margin-top:16px">
+<div class="flabel">Three-Way Handshake Summary</div>Step 1 (Client → Server):  SYN,  seq=x          [SYN consumes seq x]
+Step 2 (Server → Client):  SYN+ACK, seq=y, ack=x+1  [SYN+ACK consumes seq y]
+Step 3 (Client → Server):  ACK,  ack=y+1        [ACK with no data: no seq consumed]
+
+After Step 3: Connection is ESTABLISHED. Data transfer can begin.</div>
+<div class="note">
+<div class="note-label">Critical Rules — Exam Favorite</div>
+<ul>
+<li>A <strong>SYN</strong> segment CANNOT carry data, but it <strong>DOES consume one sequence number</strong>.</li>
+<li>A <strong>SYN + ACK</strong> segment CANNOT carry data, but it <strong>DOES consume one sequence number</strong>.</li>
+<li>An <strong>ACK</strong> segment carrying NO data <strong>DOES NOT consume</strong> a sequence number.</li>
+<li>Both client and server each choose their own independent ISN (x and y).</li>
+</ul>
+</div>
+<div class="ar-box">
+<div class="ar-label">Arabic — شرح المصافحة الثلاثية</div>
+    المصافحة الثلاثية (Three-Way Handshake) تُنشئ الاتصال قبل نقل البيانات:<br/>
+    1️⃣ العميل يرسل <strong>SYN</strong> (مزامنة): "أريد التحدث معك، رقمي الأولي x". يستهلك رقم x.<br/>
+    2️⃣ السيرفر يرد بـ <strong>SYN+ACK</strong>: "قبلت، رقمي y. وتأكيد استلام SYN (ack=x+1)". يستهلك رقم y.<br/>
+    3️⃣ العميل يرسل <strong>ACK</strong>: "قبلت. تأكيد SYN السيرفر (ack=y+1)". لا يستهلك رقم (إذا لم يحمل بيانات.<br/>
+    بعد الخطوة 3: الاتصال مفتوح وجاهز لنقل البيانات.<br/>
+<strong>لماذا ثلاث خطوات وليس اثنتين؟</strong> لأن كل طرف يحتاج لتأكيد رقمه الأولي من الطرف الآخر — مصافحتان في اتجاهين مختلفين.
+  </div>
+</div><div class="tcp-figure-card">
+<div class="tcp-figure-head">
+<div class="tcp-figure-title">Figure 23.18 — Connection establishment using three-way handshaking <span class="ar">تأسيس اتصال TCP بالمصافحة الثلاثية</span></div>
+<div class="tcp-figure-badge">TCP Handshake</div>
+</div>
+<div class="tcp-figure-img-wrap">
+<img alt="Figure 23.18 — Connection establishment using three-way handshaking" class="tcp-figure-img" src="Figure 23.18.png"/>
+</div>
+<div class="tcp-figure-caption"><strong>Exam focus:</strong> Shows SYN → SYN+ACK → ACK. SYN and SYN+ACK consume one sequence number, while a pure ACK does not consume sequence number.</div>
+</div><div class="card">
+<div class="card-title">Data Transfer Phase <span class="ar">مرحلة نقل البيانات</span></div>
+<p>After the 3-way handshake, data transfer begins. Each segment carries a sequence number and the receiver sends acknowledgments.</p>
+<div class="formula">
+<div class="flabel">Data Transfer Example (Client → Server, ISN=1000, Server ISN=4000)</div>Client sends 500 bytes:
+  Segment 1: SYN    seq=1000             (connection setup, consumes 1)
+  Segment 2: Data   seq=1001, data=200B  → Server ACKs: ack=1201
+  Segment 3: Data   seq=1201, data=300B  → Server ACKs: ack=1501
+
+Server sends 300 bytes:
+  Segment 1: SYN+ACK seq=4000, ack=1001  (consumes 1)
+  Segment 2: Data    seq=4001, data=300B → Client ACKs: ack=4301</div>
+<div class="ar-box">
+<div class="ar-label">Arabic</div>
+    بعد المصافحة الثلاثية تبدأ مرحلة نقل البيانات:<br/>
+    — كل Segment يحمل رقم التسلسل (رقم أول بايت فيه) ورقم التأكيد (رقم البايت التالي المتوقع).<br/>
+    — المستقبل يرسل ACK بعد استلام كل Segment أو مجموعة Segments (Delayed ACK).<br/>
+    — إذا ضاع Segment → المستقبل لا يرسل ACK لما بعده حتى يعيد المُرسل إرساله (أو يرسل Duplicate ACK).
+  </div>
+</div><div class="tcp-figure-card">
+<div class="tcp-figure-head">
+<div class="tcp-figure-title">Figure 23.19 — Data transfer <span class="ar">مرحلة نقل البيانات</span></div>
+<div class="tcp-figure-badge">Seq / ACK</div>
+</div>
+<div class="tcp-figure-img-wrap">
+<img alt="Figure 23.19 — Data transfer" class="tcp-figure-img" src="Figure 23.19.png"/>
+</div>
+<div class="tcp-figure-caption"><strong>Exam focus:</strong> Shows how sequence numbers and acknowledgment numbers move during TCP data exchange after the connection has been established.</div>
+</div><div class="card">
+<div class="card-title">Connection Termination — Three-Way (or Four-Way) <span class="ar">إنهاء الاتصال</span></div>
+<div class="formula">
+<div class="flabel">Normal Termination (Three-Way)</div>Step 1 (Client → Server):  FIN,      seq=x+1     [FIN consumes one seq #]
+Step 2 (Server → Client):  FIN+ACK,  seq=y+1, ack=x+2  [FIN+ACK consumes one seq #]
+Step 3 (Client → Server):  ACK,      ack=y+2     [ACK no data: no seq consumed]
+
+Connection is CLOSED after Step 3.</div>
+<div class="note" style="margin-top:10px">
+<div class="note-label">FIN Flag Rules</div>
+<ul>
+<li>A <strong>FIN</strong> segment consumes one sequence number <strong>if it does not carry data</strong>.</li>
+<li>A <strong>FIN+ACK</strong> segment consumes one sequence number <strong>if it does not carry data</strong>.</li>
+</ul>
+</div>
+
+<div class="ar-box">
+<div class="ar-label">Arabic</div>
+    إنهاء الاتصال يشبه التأسيس لكن بـ FIN بدلاً من SYN:<br/>
+    1️⃣ العميل يرسل FIN: "انتهيت من الإرسال". يستهلك رقم واحد.<br/>
+    2️⃣ السيرفر يرد بـ FIN+ACK: "فهمت، وأنا أيضاً انتهيت". يستهلك رقم واحد.<br/>
+    3️⃣ العميل يرسل ACK: "قبلت إنهاء السيرفر". الاتصال مغلق.<br/>
+<strong>Half-Close:</strong> طرف ينهي الإرسال (FIN) بينما الآخر لا يزال يرسل. مفيد لعمليات مثل: العميل يرسل طلباً ثم ينهي، لكن السيرفر لا يزال يرسل الاستجابة.
+  </div>
+</div><div class="tcp-figure-card">
+<div class="tcp-figure-head">
+<div class="tcp-figure-title">Figure 23.20 — Connection termination using three-way handshaking <span class="ar">إنهاء اتصال TCP بالمصافحة الثلاثية</span></div>
+<div class="tcp-figure-badge">FIN / ACK</div>
+</div>
+<div class="tcp-figure-img-wrap">
+<img alt="Figure 23.20 — Connection termination using three-way handshaking" class="tcp-figure-img" src="Figure 23.20.png"/>
+</div>
+<div class="tcp-figure-caption"><strong>Exam focus:</strong> Shows TCP connection closing using FIN, FIN+ACK, and ACK. FIN consumes one sequence number.</div>
+</div><div class="card">
+<div class="card-title">Half-Close in TCP <span class="ar">الإغلاق النصفي في TCP</span></div>
+<p><strong>Half-close</strong> means one side closes only its sending direction by sending FIN, while the other side can still continue sending data.</p>
+<div class="key-rule">
+<div class="kr-label">Key Idea</div>
+    FIN closes one direction of the TCP stream. The opposite direction may remain open until the other side sends its own FIN.
+  </div>
+<div class="ar-box">
+<div class="ar-label">Arabic</div>
+    الإغلاق النصفي يعني أن طرفاً واحداً يتوقف عن الإرسال ويرسل FIN، لكن الطرف الآخر ما زال يستطيع إرسال البيانات.
+    لذلك يمكن أن ترى FIN من جهة، ثم تستمر البيانات أو التأكيدات من الجهة الأخرى، وبعدها تُغلق الجهة الثانية بإرسال FIN الخاص بها.
+  </div>
+</div><div class="tcp-figure-card">
+<div class="tcp-figure-head">
+<div class="tcp-figure-title">Figure 23.21 — Half-close <span class="ar">الإغلاق النصفي في TCP</span></div>
+<div class="tcp-figure-badge">Half-Close</div>
+</div>
+<div class="tcp-figure-img-wrap">
+<img alt="Figure 23.21 — Half-close" class="tcp-figure-img" src="Figure 23.21.png"/>
+</div>
+<div class="tcp-figure-caption"><strong>Exam focus:</strong> Shows one side stopping its sending direction while the other side can continue sending data before closing.</div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SECTION 6 — FLOW CONTROL
+════════════════════════════════════════════ -->
+<div class="section-header" id="s6">
+<div class="sec-num">6</div>
+<div class="sec-titles">
+<h3>Flow Control — Sliding Window</h3>
+<div class="ar">التحكم في التدفق — النافذة المنزلقة</div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">Flow Control Concept <span class="ar">مفهوم التحكم في التدفق</span></div>
+<p>Flow control prevents the sender from overwhelming the receiver's buffer. The receiver advertises a <strong>window size</strong> — how many bytes it can accept before needing an ACK.</p>
+<div class="key-rule">
+<div class="kr-label">How Sliding Window Works</div>
+<ol class="step-list" style="margin-top:10px">
+<li>Receiver tells sender its buffer size (<strong>rwnd = Receive Window</strong>) in every ACK segment.</li>
+<li>Sender can send up to <strong>rwnd bytes</strong> without waiting for an ACK.</li>
+<li>As receiver consumes data (delivers to application), it increases rwnd in subsequent ACKs.</li>
+<li>If rwnd = 0: sender STOPS sending and waits for window to open.</li>
+</ol>
+</div>
+<div class="formula">
+<div class="flabel">Sliding Window Example</div>Receiver buffer = 1000 bytes. Application reads slowly.
+
+ACK 1 from receiver: ack=101, rwnd=1000  → Sender can send bytes 101–1100
+ACK 2 from receiver: ack=201, rwnd=800   → Buffer filling up — app not reading fast enough
+ACK 3 from receiver: ack=201, rwnd=0     → STOP! Buffer full. Sender pauses.
+ACK 4 from receiver: ack=201, rwnd=500   → Window opens again. Sender resumes.
+
+At any time: bytes in flight ≤ rwnd</div>
+<div class="ar-box">
+<div class="ar-label">Arabic — التحكم في التدفق</div>
+    التحكم في التدفق (Flow Control) يمنع المُرسل من إغراق مخزن المستقبل.<br/>
+<strong>كيف يعمل؟</strong> المستقبل في كل ACK يُخبر المُرسل بحجم المخزن المتاح (rwnd). المُرسل لا يرسل أكثر من rwnd بايت دون انتظار تأكيد.<br/>
+<strong>rwnd = 0:</strong> المُرسل يتوقف تماماً ويبدأ بإرسال "Probe Segments" صغيرة بشكل دوري حتى يفتح المستقبل نافذته.<br/>
+    تخيّلها: خرطوم ماء (المُرسل) وسطل (المستقبل). إذا امتلأ السطل → أوقف الماء حتى يُفرّغ السطل.
+  </div>
+</div><div class="tcp-figure-card">
+<div class="tcp-figure-head">
+<div class="tcp-figure-title">Figure 23.24 — Normal operation <span class="ar">العمل الطبيعي مع التأكيدات</span></div>
+<div class="tcp-figure-badge">Flow Control</div>
+</div>
+<div class="tcp-figure-img-wrap">
+<img alt="Figure 23.24 — Normal operation" class="tcp-figure-img" src="Figure 23.24.png"/>
+</div>
+<div class="tcp-figure-caption"><strong>Exam focus:</strong> Shows normal TCP data flow with sequence and acknowledgment numbers, including delayed acknowledgments.</div>
+</div>
+<!-- ════════════════════════════════════════════
+     SECTION 7 — ERROR CONTROL
+════════════════════════════════════════════ -->
+<div class="section-header" id="s7">
+<div class="sec-num">7</div>
+<div class="sec-titles">
+<h3>Error Control &amp; Retransmission</h3>
+<div class="ar">التحكم في الأخطاء وإعادة الإرسال</div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">Error Control Mechanisms <span class="ar">آليات التحكم في الأخطاء</span></div>
+<p>TCP ensures reliable delivery through several error control mechanisms:</p>
+<div class="grid2" style="margin-top:12px">
+<div class="highlight">
+<strong>1. Checksum</strong><br/>
+      Every TCP segment includes a checksum. If the receiver detects a corrupted segment, it <strong>silently discards</strong> it (no NACK). The sender will retransmit after timeout.
+    </div>
+<div class="highlight green">
+<strong>2. Acknowledgment (ACK)</strong><br/>
+      Positive acknowledgment confirms receipt. TCP is <strong>cumulative</strong> — ACK=N means all bytes up to N-1 have been received correctly.
+    </div>
+<div class="highlight gold">
+<strong>3. Retransmission Timer (RTO)</strong><br/>
+      After sending a segment, sender starts a timer. If ACK not received before timer expires → retransmit the segment.
+    </div>
+<div class="highlight red">
+<strong>4. Out-of-Order Segments</strong><br/>
+      TCP receiver delivers only <strong>ordered data</strong> to the process. Out-of-order segments are <strong>buffered</strong> until missing segments arrive.
+    </div>
+</div>
+<div class="note purple" style="margin-top:12px">
+<div class="note-label" style="color:var(--purple)">Normal Operation vs Lost Segment</div>
+<div class="grid2">
+<div>
+<strong>Normal:</strong><br/>
+        Sender → Seg1 (seq=1)<br/>
+        Sender → Seg2 (seq=2)<br/>
+        Receiver ← ACK (ack=3) — confirms both<br/>
+<span class="small g">Cumulative ACK received</span>
+</div>
+<div>
+<strong>Lost Segment:</strong><br/>
+        Sender → Seg1 (seq=1) ✓<br/>
+        Sender → Seg2 (seq=2) ✗ LOST<br/>
+        Receiver → Dup ACK (ack=2) — "I got 1, need 2"<br/>
+        Receiver → Dup ACK (ack=2) — again<br/>
+        After 3 Dup ACKs → Fast Retransmit Seg2
+      </div>
+</div>
+</div>
+<div class="key-rule" style="margin-top:12px">
+<div class="kr-label">① The Receiver TCP delivers only ORDERED data to the process</div>
+    Out-of-order segments are stored in buffer. The process (application) only sees a continuous, ordered byte stream — never sees gaps or duplicates.
+  </div>
+<div class="ar-box">
+<div class="ar-label">Arabic — التحكم في الأخطاء</div>
+    TCP يضمن الموثوقية عبر أربع آليات:<br/>
+    1️⃣ <strong>Checksum:</strong> يكشف الأخطاء — إذا تلفت الحزمة تُحذف بصمت والمُرسل يعيد الإرسال بعد انتهاء المؤقت.<br/>
+    2️⃣ <strong>ACK التراكمي:</strong> ACK=N يعني "استلمت كل شيء حتى البايت N-1". تراكمي = ACK واحد يؤكد عدة Segments.<br/>
+    3️⃣ <strong>RTO (مؤقت إعادة الإرسال):</strong> إذا انتهى المؤقت بدون ACK → إعادة إرسال. المؤقت يُحسب ديناميكياً بناءً على RTT.<br/>
+    4️⃣ <strong>الترتيب:</strong> المستقبل يُخزّن الـ Segments غير المُرتّبة في البفر ويُسلّم للتطبيق فقط البيانات المُرتّبة المتسلسلة.<br/>
+<strong>Fast Retransmit:</strong> 3 ACK مكررة (Duplicate ACKs) → المُرسل يعيد الإرسال فوراً بدون انتظار المؤقت.
+  </div>
+</div><div class="tcp-figure-card">
+<div class="tcp-figure-head">
+<div class="tcp-figure-title">Figure 23.25 — Lost segment <span class="ar">ضياع Segment وإعادة الإرسال</span></div>
+<div class="tcp-figure-badge">Error Control</div>
+</div>
+<div class="tcp-figure-img-wrap">
+<img alt="Figure 23.25 — Lost segment" class="tcp-figure-img" src="Figure 23.25.png"/>
+</div>
+<div class="tcp-figure-caption"><strong>Exam focus:</strong> Shows a lost segment, duplicate acknowledgments, timeout/retransmission, and recovery using cumulative ACK.</div>
+</div>
+<!-- ════════════════════════════════════════════
+     SECTION 8 — COMPARISON TABLE
+════════════════════════════════════════════ -->
+<div class="section-header" id="s8">
+<div class="sec-num">8</div>
+<div class="sec-titles">
+<h3>Full Comparison: UDP vs TCP</h3>
+<div class="ar">مقارنة شاملة: UDP مقابل TCP</div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">UDP vs TCP — Complete Comparison Table <span class="ar">جدول المقارنة الكامل</span></div>
+<div class="table-wrap">
+<table class="cmp-table">
+<thead>
+<tr><th>Property / الخاصية</th><th>UDP</th><th>TCP</th><th>بالعربي</th></tr>
+</thead>
+<tbody>
+<tr><td>Full Name</td><td>User Datagram Protocol</td><td>Transmission Control Protocol</td><td>اسم البروتوكول الكامل</td></tr>
+<tr><td>Connection Type</td><td class="r-cell">Connectionless — no setup</td><td class="g-cell">Connection-Oriented — 3-way handshake</td><td>نوع الاتصال</td></tr>
+<tr><td>Reliability</td><td class="r-cell">Unreliable — no guarantee</td><td class="g-cell">Reliable — guaranteed delivery</td><td>الموثوقية</td></tr>
+<tr><td>Order of Delivery</td><td class="r-cell">Not guaranteed</td><td class="g-cell">Guaranteed (in-order)</td><td>ترتيب التسليم</td></tr>
+<tr><td>Header Size</td><td class="g-cell">8 bytes (fixed)</td><td class="r-cell">20–60 bytes (variable)</td><td>حجم الـ Header</td></tr>
+<tr><td>Speed</td><td class="g-cell">Faster (less overhead)</td><td class="r-cell">Slower (more overhead)</td><td>السرعة</td></tr>
+<tr><td>Flow Control</td><td class="r-cell">None</td><td class="g-cell">Yes — sliding window (rwnd)</td><td>التحكم في التدفق</td></tr>
+<tr><td>Error Control</td><td class="r-cell">Checksum only (no retransmit)</td><td class="g-cell">Checksum + ACK + retransmission</td><td>التحكم في الأخطاء</td></tr>
+<tr><td>Congestion Control</td><td class="r-cell">None</td><td class="g-cell">Yes (slow start, AIMD)</td><td>التحكم في الازدحام</td></tr>
+<tr><td>Data Unit</td><td>Datagram (independent)</td><td>Segment (part of stream)</td><td>وحدة البيانات</td></tr>
+<tr><td>Byte Numbering</td><td class="r-cell">No</td><td class="g-cell">Yes — every byte numbered</td><td>ترقيم البايتات</td></tr>
+<tr><td>Broadcast/Multicast</td><td class="g-cell">Supported</td><td class="r-cell">Not supported</td><td>البث المتعدد</td></tr>
+<tr><td>Suitable for</td><td>DNS, VoIP, streaming, gaming, DHCP</td><td>HTTP, FTP, SMTP, SSH, file transfer</td><td>الاستخدامات</td></tr>
+<tr><td>Protocol Number (IP)</td><td>17</td><td>6</td><td>رقم البروتوكول في IP Header</td></tr>
+</tbody>
+</table>
+</div>
+<div class="ar-box">
+<div class="ar-label">Arabic Summary</div>
+<strong>UDP:</strong> سريع، بسيط، بدون ضمانات. Header صغير 8 بايت ثابتة. مناسب لما يهم فيه الوقت أكثر من الدقة.<br/>
+<strong>TCP:</strong> بطيء أكثر لكن موثوق تماماً. Header 20-60 بايت. يضمن الوصول والترتيب وعدم التكرار. مناسب لنقل الملفات والصفحات وكل ما يتطلب دقة.<br/>
+<strong>قاعدة الاختيار:</strong> إذا كانت خسارة بيانات مقبولة وتريد سرعة → UDP. إذا كانت كل البيانات يجب أن تصل صحيحة ومرتبة → TCP.
+  </div>
+</div>
+<div class="card">
+<div class="card-title">SYN / ACK / FIN Sequence Consumption Summary <span class="ar">ملخص استهلاك أرقام التسلسل</span></div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>Segment Type</th><th>Carries Data?</th><th>Consumes Seq Number?</th><th>Reason</th><th>بالعربي</th></tr>
+</thead>
+<tbody>
+<tr><td>SYN</td><td class="r">No</td><td class="g">Yes — 1 seq#</td><td>SYN itself is treated as a logical byte</td><td>SYN يُعامل كبايت افتراضي</td></tr>
+<tr><td>SYN + ACK</td><td class="r">No</td><td class="g">Yes — 1 seq#</td><td>Same as SYN</td><td>نفس SYN</td></tr>
+<tr><td>ACK (no data)</td><td class="r">No</td><td class="r">No</td><td>Pure ACK: just confirmation, no byte in stream</td><td>تأكيد فقط — لا بايت في الـ Stream</td></tr>
+<tr><td>Data Segment</td><td class="g">Yes (N bytes)</td><td class="g">Yes — N seq#s</td><td>Each byte consumes one sequence number</td><td>كل بايت يستهلك رقم تسلسل</td></tr>
+<tr><td>FIN</td><td class="r">No</td><td class="g">Yes — 1 seq#</td><td>FIN is treated as a logical byte</td><td>FIN يُعامل كبايت افتراضي</td></tr>
+<tr><td>FIN + ACK</td><td class="r">No</td><td class="g">Yes — 1 seq#</td><td>Same as FIN</td><td>نفس FIN</td></tr>
+<tr><td>RST</td><td class="r">No</td><td class="r">No</td><td>Hard reset — not part of stream</td><td>إعادة ضبط مفاجئة — ليست في الـ Stream</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<div class="card-title">Transport Protocols in TCP/IP Suite <span class="ar">بروتوكولات طبقة النقل في مجموعة TCP/IP</span></div>
+<div class="grid3">
+<div class="highlight red">
+<strong>UDP (17)</strong><br/>
+      Connectionless, unreliable<br/>
+<span class="small">DNS, DHCP, VoIP, streaming, SNMP, TFTP</span>
+</div>
+<div class="highlight">
+<strong>TCP (6)</strong><br/>
+      Connection-oriented, reliable<br/>
+<span class="small">HTTP, HTTPS, FTP, SMTP, SSH, Telnet</span>
+</div>
+<div class="highlight gold">
+<strong>SCTP (132)</strong><br/>
+      Stream Control TP — hybrid<br/>
+<span class="small">Telephony signaling (SS7 over IP), multihoming support</span>
+</div>
+</div>
+<div class="ar-box">
+<div class="ar-label">Arabic</div>
+    مجموعة TCP/IP تتضمن ثلاثة بروتوكولات في طبقة النقل:<br/>
+<strong>UDP (رقم 17):</strong> سريع وبسيط — للتطبيقات التي تتحمل الخسارة.<br/>
+<strong>TCP (رقم 6):</strong> موثوق ومنظم — للتطبيقات التي تحتاج ضماناً كاملاً.<br/>
+<strong>SCTP (رقم 132):</strong> هجين — يجمع ميزات UDP وTCP. يدعم Multi-homing (اتصال عبر عدة واجهات) وMulti-streaming. يُستخدم في الاتصالات الهاتفية عبر IP.
+  </div>
+</div>
+<!-- ════════════════════════════════════════════
+     SECTION 9 — EXAM Q&A
+════════════════════════════════════════════ -->
+<div class="section-header" id="s9">
+<div class="sec-num">9</div>
+<div class="sec-titles">
+<h3>Exam Questions &amp; Complete Answers</h3>
+<div class="ar">أسئلة الامتحان وإجاباتها الكاملة</div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">Part A — Conceptual Questions <span class="ar">أسئلة نظرية</span></div>
+<div class="exam-q">
+<div class="q-label">Q1 — Fundamental Difference</div>
+    What is the main difference between UDP and TCP?<br/>
+<span class="answer">Answer:</span> UDP is <strong>connectionless and unreliable</strong> — no setup, no guarantee, 8-byte fixed header, fast. TCP is <strong>connection-oriented and reliable</strong> — 3-way handshake, guaranteed ordered delivery, flow &amp; error control, 20–60 byte header. Use UDP when speed matters more than accuracy (VoIP, gaming). Use TCP when all data must arrive correctly (file transfer, HTTP).
+  </div>
+<div class="exam-q">
+<div class="q-label">Q2 — Transport Layer Role</div>
+    What is the responsibility of the transport layer?<br/>
+<span class="answer">Answer:</span> The transport layer is responsible for <strong>process-to-process delivery</strong> — delivering packets from one process (identified by port number) on one host to another process on another host. The network layer handles host-to-host delivery; the transport layer extends this to process-to-process.
+  </div>
+<div class="exam-q">
+<div class="q-label">Q3 — Port Ranges</div>
+    A client initiates a connection to a web server. Which port numbers are used on each side?<br/>
+<span class="answer">Answer:</span> Web server uses port <strong>80</strong> (well-known, HTTP). The client OS assigns an <strong>ephemeral port</strong> (49152–65535) temporarily. The socket pair is: (ClientIP:ephemeral) ↔ (ServerIP:80).
+  </div>
+<div class="exam-q">
+<div class="q-label">Q4 — SYN/ACK Rules</div>
+    Does a SYN segment consume a sequence number? Does an ACK segment?<br/>
+<span class="answer">Answer:</span> <strong>SYN: YES</strong> — always consumes one sequence number even though it carries no data (treated as a virtual byte). <strong>SYN+ACK: YES</strong> — also consumes one. <strong>ACK (no data): NO</strong> — a pure ACK with no data consumes no sequence number.
+  </div>
+<div class="exam-q">
+<div class="q-label">Q5 — Acknowledgment Number</div>
+    What does the acknowledgment number represent in TCP? Is it cumulative?<br/>
+<span class="answer">Answer:</span> The acknowledgment number represents the <strong>number of the next byte the receiver expects to receive</strong>. It is <strong>cumulative</strong> — ACK=1001 means all bytes up to byte 1000 have been received correctly.
+  </div>
+<div class="exam-q">
+<div class="q-label">Q6 — Ordered Delivery</div>
+    If TCP receives segment 3 before segment 2, what does it do?<br/>
+<span class="answer">Answer:</span> TCP buffers the out-of-order segment 3 and waits for segment 2. The application receives <strong>only ordered data</strong>. The receiver may send a Duplicate ACK indicating it still needs segment 2. After segment 2 arrives, both are delivered in order.
+  </div>
+<div class="exam-q">
+<div class="q-label">Q7 — Flow Control</div>
+    Describe TCP flow control. What happens when rwnd = 0?<br/>
+<span class="answer">Answer:</span> TCP uses a <strong>sliding window</strong>. The receiver advertises its available buffer size (rwnd) in each ACK. The sender cannot send more than rwnd bytes without an ACK. When rwnd = 0 the sender <strong>stops sending</strong> and periodically sends small "probe" segments to check if the window has reopened.
+  </div>
+<div class="exam-q">
+<div class="q-label">Q8 — UDP Queue Overflow</div>
+    What happens in UDP when the incoming queue overflows?<br/>
+<span class="answer">Answer:</span> The datagram is <strong>silently discarded</strong> — no notification is sent to the sender. UDP has no flow control mechanism. This is acceptable for applications like VoIP where retransmitting old audio is worse than losing it.
+  </div>
+</div>
+<div class="card">
+<div class="card-title">Part B — Calculation Problems <span class="ar">مسائل حسابية</span></div>
+<div class="exam-q">
+<div class="q-label">Q9 — UDP Header Decoding</div>
+    Given UDP header dump: <strong>0045 0035 0026 XXXX</strong><br/>
+    Find: source port, dest port, total length, data length, direction (C→S or S→C)?<br/>
+<span class="answer">Solution:</span>
+<div class="formula">
+0045 → Source Port  = (0045)₁₆ = 0×16³ + 0×16² + 4×16¹ + 5×16⁰ = 69 decimal
+0035 → Dest Port    = (0035)₁₆ = 53 decimal   ← Well-known port = DNS!
+0026 → Total Length = (0026)₁₆ = 2×16¹ + 6×16⁰ = 38 bytes
+XXXX → Checksum (not asked)
+
+Data Length = 38 - 8 = 30 bytes
+Source port 69 is ephemeral-ish but 53 (DNS) is well-known → Packet: Client → Server (DNS query)
+Client process: DNS client (port 53 = DNS service)</div>
+</div>
+<div class="exam-q">
+<div class="q-label">Q10 — TCP Three-Way Handshake Sequence Numbers</div>
+    Client ISN = 2000, Server ISN = 5000. Write the 3 handshake segments with all fields.<br/>
+<span class="answer">Solution:</span>
+<div class="formula">
+Step 1 — Client → Server:
+  Flags: SYN
+  Seq = 2000  (ISN, consumes this number)
+  ACK = 0     (ACK flag not set yet)
+  Data: none
+  Next seq for client = 2001
+
+Step 2 — Server → Client:
+  Flags: SYN + ACK
+  Seq = 5000  (Server ISN, consumes this number)
+  ACK = 2001  (next byte expected from client = 2000+1)
+  Data: none
+  Next seq for server = 5001
+
+Step 3 — Client → Server:
+  Flags: ACK
+  Seq = 2001  (next after SYN)
+  ACK = 5001  (next byte expected from server = 5000+1)
+  Data: none
+  Seq consumed? NO (pure ACK with no data)
+
+Connection ESTABLISHED. Client can now send data starting at seq=2001.</div>
+</div>
+<div class="exam-q">
+<div class="q-label">Q11 — Connection Termination</div>
+    After the connection above, Client seq=2500, Server seq=5300. Write the termination.<br/>
+<span class="answer">Solution:</span>
+<div class="formula">
+Step 1 — Client → Server:
+  Flags: FIN
+  Seq = 2500  (consumes 1 seq number)
+  ACK = 5301  (acknowledging all server data)
+
+Step 2 — Server → Client:
+  Flags: FIN + ACK
+  Seq = 5300  (consumes 1 seq number)
+  ACK = 2501  (acknowledging FIN = 2500+1)
+
+Step 3 — Client → Server:
+  Flags: ACK
+  Seq = 2501
+  ACK = 5301  (acknowledging server FIN = 5300+1)
+  Seq consumed? NO (pure ACK)
+
+Connection CLOSED.</div>
+</div>
+<div class="exam-q">
+<div class="q-label">Q12 — UDP Length Formula</div>
+    An IP packet has Total Length = 512 bytes and IP Header Length = 20 bytes. Is it UDP or TCP? Find UDP data length if applicable.<br/>
+<span class="answer">Solution:</span>
+<div class="formula">
+IP payload size = Total IP Length - IP Header = 512 - 20 = 492 bytes
+
+If UDP: UDP Total Length = 492 bytes
+        UDP Data = 492 - 8 (UDP header) = 484 bytes
+
+If TCP: TCP data = 492 - TCP header (at least 20, up to 60 bytes)
+        If TCP header = 20: Data = 492 - 20 = 472 bytes
+
+Note: The protocol (UDP=17, TCP=6) is identified in the IP Header's Protocol field.</div>
+</div>
+<div class="exam-q">
+<div class="q-label">Q13 — Sliding Window Problem</div>
+    The receiver's buffer = 4000 bytes. Application reads at 100 bytes/ms. Sender sends at 500 bytes/ms. How long until rwnd = 0?<br/>
+<span class="answer">Solution:</span>
+<div class="formula">
+Net fill rate = Send rate - Read rate = 500 - 100 = 400 bytes/ms
+Time until full = Buffer size / Net fill rate = 4000 / 400 = 10 ms
+
+After 10 ms: rwnd = 0 → Sender MUST stop.
+After that, application continues reading at 100 bytes/ms (sender stopped adding).
+Window opens again as application drains the buffer.</div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">Part C — True/False Quick Review <span class="ar">صح أم خطأ — مراجعة سريعة</span></div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>#</th><th>Statement</th><th>Answer</th><th>Reason</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>UDP is reliable because it uses a checksum</td><td class="r">FALSE</td><td>Checksum detects errors but UDP discards corrupted packets silently — no retransmission</td></tr>
+<tr><td>2</td><td>A SYN segment consumes one sequence number</td><td class="g">TRUE</td><td>SYN is treated as a virtual byte in the stream</td></tr>
+<tr><td>3</td><td>TCP acknowledgment is cumulative</td><td class="g">TRUE</td><td>ACK=N confirms all bytes up to N-1</td></tr>
+<tr><td>4</td><td>UDP can be used for broadcast</td><td class="g">TRUE</td><td>TCP cannot do broadcast; UDP supports it</td></tr>
+<tr><td>5</td><td>The TCP header minimum size is 20 bytes</td><td class="g">TRUE</td><td>HLEN minimum = 5 × 4 = 20 bytes (no options)</td></tr>
+<tr><td>6</td><td>A pure ACK with no data consumes a sequence number</td><td class="r">FALSE</td><td>Pure ACK consumes NO sequence number</td></tr>
+<tr><td>7</td><td>Port 80 is used by FTP</td><td class="r">FALSE</td><td>Port 80 = HTTP. FTP uses ports 20 (data) and 21 (control)</td></tr>
+<tr><td>8</td><td>TCP delivers data to the application in the order received</td><td class="g">TRUE</td><td>TCP buffers and reorders segments before delivery</td></tr>
+<tr><td>9</td><td>UDP header length = 8 bytes always</td><td class="g">TRUE</td><td>UDP header is always fixed at 8 bytes (4 fields × 2 bytes)</td></tr>
+<tr><td>10</td><td>SCTP supports multihoming unlike TCP</td><td class="g">TRUE</td><td>SCTP can use multiple IP addresses per endpoint</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- QUICK REFERENCE -->
+<div class="final" id="qr">
+<h2>Quick Reference — Everything You Need to Know
+    <span class="ar">مراجعة سريعة — كل ما تحتاجه</span>
+</h2>
+<div class="table-wrap">
+<table class="cmp-table">
+<thead>
+<tr><th>Concept</th><th>Core Idea</th><th>Arabic — الجوهر</th></tr>
+</thead>
+<tbody>
+<tr><td>Transport Layer</td><td>Process-to-process delivery using port numbers</td><td>توصيل من عملية لعملية عبر أرقام المنافذ</td></tr>
+<tr><td>Multiplexing</td><td>Multiple processes → one transport layer → network</td><td>دمج بيانات عمليات متعددة للإرسال</td></tr>
+<tr><td>Demultiplexing</td><td>Network → transport layer → correct process (by port)</td><td>توزيع الحزم للعملية الصحيحة عند الاستقبال</td></tr>
+<tr><td>Well-Known Ports</td><td>0–1023, assigned by IANA to common services</td><td>0-1023: خدمات معروفة. HTTP=80, DNS=53, FTP=21</td></tr>
+<tr><td>Socket Address</td><td>IP : Port = unique endpoint identifier</td><td>IP + Port معاً = معرّف فريد لنقطة الاتصال</td></tr>
+<tr><td>UDP Header</td><td>8 bytes fixed: Src Port, Dst Port, Length, Checksum</td><td>8 بايت ثابتة: 4 حقول × 2 بايت</td></tr>
+<tr><td>UDP Length Formula</td><td>UDP Length = IP Total - IP Header; Data = UDP Length - 8</td><td>البيانات = طول UDP - 8</td></tr>
+<tr><td>UDP Queues</td><td>Overflow → silent drop. No flow control.</td><td>إذا امتلأت القائمة → حذف صامت بلا إشعار</td></tr>
+<tr><td>TCP Stream</td><td>Continuous byte stream; bytes numbered from random ISN</td><td>تدفق بايتات مستمر؛ ترقيم يبدأ من ISN عشوائي</td></tr>
+<tr><td>Sequence Number</td><td>Number of first data byte in segment</td><td>رقم أول بايت في الـ Segment</td></tr>
+<tr><td>ACK Number</td><td>Next byte expected; cumulative</td><td>البايت التالي المتوقع؛ تراكمي</td></tr>
+<tr><td>SYN</td><td>Connection request; consumes 1 seq #; carries ISN</td><td>طلب اتصال؛ يستهلك رقم تسلسل واحد</td></tr>
+<tr><td>SYN+ACK</td><td>Connection accept; consumes 1 seq #</td><td>قبول الاتصال؛ يستهلك رقم تسلسل واحد</td></tr>
+<tr><td>FIN / FIN+ACK</td><td>Termination request; each consumes 1 seq #</td><td>طلب إنهاء؛ كل منهما يستهلك رقم تسلسل</td></tr>
+<tr><td>ACK (no data)</td><td>Consumes NO sequence number</td><td>ACK الفارغ لا يستهلك أي رقم تسلسل</td></tr>
+<tr><td>3-Way Handshake</td><td>SYN → SYN+ACK → ACK = connection established</td><td>ثلاث خطوات لتأسيس الاتصال</td></tr>
+<tr><td>TCP Header</td><td>20–60 bytes; HLEN in 32-bit words (min 5, max 15)</td><td>20-60 بايت؛ HLEN × 4 = طول الـ Header</td></tr>
+<tr><td>Window Size (rwnd)</td><td>Flow control: max bytes sender can send unacknowledged</td><td>التحكم في التدفق: أقصى بايتات بدون ACK</td></tr>
+<tr><td>Ordered Delivery</td><td>TCP delivers ONLY ordered data to process; buffers OOO</td><td>TCP يُسلّم للتطبيق فقط البيانات المرتبة</td></tr>
+<tr><td>Retransmission</td><td>Timer (RTO) expires → retransmit; 3 Dup ACKs → fast retransmit</td><td>انتهاء المؤقت أو 3 ACK مكررة → إعادة الإرسال</td></tr>
+<tr><td>TCP Protocol #</td><td>6 in IP header</td><td>رقم بروتوكول TCP في الـ IP Header هو 6</td></tr>
+<tr><td>UDP Protocol #</td><td>17 in IP header</td><td>رقم بروتوكول UDP في الـ IP Header هو 17</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr class="div"/>
+<p style="text-align:center;color:var(--muted);font-size:12px;margin-top:36px">
+  Networks and Data Transmissions — Chapter 23: Process-to-Process Delivery: UDP, TCP, and SCTP<br/>
+  Based on Forouzan, "Data Communications and Networking" · Good Luck! 🎯
+</p>
+</div><!-- /container -->
+</body>
+</html>
