@@ -404,8 +404,8 @@ const QUESTIONS = [
   // ═══ CHAPTER 5 — IPv4 Addressing ═══
   {id:121,ch:'CH5',q:'The IPv4 address is:',opts:['16-bit','32-bit','64-bit','128-bit'],ans:1,explain:'IPv4 = 32 bits = 4 octets (مثل 192.168.1.1). IPv6 = 128 bits.'},
   {id:122,ch:'CH5',q:'One responsibility of the Network Layer protocol is to create:',opts:['Host-to-host','Process-to-process','Source-to-destination','None of the above'],ans:2,explain:'Network Layer مسؤولة عن التوصيل من المصدر إلى الوجهة (source-to-destination).'},
-  {id:123,ch:'CH5',q:'In ______ addressing, when an address is given, we can find the beginning address and range.',opts:['Classless','Classful','Both (a) and (b)','None of the above'],ans:2,explain:'في كلا النوعين (Classful و Classless) يمكن إيجاد عنوان الشبكة والنطاق من العنوان والـ mask.'},
-  {id:124,ch:'CH5',q:'In Class B, the netid is between:',opts:['0–127','128–191','192–223','None'],ans:1,explain:'Class B: أول بايت بين 128-191. أول بتين = 10. يدعم شبكات متوسطة الحجم.'},
+  {id:123,ch:'CH5',q:'In ______ addressing, when an address is given, we can find the beginning address and range without needing a prefix.',opts:['Classless','Classful','Both (a) and (b)','None of the above'],ans:1,explain:'في Classful addressing يكفي العنوان لمعرفة الـ class وبالتالي بداية البلوك والـ range. أما Classless/CIDR فيحتاج prefix مثل /24.'},
+  {id:124,ch:'CH5',q:'In Class B, the first byte is between:',opts:['0–127','128–191','192–223','None'],ans:1,explain:'Class B: أول بايت بين 128–191. أول بتين = 10. يدعم شبكات متوسطة الحجم.'},
   {id:125,ch:'CH5',q:'The default mask for Class C is:',opts:['255.255.0.0','255.0.0.0','255.255.255.0','255.255.255.255'],ans:2,explain:'Class C mask = 255.255.255.0 = /24. آخر أوكتيت للـ hosts (254 host كحد أقصى).'},
   {id:126,ch:'CH5',q:'Class A address first byte range:',opts:['0–127','128–191','192–223','224–239'],ans:0,explain:'Class A: أول بايت 0-127. أول bit = 0. يدعم عدد ضخم جداً من الـ hosts.'},
   {id:127,ch:'CH5',q:'Class B address range:',opts:['0–127','128–191','192–223','224–239'],ans:1,explain:'Class B: 128-191. أول بتين = 10.'},
@@ -440,6 +440,56 @@ const QUESTIONS = [
   {id:156,ch:'CH5',q:'Class E range begins with:',opts:['192','224','240','248'],ans:2,explain:'Class E: 240-255 محجوز.'},
   {id:157,ch:'CH5',q:'Which class supports multicast?',opts:['A','B','C','D'],ans:3,explain:'Class D (224-239) خصصت للـ Multicast.'},
   {id:158,ch:'CH5',q:'Which class is reserved?',opts:['D','E','C','B'],ans:1,explain:'Class E (240-255) محجوزة للبحث والتجارب.'},
+
+  // ═══ ADDED CORRECT MCQ — CH5 5.13 to 5.29 ═══
+  {id:239,ch:'CH5',q:'Given IP address 73.22.17.25. Which class does it belong to?',opts:['Class A','Class B','Class C','Class D'],ans:0,explain:'73 يقع ضمن 0–127 لذلك هو Class A. في Class A يكون الـ prefix الافتراضي /8.'},
+  {id:240,ch:'CH5',q:'For 73.22.17.25 in Class A, what is the default prefix length?',opts:['/8','/16','/24','/27'],ans:0,explain:'Class A يستخدم أول 8 bits للشبكة، لذلك prefix = /8.'},
+  {id:241,ch:'CH5',q:'How many addresses are in the Class A block that contains 73.22.17.25?',opts:['256','65,536','16,777,216','32'],ans:2,explain:'Class A = /8، إذن عدد العناوين = 2^(32−8) = 2^24 = 16,777,216.'},
+  {id:242,ch:'CH5',q:'What is the first address of the block containing 73.22.17.25?',opts:['73.22.0.0','73.0.0.0','73.22.17.0','73.255.255.255'],ans:1,explain:'في Class A نثبت أول byte وهو 73، ونضع باقي الـ host bits أصفار → 73.0.0.0/8.'},
+  {id:243,ch:'CH5',q:'What is the last address of the block containing 73.22.17.25?',opts:['73.255.255.255','73.22.255.255','73.22.17.255','73.0.0.255'],ans:0,explain:'في Class A نثبت 73، ونضع باقي أجزاء الهوست 255 → 73.255.255.255.'},
+
+  {id:244,ch:'CH5',q:'Given IP address 180.8.17.9. Which class does it belong to?',opts:['Class A','Class B','Class C','Class D'],ans:1,explain:'180 يقع ضمن 128–191 لذلك هو Class B، والـ prefix الافتراضي /16.'},
+  {id:245,ch:'CH5',q:'For 180.8.17.9 in Class B, what is the default prefix length?',opts:['/8','/16','/24','/20'],ans:1,explain:'Class B يثبت أول byteين للشبكة، لذلك prefix = /16.'},
+  {id:246,ch:'CH5',q:'How many addresses are in the Class B block that contains 180.8.17.9?',opts:['256','4,096','65,536','16,777,216'],ans:2,explain:'Class B = /16، عدد العناوين = 2^(32−16) = 2^16 = 65,536.'},
+  {id:247,ch:'CH5',q:'What is the correct first address for the block containing 180.8.17.9?',opts:['18.8.0.0','180.8.0.0','180.0.0.0','180.8.17.0'],ans:1,explain:'الصحيح 180.8.0.0/16 لأن العنوان المعطى يبدأ بـ 180.8، وليس 18.8.'},
+  {id:248,ch:'CH5',q:'What is the correct last address for the block containing 180.8.17.9?',opts:['18.8.255.255','180.8.255.255','180.255.255.255','180.8.17.255'],ans:1,explain:'في Class B نثبت أول رقمين 180.8، وآخر عنوان يكون 180.8.255.255.'},
+
+  {id:249,ch:'CH5',q:'Given IP address 200.11.8.45. Which class does it belong to?',opts:['Class A','Class B','Class C','Class E'],ans:2,explain:'200 يقع ضمن 192–223 لذلك هو Class C، والـ prefix الافتراضي /24.'},
+  {id:250,ch:'CH5',q:'How many addresses are in the Class C block containing 200.11.8.45?',opts:['32','256','65,536','4,096'],ans:1,explain:'Class C = /24، إذن عدد العناوين = 2^(32−24) = 2^8 = 256.'},
+  {id:251,ch:'CH5',q:'What is the first address of the block containing 200.11.8.45?',opts:['200.11.0.0','200.11.8.0','200.0.0.0','200.11.8.45'],ans:1,explain:'في Class C نثبت أول 3 bytes: 200.11.8، ونضع آخر byte = 0 → 200.11.8.0/24.'},
+  {id:252,ch:'CH5',q:'What is the last address of the block containing 200.11.8.45?',opts:['200.11.8.255','200.11.255.255','200.255.255.255','200.11.8.0'],ans:0,explain:'في Class C نثبت أول 3 bytes، وآخر byte يكون 255 → 200.11.8.255.'},
+
+  {id:253,ch:'CH5',q:'In the telephone analogy 626-358-1301, what does 626 represent?',opts:['Subscriber connection','Exchange','Area code','Host ID'],ans:2,explain:'في التشبيه: 626 = Area code، و358 = Exchange، و1301 = Subscriber connection.'},
+  {id:254,ch:'CH5',q:'In the telephone analogy 626-358-1301, what does 358 represent?',opts:['Area code','Exchange','Subscriber connection','Subnet mask'],ans:1,explain:'358 يمثل Exchange، أي المستوى الثاني في العنوان الهرمي.'},
+  {id:255,ch:'CH5',q:'In the telephone analogy, what networking idea is being explained?',opts:['Hierarchical addressing / subnetting','Error detection','TCP handshaking','DNS root servers'],ans:0,explain:'الفكرة هي العنوان الهرمي: مستوى كبير ثم أصغر ثم العنوان النهائي. Subnetting يضيف مستوى داخل الشبكة.'},
+
+  {id:256,ch:'CH5',q:'A Class B network before subnetting uses which default prefix?',opts:['/8','/16','/24','/27'],ans:1,explain:'Class B قبل subnetting يكون بلوك واحد كبير بـ prefix افتراضي /16.'},
+  {id:257,ch:'CH5',q:'Before subnetting, a Class B network is treated as:',opts:['One big network','256 separate networks','Only multicast addresses','One host only'],ans:0,explain:'قبل Subnetting يكون Class B شبكة واحدة كبيرة، وبعد subnetting يتم تقسيمها داخلياً إلى شبكات أصغر.'},
+
+  {id:258,ch:'CH5',q:'In classless addressing, the IP address 230.8.24.56 alone is enough to find the block.',opts:['True','False'],ans:1,explain:'خطأ. في Classless/CIDR يجب معرفة prefix مثل /8 أو /16 أو /24 أو /27 لتحديد البلوك.'},
+  {id:259,ch:'CH5',q:'What information must be given with a classless IP address to identify its block?',opts:['Port number','Prefix length /n','MAC address','DNS name'],ans:1,explain:'في CIDR لازم نعرف prefix length /n لأنه يحدد عدد bits الخاصة بالشبكة.'},
+
+  {id:260,ch:'CH5',q:'What is the network mask for 12.23.24.78/8?',opts:['255.0.0.0','255.255.0.0','255.255.255.0','255.255.255.224'],ans:0,explain:'/8 يعني 8 bits واحدات في الماسك → 255.0.0.0.'},
+  {id:261,ch:'CH5',q:'What is the suffix length for 12.23.24.78/8?',opts:['8','16','24','27'],ans:2,explain:'Suffix = 32 − prefix = 32 − 8 = 24 bits.'},
+  {id:262,ch:'CH5',q:'What is the network mask for 130.11.232.156/16?',opts:['255.0.0.0','255.255.0.0','255.255.255.0','255.255.255.240'],ans:1,explain:'/16 يعني 16 bits للشبكة → 255.255.0.0.'},
+  {id:263,ch:'CH5',q:'For 167.199.170.82/27, what is the suffix length?',opts:['3','5','8','27'],ans:1,explain:'Suffix = 32 − 27 = 5 bits.'},
+  {id:264,ch:'CH5',q:'What is the correct mask for /27?',opts:['255.255.255.240','255.255.255.224','255.255.255.0','255.255.240.0'],ans:1,explain:'/27 يعني آخر byte في الماسك = 11100000₂ = 224، لذلك الماسك الصحيح 255.255.255.224.'},
+
+  {id:265,ch:'CH5',q:'One address is 167.199.170.82/27. How many addresses are in the block?',opts:['16','32','64','256'],ans:1,explain:'/27 يترك 5 host bits، وعدد العناوين = 2^5 = 32.'},
+  {id:266,ch:'CH5',q:'One address is 167.199.170.82/27. What is the first address?',opts:['167.199.170.0','167.199.170.64','167.199.170.80','167.199.170.82'],ans:1,explain:'حجم البلوك في آخر byte = 256−224 = 32. الرقم 82 يقع في المدى 64–95، إذن first = 167.199.170.64/27.'},
+  {id:267,ch:'CH5',q:'One address is 167.199.170.82/27. What is the last address?',opts:['167.199.170.95','167.199.170.127','167.199.170.255','167.199.170.64'],ans:0,explain:'البلوك الذي يحتوي 82 يبدأ من 64 وينتهي عند 95، لذلك last = 167.199.170.95.'},
+
+  {id:268,ch:'CH5',q:'One address is 17.63.110.114/24. What is the mask?',opts:['255.0.0.0','255.255.0.0','255.255.255.0','255.255.255.224'],ans:2,explain:'/24 يعني 24 bits للشبكة → 255.255.255.0.'},
+  {id:269,ch:'CH5',q:'One address is 17.63.110.114/24. How many addresses are in the block?',opts:['32','256','4,096','65,536'],ans:1,explain:'/24 يترك 8 host bits، إذن عدد العناوين = 2^8 = 256.'},
+  {id:270,ch:'CH5',q:'One address is 17.63.110.114/24. What is the first address?',opts:['17.63.0.0','17.63.110.0','17.63.110.114','17.63.110.255'],ans:1,explain:'/24 يعني أول 3 bytes ثابتة، وآخر byte يبدأ من 0 → 17.63.110.0/24.'},
+  {id:271,ch:'CH5',q:'One address is 17.63.110.114/24. What is the last address?',opts:['17.63.110.255','17.63.255.255','17.255.255.255','17.63.110.0'],ans:0,explain:'/24 يعني آخر byte للـ host، لذلك آخر عنوان = 17.63.110.255.'},
+
+  {id:272,ch:'CH5',q:'One address is 110.23.120.14/20. What is the network mask?',opts:['255.255.255.0','255.255.255.224','255.255.240.0','255.255.0.0'],ans:2,explain:'/20 = 16 bits كاملة + 4 bits في الـ third byte، لذلك الماسك = 255.255.240.0.'},
+  {id:273,ch:'CH5',q:'One address is 110.23.120.14/20. How many addresses are in the block?',opts:['256','512','4,096','65,536'],ans:2,explain:'/20 يترك 12 host bits، إذن عدد العناوين = 2^12 = 4096.'},
+  {id:274,ch:'CH5',q:'For /20, what is the block size in the third byte?',opts:['4','8','16','32'],ans:2,explain:'الماسك في الـ third byte = 240، وحجم القفزة = 256 − 240 = 16.'},
+  {id:275,ch:'CH5',q:'In 110.23.120.14/20, the third byte 120 belongs to which range?',opts:['96–111','112–127','120–135','128–143'],ans:1,explain:'القفزات في الـ third byte تكون 0,16,32,...,112,128. الرقم 120 يقع بين 112 و127.'},
+  {id:276,ch:'CH5',q:'What is the first address of the block containing 110.23.120.14/20?',opts:['110.23.120.0','110.23.112.0','110.23.0.0','110.23.127.0'],ans:1,explain:'نقرّب الـ third byte 120 للأسفل إلى أقرب مضاعف 16 وهو 112، وآخر byte = 0 → 110.23.112.0/20.'},
+  {id:277,ch:'CH5',q:'What is the last address of the block containing 110.23.120.14/20?',opts:['110.23.120.255','110.23.112.255','110.23.127.255','110.23.255.255'],ans:2,explain:'مدى الـ third byte هو 112–127، وآخر byte = 255، لذلك last = 110.23.127.255/20.'},
   // ═══ CHAPTER 6 — Multiple Access & Error Detection ═══
   {id:159,ch:'CH6',q:'______ error detection method uses one\'s complement arithmetic.',opts:['Simple parity check','Two-dimensional parity check','CRC','Checksum'],ans:3,explain:'Checksum يستخدم حساب المكمل الأحادي (one\'s complement) للكشف عن الأخطاء.'},
   {id:160,ch:'CH6',q:'In ______ method, a station cannot send unless it has been authorized by other stations.',opts:['Random access','Controlled access','Channelization','None of the above'],ans:1,explain:'Controlled Access: المحطة تنتظر إذناً للإرسال. مثل Token Ring و Polling.'},
@@ -703,4 +753,3 @@ updateScore();
 </script>
 </body>
 </html>
-HTMLEOF
